@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+ 
+	<bean id="root" class="org.restlet.ext.spring.SpringRouter">
+		<property name="attachments">
+			<map>
+			    <entry key="/kpiLevelModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiLevelResource" />
+					</bean>
+				</entry>
+				<entry key="/kpiGroupModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiGroupResource" />
+					</bean>
+				</entry>
+				
+				<entry key="/kpiGroupTypeModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiGroupTypeResource" />
+					</bean>
+				</entry>
+				
+				<entry key="/kpiTypeModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiTypeResource" />
+					</bean>
+				</entry>
+				
+				<entry key="/kpiUomModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiUomResource" />
+					</bean>
+				</entry>
+				
+				<entry key="/kpiStrucModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiStrucResource" />
+					</bean>
+				</entry>
+				
+				<entry key="/orgModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="orgResource" />
+					</bean>
+				</entry>
+				
+				<entry key="/orgTypeModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="orgTypeResource" />
+					</bean>
+					
+				</entry>
+				
+				<entry key="/strucTypeModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="strucTypeResource" />
+					</bean>
+				</entry>	
+				
+				<entry key="/DbConnModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="dbConnResource" />
+					</bean>
+				</entry>
+				<entry key="/DbQueryModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="dbQueryResource" />
+					</bean>
+				</entry>
+				<entry key="/cdsModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="cdsResource" />
+					</bean>
+				</entry>
+				<entry key="/kpiModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiResource" />
+					</bean>
+				</entry>
+				<entry key="/CriteriaGroupModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="criteriaGroupResource" />
+					</bean>
+				</entry>
+				<entry key="/CriteriaModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="criteriaResource" />
+					</bean>
+				</entry>
+				<entry key="/BaselineModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="baselineResource" />
+					</bean>
+				</entry>
+				<entry key="/thresholdModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="thresholdResource" />
+					</bean>
+				</entry>	
+				
+				<entry key="/sysYearModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="sysYearResource" />
+					</bean>
+				</entry>
+				
+				<entry key="/sysMonthModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="sysMonthResource" />
+					</bean>
+				</entry>
+				
+				<entry key="/kpiReComndModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiReComndResource" />
+					</bean>
+				</entry>
+				<entry key="/kpiTargetModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiTargetResource" />
+					</bean>
+				</entry>
+				<entry key="/kpiResultModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiResultResource" />
+					</bean>
+				</entry>
+				<entry key="/cdsEvidenceModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="cdsEvidenceResource" />
+					</bean>
+				</entry>
+				<entry key="/cdsResultModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="cdsResultResource" />
+					</bean>
+				</entry>
+				<entry key="/cdsResultDetailModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="cdsResultDetailResource" />
+					</bean>
+				</entry>
+				<entry key="/descriptionModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="descriptionResource" />
+					</bean>
+				</entry>
+				<entry key="/kpiResultDetailModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiResultDetailResource" />
+					</bean>
+				</entry>
+				<entry key="/kpiEvidenceModel">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="create"
+							bean="kpiEvidenceResource" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="org.restlet.routing.Variable.TYPE_URI_ALL"
+		class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+ 
+</beans>

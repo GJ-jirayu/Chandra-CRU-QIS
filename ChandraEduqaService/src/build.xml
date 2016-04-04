@@ -1,0 +1,13 @@
+<project>
+
+	<target name="jar_eduqaService">
+		<jar destfile="../target/eduqaService.jar">
+			<!-- MISSExamServices/build/classes -->
+			<!-- common -->			  
+			<fileset dir="../build/classes" includes="th/ac/chandra/eduqa/constant/*.class" />
+			<fileset dir="../build/classes" includes="th/ac/chandra/eduqa/model/*.class" />
+			<fileset dir="../build/classes" includes="th/ac/chandra/eduqa/xstream/common/*.class" />			 
+			<fileset dir="../build/classes" includes="th/ac/chandra/eduqa/utils/*.class" />
+		</jar>
+	</target> 
+</project>

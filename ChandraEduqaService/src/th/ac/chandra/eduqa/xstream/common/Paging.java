@@ -1,0 +1,110 @@
+package th.ac.chandra.eduqa.xstream.common;
+
+import java.io.Serializable;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+/**
+ * <p>Title: RTA Web Project</p>
+ *
+ * <p>Description: </p>
+ *
+ * <p>Copyright: Copyright (c) 2006</p>
+ *
+ * <p>Company: </p>
+ *
+ * @author not attributable
+ * @version 1.0
+ */
+@XStreamAlias("paging")
+public class Paging implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1732815183295587738L;
+
+	@XStreamAlias("pageNo")
+	private int pageNo = 1; 
+	
+	@XStreamAlias("pageSize")
+	private int pageSize = 10;
+	
+	@XStreamAlias("totalRecord")
+	private int totalRecord = 0;
+	
+	@XStreamAlias("startIndex")
+	private int startIndex = 0;
+	
+	@XStreamAlias("orderBy")
+	private String orderBy = "";
+	
+	@XStreamAlias("sortBy")
+	private String sortBy = "";
+
+	public Paging(int pageNo, int pageSize, String orderBy) {
+		this.pageNo = pageNo;
+		this.pageSize = pageSize;
+		this.orderBy = orderBy;
+		this.sortBy = "DESC";
+	}
+
+	public Paging() {
+		pageNo = 1;
+		pageSize = 10;
+		totalRecord = 0;
+		orderBy = ""; 
+		startIndex = 0;
+	}
+
+	public int getPageNo() {
+		return pageNo;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public int getTotalRecord() {
+		return totalRecord;
+	}
+
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
+
+	public void setPageNo(int pageNo) {
+		this.pageNo = pageNo;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public void setTotalRecord(int totalRecord) {
+		this.totalRecord = totalRecord;
+	}
+
+	public String getSortBy() {
+		return sortBy;
+	}
+
+	public void setSortBy(String sortBy) {
+		this.sortBy = sortBy;
+	}
+
+	public int getStartIndex() {
+		return startIndex;
+	}
+
+	public void setStartIndex(int startIndex) {
+		this.startIndex = startIndex;
+	}
+
+	
+
+}

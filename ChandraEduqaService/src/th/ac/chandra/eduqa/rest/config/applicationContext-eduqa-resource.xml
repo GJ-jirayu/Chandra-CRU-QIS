@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+    
+	<bean id="kpiLevelResource"
+		class="th.ac.chandra.eduqa.resource.KpiLevelResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	
+	<bean id="kpiGroupResource"
+		class="th.ac.chandra.eduqa.resource.KpiGroupResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	
+	<bean id="kpiGroupTypeResource"
+		class="th.ac.chandra.eduqa.resource.KpiGroupTypeResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	
+	<bean id="kpiTypeResource"
+		class="th.ac.chandra.eduqa.resource.KpiTypeResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	
+	<bean id="kpiUomResource"
+		class="th.ac.chandra.eduqa.resource.KpiUomResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	
+	<bean id="kpiStrucResource"
+		class="th.ac.chandra.eduqa.resource.KpiStrucResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	
+	<bean id="orgResource"
+		class="th.ac.chandra.eduqa.resource.OrgResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	
+	<bean id="orgTypeResource"
+		class="th.ac.chandra.eduqa.resource.OrgTypeResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	
+	<bean id="strucTypeResource"
+		class="th.ac.chandra.eduqa.resource.StrucTypeResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<!--  entry -->
+	<bean id="dbConnResource"
+		class="th.ac.chandra.eduqa.resource.DbConnResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="dbQueryResource"
+		class="th.ac.chandra.eduqa.resource.DbQueryResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="cdsResource"
+		class="th.ac.chandra.eduqa.resource.CdsResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="kpiResource"
+		class="th.ac.chandra.eduqa.resource.KpiResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="criteriaGroupResource"
+		class="th.ac.chandra.eduqa.resource.CriteriaGroupResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="criteriaResource"
+		class="th.ac.chandra.eduqa.resource.CriteriaResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="baselineResource"
+		class="th.ac.chandra.eduqa.resource.BaselineResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+		<bean id="thresholdResource"
+		class="th.ac.chandra.eduqa.resource.ThresholdResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="sysYearResource"
+		class="th.ac.chandra.eduqa.resource.SysYearResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="sysMonthResource"
+		class="th.ac.chandra.eduqa.resource.SysMonthResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="kpiReComndResource"
+		class="th.ac.chandra.eduqa.resource.KpiReComndResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="kpiTargetResource"
+		class="th.ac.chandra.eduqa.resource.KpiTargetResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="kpiResultResource"
+		class="th.ac.chandra.eduqa.resource.KpiResultResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="cdsResultResource"
+		class="th.ac.chandra.eduqa.resource.CdsResultResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="cdsResultDetailResource"
+		class="th.ac.chandra.eduqa.resource.CdsResultDetailResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="cdsEvidenceResource"
+		class="th.ac.chandra.eduqa.resource.CdsEvidenceResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="descriptionResource"
+		class="th.ac.chandra.eduqa.resource.DescriptionResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="kpiResultDetailResource"
+		class="th.ac.chandra.eduqa.resource.KpiResultDetailResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+	<bean id="kpiEvidenceResource"
+		class="th.ac.chandra.eduqa.resource.KpiEvidenceResource"
+		scope="prototype"> 
+		<property name="xstream" ref="xstream"></property>
+	</bean>
+</beans>
