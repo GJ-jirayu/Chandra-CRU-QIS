@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE display PUBLIC "-//Liferay//DTD Display 5.2.0//EN" "http://www.liferay.com/dtd/liferay-display_5_2_0.dtd">
+
+<display>
+	<category name="Master Data">
+		<portlet id="KpiLevel"></portlet>
+		<portlet id="KpiGroup"></portlet>
+		<portlet id="KpiGroupType"></portlet>
+		<portlet id="KpiType"></portlet>
+		<portlet id="KpiUom"></portlet>
+		<portlet id="KpiStruc"></portlet>
+		<portlet id="Cds"></portlet>
+		<portlet id="Kpi"></portlet>
+	</category>
+	<category name="Configuration">
+		<portlet id="SetupMaster"></portlet>
+		<portlet id="Threshold"></portlet>
+	</category>
+	<category name="Data Entry">
+		<portlet id="AssignKpi"></portlet>
+		<portlet id="Result"></portlet>
+		<portlet id="ReComnd"></portlet>
+	</category>
+</display>

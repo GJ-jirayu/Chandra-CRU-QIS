@@ -1,0 +1,202 @@
+body, .ui-dialog {
+	font-family: "Liberation Sans";
+	font-size: 15px;
+}
+
+input[type=button] {
+	font-size: 95%;
+}
+img{
+	cursor: pointer !important;
+}
+
+/*element layout*/
+.ui-dialog {
+	padding: 1px;
+	background: linear-gradient(#FFFFFF, #EFEFEF, #FFFFFF);
+}
+
+.ui-dialog-titlebar {
+	display: none;
+}
+
+div.boxTable {
+	padding-top: 10px;
+}
+.column-center{
+	text-align:center;
+}
+.box {
+	padding: 20px 20px 40px 20px;
+	border: thin solid #CDCDCD;
+	border-radius: 10px;
+	/*display: block;
+	min-width:350px;
+	min-height:200px; */
+	background: linear-gradient(#FFFFFF, rgba(222, 222, 222, .5),
+		rgba(233, 233, 233, .8));
+}
+.bg{ 
+/*    			background-image: url("../images/2.png"); */
+/*    			background-position: center right; */
+/* 			background-size: 80px 60px; */
+/*     		background-repeat: no-repeat; */
+   		}
+button.icon img {
+	margin: 0;
+	padding: 0;
+	width: 16px;
+	height: 16px;
+	box-sizing: border-box;
+}
+
+/*element theme */
+input[type=button].save {
+	background: linear-gradient(#6ba9ff, #0970ff, #0759cc);
+	color: white;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid #6ba9ff;
+	border-radius: 4px;
+}
+
+input[type=button].cancel {
+	background: linear-gradient(#e01d1d,#c71a1a,#ae1717);
+	color: white;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid #e01d1d;
+	border-radius: 4px;
+}
+
+input[type=button].back2default{
+	background: linear-gradient(#34d003,#2ebb02,#29a602);
+	color: white;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid #01e311;
+	border-radius: 4px;
+}
+input[type=text] {
+	vertical-align: middle;
+	margin-bottom: 0px;
+}
+.save {
+	background: linear-gradient(#6ba9ff, #0970ff, #0759cc);
+	color: white;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid #6ba9ff;
+	border-radius: 3px;
+}
+.cancel {
+	background: linear-gradient(#e01d1d,#c71a1a,#ae1717);
+	color: white;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid #e01d1d;
+	border-radius: 3px;
+}
+.paging div {
+	display: inline-block;
+}
+
+.action {
+	padding: 2px 15px 2px 15px;
+	border: thin solid #CDCDCD;
+	border-radius: 10px;
+	display: block;
+	background: linear-gradient(#FFFFFF, rgba(222, 222, 222, .6));
+	min-width: 400px;
+	font-size: 90%;
+}
+
+.action fieldset {
+	border: 1px solid #BDBDBD;
+	border-radius: 5px;
+	padding: 20px 20px 20px 20px;
+	margin: 0;
+}
+
+.action fieldset legend {
+	padding: 5px;
+	margin: 0;
+}
+#pageMessage{
+	font-size:110%;	
+}
+.textC {text-align: center;}
+.padL {padding-left: 1%; !important}
+/**********start Table higthlight *************/
+	  .ui-widget, .box .ui-widget * {
+	    font-size: 1em;
+	}
+	
+	table.tableGridLv{
+   		background-color:#FFFFFF;
+    	border:1px solid #999999;
+    	overflow:hidden;
+    	width:100%;
+   		font-size:14px;
+   	}
+   	table.tableGridLv thead th{
+   			height: 30px;
+   			text-align:center;
+   			border-color:#acacac;
+   			border-width:1px 1px 1px 1px;
+   			border-style:inset;
+   			background: linear-gradient(white, #efefef,#e2e2e2,#f7f7f7);
+   	}
+   	table.tableGridLv tbody td {
+		border: none;
+		padding: 1px 2px 2px 2px;
+	}
+   	.tableGridLv tr:nth-child(2n){ background-color:rgba(244,244,244,1); }				
+   		
+	.hoverTable{
+		width:100%; 
+		border-collapse:collapse; 
+	}
+	.hoverTable td{ 
+		padding:7px;
+	}
+	/* Define the default color for all the table rows */
+	.hoverTable thead tr{
+		background: linear-gradient(#fae553,#fff97f,#fae553);
+	}
+	/* Define the hover highlight color for the table row */
+    .hoverTable tbody tr:hover {
+      background:  linear-gradient(#fff97f,#fae553) !important;
+      color:#000;
+    }
+    
+/**********end Table higthlight *************/
+
+    	table.darkTable{
+    		background-color:#efefef;
+    	}
+    	table.darkTable td{
+    		padding:3px 4px 6px 4px;
+    	}
+    	table.darkTable tr:nth-child(2n-1) td{
+    		background-color:#ffffff;
+    	}
+    	table.darkTable thead th{
+    		border:1px solid #acacac;
+    		background: linear-gradient(#ffffff, #dfdfdf); 
+    	}
+    	table.darkTable td.action{ text-align:center;  }
+    	.tabAction>.actionCnt{
+    		display:none;
+    	}
+    	/* pagging */
+    	select.pageSize{
+			width:60px;
+			height:25px;
+			vertical-align: middle;
+			margin-bottom: 0px;
+		}
+		select.pageSize option { font-size: 18px; }
+		button.btnPag {
+		    background-color: Transparent;
+		    background-repeat:no-repeat;
+		    border: none;
+		    cursor:pointer;
+		    overflow: hidden;
+		    outline:none;
+		}

@@ -1,0 +1,249 @@
+/* Start style in assignKpi.jsp  */
+  .boxHeader{
+  	width:100%;
+    
+  }
+  .table-responsive {
+    width: 100%;
+  }
+  .wid{
+  	margin: 1% 1% 1% 0 !important;
+  }
+  .spn1{
+  	margin-left:0%
+  }
+  .spn3{
+  	margin-left:4.3%
+  }
+  .spn4{
+  	margin-left:7%
+  }
+  .aui .btn {
+    font-size: 1em;
+    margin-top: 1%
+	}
+/*@media screen and (max-width: 1200px) {
+ Add your styles for devices with a maximum width of 1200 
+  .boxHeader{
+  	width:100%;
+    
+  }
+  .table-responsive {
+    width: 100%;
+  }
+  .wid{
+  	width:100%;
+    min-width:360px;
+    margin:1% 0% !important;
+  }
+  .spn1{
+  	margin-left:0%
+  }
+  .spn3{
+  	margin-left:4.3%
+  }
+  .spn4{
+  	margin-left:7%
+  }
+  .aui .btn {
+    font-size: 1em;
+    margin-top: 1%
+	}
+} */
+  
+@media screen and (max-width: 1024px) {
+/* Add your styles for devices with a maximum width of 1024 */
+  .table-responsive {
+    width: 100%;
+  }
+  .boxHeader{
+  	width:100%;
+    
+  }
+  .wid{
+  	margin: 1% 1% 1% 0 !important;
+  }
+  .spn1{
+  	margin-left:0%
+  }
+  .spn3{
+  	margin-left:4.3%
+  }
+  .spn4{
+  	margin-left:7%
+  }
+  .aui .btn {
+    font-size: 1em;
+    margin-top: 1%
+	}
+}
+
+@media screen and (max-width: 768px) {
+/* Add your styles for devices with a maximum width of 768 */
+	.table-responsive {
+    width: 100%;
+  }
+  .wid{
+    display:block;
+  	width:100%;
+    min-width:500px;
+    margin:3% 0% !important;
+  }
+  .spn1{
+  	margin-left:7.5%
+  }
+  .spn3{
+  	margin-left:14%
+  }
+  .spn4{
+  	margin-left:10.5%
+  }
+}
+  
+@media screen and (max-width: 500px) {
+/* Add your styles for devices with a maximum width of 500 */
+  .wid {
+	  	width:100%;
+	    min-width:340px;
+	    margin:3% 0% !important;
+	  	}
+  .aui .btn {
+	    font-size: 1.1em;
+	    padding: 4% 5%;
+		}
+	.spn1 {
+	  	margin-left:0%
+	  }
+	  .spn3{
+	  	margin-left:0%
+	  }
+	  .spn4{
+	  	margin-left:0%
+	  }
+}
+
+@media screen and (max-width: 480px) {
+/* Add your styles for devices with a maximum width of 480 */
+  .wid{
+  	width:100%;
+    min-width:340px;
+    margin:3% 0% !important;
+  }
+  .spn1{
+  	margin-left:0%
+  }
+  .spn3{
+  	margin-left:0%
+  }
+  .spn4{
+  	margin-left:0%
+  }
+}
+@media screen and (max-width: 320px) {
+/* Add your styles for devices with a maximum width of 320 */
+.wid{
+  	width:100%;
+    min-width:180px;
+    margin:3% 0% !important;
+  }
+.aui .btn {
+    font-size: 1em;
+    padding: 4% 5%;
+	}
+	.spn1{
+  	margin-left:0%
+  }
+  .spn3{
+  	margin-left:0%
+  }
+  .spn4{
+  	margin-left:0%
+  }
+  
+  /*table-reposive*/
+  .table-responsive {
+    width: 100%;
+    margin-bottom: 15px;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    border: 1px solid @table-border-color;
+
+    // Tighten up spacing and give a background color
+    &amp;amp;gt; .table {
+      margin-bottom: 0;
+      background-color: #fff;
+
+      // Ensure the content doesn't wrap
+      &amp;amp;gt; thead,
+      &amp;amp;gt; tbody,
+      &amp;amp;gt; tfoot {
+        &amp;amp;gt; tr {
+          &amp;amp;gt; th,
+          &amp;amp;gt; td {
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+
+    // Special overrides for the bordered tables
+    &amp;amp;gt; .table-bordered {
+      border: 0;
+
+      // Nuke the appropriate borders so that the parent can handle them
+      &amp;amp;gt; thead,
+      &amp;amp;gt; tbody,
+      &amp;amp;gt; tfoot {
+        &amp;amp;gt; tr {
+          &amp;amp;gt; th:first-child,
+          &amp;amp;gt; td:first-child {
+            border-left: 0;
+          }
+          &amp;amp;gt; th:last-child,
+          &amp;amp;gt; td:last-child {
+            border-right: 0;
+          }
+        }
+        &amp;amp;gt; tr:last-child {
+          &amp;amp;gt; th,
+          &amp;amp;gt; td {
+            border-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+  /*end table-reposive*/
+  
+}
+ 
+/* iPads (landscape) ----------- */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
+   /* Add your styles for devices with a maximum width of 1024 */
+}
+/* iPads (portrait) ----------- */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait) {
+  /* Add your styles for devices with a maximum width of 768 */
+}
+	
+/* end style in assignKpi.jsp */ 
+/* @media screen and (max-width: 385px) { */
+/* /* Add your styles for devices with a maximum width of 320 */ */
+/*   .wid{ */
+/*   	width:100%; */
+/*     min-width:265px; */
+/*     margin:3% 0% !important; */
+/*   	} */
+/*   .aui .btn { */
+/*     font-size: 1.1em; */
+/*     padding: 4% 5%; */
+/* 	} */
+/* } */
+
+/* start style in assignKpiTarget.jsp */
+	#baselinePanel {margin-left: 7%;max-width: 1000px;}
+	#actionMenu {padding: 2% 0 2% 24%;}
+	.marTaget {margin:3% 0% 0% 7%;}
+	.marB7 {margin-bottom:7px;}
+	.marL-35 {margin-left:-35%;}
+/* end style in assignKpiTarget.jsp */

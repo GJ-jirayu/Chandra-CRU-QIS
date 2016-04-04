@@ -1,0 +1,23 @@
+.aui h1, .aui h2, .aui h3, .aui h4, .aui h5, .aui h6{
+	line-height:34px;
+	margin:0px 0px 0px 0px;
+}
+.aui textarea{
+	color:black;
+}
+.aui select{
+	color:black;
+	width:auto;
+}
+.aui label{
+	color:black;
+}
+.aui legend{
+	margin-bottom:10px;
+}
+.aui fieldset{
+	margin:0px 0px 20px 0px;
+}
+.aui ul, .aui ol{
+	margin: 0 0 0 0; 
+}

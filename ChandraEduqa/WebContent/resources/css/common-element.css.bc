@@ -1,0 +1,107 @@
+body, .ui-dialog {
+	font-family: "Liberation Sans";
+	font-size: 15px;
+}
+
+input[type=button] {
+	font-size: 95%;
+}
+
+/*element layout*/
+.ui-dialog {
+	padding: 1px;
+	background: linear-gradient(#FFFFFF, #EFEFEF, #FFFFFF);
+}
+
+.ui-dialog-titlebar {
+	display: none;
+}
+
+div.boxTable {
+	padding-top: 10px;
+}
+
+.box {
+	padding: 20px 20px 40px 20px;
+	border: thin solid #CDCDCD;
+	border-radius: 10px;
+	/*display: block;
+	min-width:350px;
+			min-height:200px; */
+	background: linear-gradient(#FFFFFF, rgba(222, 222, 222, .5),
+		rgba(233, 233, 233, .8));
+}
+
+button.icon img {
+	margin: 0;
+	padding: 0;
+	width: 16px;
+	height: 16px;
+	box-sizing: border-box;
+}
+
+/*element theme */
+input[type=button].save {
+	background: linear-gradient(#5882FA, #5858FA, #5882FA);
+	color: white;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid white;
+}
+
+input[type=button].cancel {
+	background: linear-gradient(#F7819F, #FE2E64, #F7819F);
+	color: white;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid white;
+}
+
+input[type=button].back{
+	background: linear-gradient(#efefef, #cacaca, #efefef);
+	color: black;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid white;
+}
+input[type=button].back2default{
+	background: linear-gradient(#33CC00, #33CC33, #33CC00);
+	color: white;
+	padding: 4px 20px 4px 20px;
+	border: 1px solid white;
+}
+input[type=text] {
+	vertical-align: middle;
+	margin-bottom: 0px;
+}
+input[type=button].iconDelete{
+	border:none;background-color:transparent;
+	background-image:url('../images/delete-24px.png') no-repeat;
+	width:26px;
+	height:24px;
+}
+.paging div {
+	display: inline-block;
+}
+
+.action {
+	padding: 2px 15px 2px 15px;
+	border: thin solid #CDCDCD;
+	border-radius: 10px;
+	display: block;
+	background: linear-gradient(#FFFFFF, rgba(222, 222, 222, .6));
+	min-width: 400px;
+	font-size: 90%;
+}
+
+.action fieldset {
+	border: 1px solid #BDBDBD;
+	border-radius: 5px;
+	padding: 20px 20px 20px 20px;
+	margin: 0;
+}
+
+.action fieldset legend {
+	padding: 5px;
+	margin: 0;
+}
+#pageMessage{
+	font-size:110%;	
+}
