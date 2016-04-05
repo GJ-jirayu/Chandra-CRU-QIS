@@ -52,10 +52,10 @@ public class Kpi implements Serializable {
 	private Integer parentId;
 
 	@Column(name="BENCHMARK_VALUE")
-	private double benchmark;
+	private Double benchmark;
 	
 	@Column(name="MIN_SCORE")
-	private double minScore;
+	private Double minScore;
 	
 	@Column(name="CRITERIA_TYPE_ID")
 	private Integer criteriaTypeId;
@@ -188,14 +188,14 @@ public class Kpi implements Serializable {
 		return benchmark;
 	}
 
-	public void setBenchmark(double benchmark) {
+	public void setBenchmark(Double benchmark) {
 		this.benchmark = benchmark;
 	}
 	public double getMinScore() {
-		return minScore;
+		return minScore = minScore == null ? 0.0 : minScore;
 	}
-	public void setMinScore(double minScore) {
-		this.minScore = minScore;
+	public void setMinScore(Double minScore) {
+		this.minScore = minScore == null ? 0.0 : minScore;
 	}
 	public Integer getCriteriaTypeId() {
 		return criteriaTypeId;

@@ -100,11 +100,12 @@
     	}
     	function resultSave(){
     		$("#assignResultQualityForm").attr("action","<%=doSaveResultQuality%>");
-    		if($('#cdmCdsValue').val().trim()!=""){
+    		$("#assignResultQualityForm").submit();
+    		/* if($('#cdmCdsValue').text().trim() != ""){
     			$("#assignResultQualityForm").submit();
     		}else{
     			$('#resultDetailMessage').html('ไม่ใส่ผลดำเนินงาน');
-    		}
+    		} */
     	}
     	function resultBack(){
     		$("#assignResultQualityForm").attr("action","<%=doResultQualityBackToList%>");
