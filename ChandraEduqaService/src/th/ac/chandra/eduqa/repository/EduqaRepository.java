@@ -3,6 +3,7 @@ package th.ac.chandra.eduqa.repository;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -81,7 +83,9 @@ public class EduqaRepository   {
 	@Autowired
 	@PersistenceContext(unitName="HibernatePersistenceUnit") 
 	private EntityManager entityManager;
-
+	
+	private Timestamp currentTimestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
+	
 	@Autowired
 	@PersistenceContext(unitName="HibernatePersistenceLiferayUnit") 
 	private EntityManager portalEntityManager;
@@ -2429,6 +2433,8 @@ public class EduqaRepository   {
 			}
 		// =====[ END: CDS RESULT DETAIL ]================================================================================//
 			
+			
+			
 		// =====[ START: CDS EVIDENCE ]================================================================================//
 			
 			public Integer saveCdsEvidence(CdsEvidence transientInstance)
@@ -2606,9 +2612,15 @@ public class EduqaRepository   {
 						if(query2.getResultList().size()<=0){
 							entityManager.persist(domain);
 						}else{
-							entityManager.createQuery("update KpiResultDetail r set r.actionFlag="+domain.getActionFlag()+" where r.resultId="+domain.getResultId()+" and r.criteriaId="+domain.getCriteriaId()).executeUpdate();
+							entityManager.createQuery(""
+									+ "update KpiResultDetail r set "
+									+ "r.actionFlag="+domain.getActionFlag()+" "
+									//+ "r.updatedBy="+domain.getUpdatedBy()+" "
+									//+ "r.updatedDate="+currentTimestamp+" "
+									+ "where r.resultId="+domain.getResultId()+" "
+									+ "and r.criteriaId="+domain.getCriteriaId()
+								).executeUpdate();
 						};
-
 						entityManager.flush();
 						return domain.getResultId();
 					}else{

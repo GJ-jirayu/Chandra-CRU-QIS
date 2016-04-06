@@ -26,6 +26,7 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
+import javax.portlet.StateAwareResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -829,6 +830,7 @@ public class ResultController {
 		// declare attrbuite
 		List<String> errorMessages = new ArrayList<String>();
 		User user = (User) request.getAttribute(WebKeys.USER);
+		SysYearModel sysYear = service.getSysYear();
 		//save kpiResultDetail
 		KpiResultDetailModel kpiResultDetailM = new KpiResultDetailModel();
 		//find resultId;
@@ -844,7 +846,7 @@ public class ResultController {
 		kpiResultDetailM.setCreatedBy(user.getScreenName());
 		kpiResultDetailM.setUpdatedBy(user.getScreenName());
 		kpiResultDetailM.setEvidenceFlag(null);  // update when click view evidence list
-		kpiResultDetailM.setAcademicYear(2015);
+		kpiResultDetailM.setAcademicYear(sysYear.getAppraisalAcademicYear()); //SysYearModel sy = service.getSysYear();
 		Integer success = service.saveKpiResultDetail(kpiResultDetailM); 
 		if(success<=0){
 			errorMessages.add("บันทึกไม่สำเร็จ");
@@ -1518,7 +1520,64 @@ public class ResultController {
 			response.setRenderParameter("orgId", String.valueOf(form.getOrgId() ) );
 			response.setRenderParameter("kpiId", String.valueOf(form.getKpiId()) );
 			response.setRenderParameter("monthId", String.valueOf(form.getMonthId() ) );
-			response.setRenderParameter("cdsId", String.valueOf(form.getCdsId() ) );	
+			response.setRenderParameter("cdsId", String.valueOf(form.getCdsId() ) );
 			response.setRenderParameter("evidenceMessage", message);
 	    }
+		
+		
+	@ResourceMapping(value = "doSaveAutoSaveResult")
+	@ResponseBody
+	public void doSaveAutoSaveResult(ResourceRequest request, ResourceResponse resourceResponse) throws IOException {
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+	
+		Integer orgId = Integer.parseInt( normalRequest.getParameter("orgId"));
+		Integer kpiId = Integer.parseInt(normalRequest.getParameter("kpiId"));
+		Integer monthId = Integer.parseInt(normalRequest.getParameter("monthId"));
+		Integer criteriaId = Integer.parseInt(normalRequest.getParameter("selectStdId"));
+		Boolean actionFlag = Boolean.valueOf(normalRequest.getParameter("actionFlag"));
+		
+		// declare attrbuite
+		List<String> errorMessages = new ArrayList<String>();
+		JSONObject jsonMessages = JSONFactoryUtil.createJSONObject();
+		User user = (User) request.getAttribute(WebKeys.USER);
+		SysYearModel sysYear = service.getSysYear();
+		// save kpiResultDetail
+		KpiResultDetailModel kpiResultDetailM = new KpiResultDetailModel();
+		// find resultId;
+		kpiResultDetailM.setKpiId(kpiId);
+		kpiResultDetailM.setOrgId(orgId);
+		kpiResultDetailM.setMonthId(monthId);
+		kpiResultDetailM.setCriteriaId(criteriaId);
+		if (actionFlag) {
+			kpiResultDetailM.setActionFlag("1");
+		} else {
+			kpiResultDetailM.setActionFlag("0");
+		}
+		kpiResultDetailM.setCreatedBy(user.getFullName());
+		kpiResultDetailM.setUpdatedBy(user.getFullName());
+		kpiResultDetailM.setEvidenceFlag(null); // update when click view evidence list
+		kpiResultDetailM.setAcademicYear(sysYear.getAppraisalAcademicYear());
+		Integer success = service.saveKpiResultDetail(kpiResultDetailM);
+		if (success <= 0) {
+			errorMessages.add("บันทึกไม่สำเร็จ");
+			jsonMessages.put("msgCode", "0").put("msgDesc", "บันทึกไม่สำเร็จ");
+		}
+
+		String resultMessage = "";
+		if (errorMessages.size() <= 0) {
+			resultMessage = "บันทึกสำเร็จ";
+			jsonMessages.put("msgCode", "1").put("msgDesc", "บันทึกสำเร็จ");
+		} else {
+			resultMessage = StringUtils.join(" ", errorMessages);
+		}
+		resourceResponse.getWriter().write(jsonMessages.toString());
+		
+		/*actionResponse.setRenderParameter("resultMessage", resultMessage);
+		actionResponse.setRenderParameter("render", "assignResultQuality");
+		actionResponse.setRenderParameter("orgId", String.valueOf(orgId));
+		actionResponse.setRenderParameter("kpiId", String.valueOf(kpiId));
+		actionResponse.setRenderParameter("monthId", String.valueOf(monthId));
+		actionResponse.setRenderParameter("criteriaId", String.valueOf(criteriaId));*/
+	}
 }
