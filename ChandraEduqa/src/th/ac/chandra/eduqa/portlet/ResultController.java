@@ -106,8 +106,8 @@ public class ResultController {
 	@Autowired
 	@Qualifier("eduqaServiceWSImpl")
 	private EduqaService service;
-	//private String uploadDirectory = "/home/pongkorn/client/chandra/fileupload/";
-	private String uploadDirectory = "D:\\eduqa\\FileServer\\";
+	private String uploadDirectory = "/home/pwirun/app/Chandra/fileupload/";
+	//private String uploadDirectory = "D:\\eduqa\\FileServer\\";
 	private String directoryDelimitor;
 	
 	@Autowired
@@ -139,7 +139,7 @@ public class ResultController {
 		Integer groupId = null;
 		//  initial param
 		SysYearModel sy = service.getSysYear();
-		if(request.getParameter("month")!=null){ 
+		if(request.getParameter("month")!=null){
 			monthId =  Integer.parseInt(request.getParameter("month"));
 		}
 		if(request.getParameter("group")!=null){ 
@@ -255,12 +255,13 @@ public class ResultController {
 		}
 		
 		
-		
+		model.addAttribute("userLevel", org.getLevelId().toString());
 		model.addAttribute("size",kpiResult.size());
 		model.addAttribute("lastPage",service.getResultPage());
 		
 		return "dataEntry/resultList";
 	}
+	
 	@RequestMapping(params="action=doShowResultQuantity") 
 	public void quantityActionShowResultList(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response
 			,@ModelAttribute("KpiResultForm") KpiResultForm kpiResultForm,BindingResult result,Model model){
@@ -661,29 +662,35 @@ public class ResultController {
 
 	// ######################ajax hierachy ##################// 
 
-	@RequestMapping(params="action=doSubmitFilter") 
-	public void submitFilter(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response
-			,@ModelAttribute("KpiResultForm") KpiResultForm form,BindingResult result,Model model){
-	//	response.setRenderParameter(arg0, arg1);
+	@RequestMapping(params = "action=doSubmitFilter")
+	public void submitFilter(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response,
+			@ModelAttribute("KpiResultForm") KpiResultForm form, BindingResult result, Model model) {
+		// response.setRenderParameter(arg0, arg1);
 		Integer level = form.getIdentify().getLevel();
-		String orgId = null ;
-		if(level==1){		orgId =  form.getIdentify().getUniversity(); 
-		}else if(level==2) {	orgId = form.getIdentify().getFaculty(); 
-		}else if(level==3) {	orgId =	form.getIdentify().getCourse(); 
+		String orgId = null;
+		if (level == 1) {
+			orgId = form.getIdentify().getUniversity();
+		} else if (level == 2) {
+			orgId = form.getIdentify().getFaculty();
+		} else if (level == 3) {
+			orgId = form.getIdentify().getCourse();
 		}
-		if(orgId.isEmpty()){ orgId = "0";}
-		//version 2 * academic > calendar , monthId > monthNo
+		if (orgId.isEmpty()) {
+			orgId = "0";
+		}
+		// version 2 * academic > calendar , monthId > monthNo
 		SysMonthModel dm = new SysMonthModel();
 		dm.setCalendarYear(form.getCalendarYear());
 		dm.setCalendarMonthNo(form.getMonthNo());
-		try{
+		try {
 			List<SysMonthModel> dms = service.getMonthId(dm);
 			dm = dms.get(0);
-		}catch(Exception ex){ }
+		} catch (Exception ex) {
+		}
 		tempGroupOptValue = form.getGroupId();
-		response.setRenderParameter("orgId",orgId);
-		response.setRenderParameter("month",String.valueOf(dm.getMonthId()));
-		response.setRenderParameter("group",String.valueOf(form.getGroupId()));
+		response.setRenderParameter("orgId", orgId);
+		response.setRenderParameter("month", String.valueOf(dm.getMonthId()));
+		response.setRenderParameter("group", String.valueOf(form.getGroupId()));
 	}
 	
 	// ########################### quality คุณภาพ ###################
@@ -1572,12 +1579,30 @@ public class ResultController {
 			resultMessage = StringUtils.join(" ", errorMessages);
 		}
 		resourceResponse.getWriter().write(jsonMessages.toString());
+	}
+	
+	@ResourceMapping(value = "dofindOrgByOrgId")
+	@ResponseBody
+	public void dofindOrgByOrgId(ResourceRequest request, ResourceResponse response) throws IOException {
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+	
+		Integer orgId = Integer.parseInt( normalRequest.getParameter("orgId"));
+		OrgModel org = new OrgModel();
+		org.setOrgId(orgId);
 		
-		/*actionResponse.setRenderParameter("resultMessage", resultMessage);
-		actionResponse.setRenderParameter("render", "assignResultQuality");
-		actionResponse.setRenderParameter("orgId", String.valueOf(orgId));
-		actionResponse.setRenderParameter("kpiId", String.valueOf(kpiId));
-		actionResponse.setRenderParameter("monthId", String.valueOf(monthId));
-		actionResponse.setRenderParameter("criteriaId", String.valueOf(criteriaId));*/
+		OrgModel orgs = service.findOrgById(org);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+		connJSON.put("facultyCode", orgs.getFacultyCode());
+        connJSON.put("facultyName", orgs.getFacultyName());
+        connJSON.put("courseCode", orgs.getCourseCode());
+        connJSON.put("courseName", orgs.getCourseName());
+        lists.put(connJSON);
+		json.put("facultyCourseList", lists);
+		
+		//System.out.println(json.toString());
+		response.getWriter().write(json.toString());
 	}
 }

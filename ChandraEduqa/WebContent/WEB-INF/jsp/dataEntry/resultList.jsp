@@ -34,6 +34,9 @@
 <portlet:resourceURL var="requestSearchOrgId" id="requestSearchOrgId" ></portlet:resourceURL>
 <portlet:resourceURL var="requestOrgFaculty" id="requestOrgFaculty" ></portlet:resourceURL>
 <portlet:resourceURL var="requestOrgCourse" id="requestOrgCourse" ></portlet:resourceURL>
+<portlet:resourceURL var="dofindOrgByOrgId" id="dofindOrgByOrgId" ></portlet:resourceURL>
+
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -64,7 +67,47 @@
 				heightStyle: "content",
 			 	collapsible: true
 			});
+
+			renderParameterCtrl();
     	});
+
+    	function renderParameterCtrl(){
+    		var uni  =  $("#paramUniversity");
+    		var fac  =  $("#paramFaculty");
+    		var cou = $("#paramCourse");
+    		var paramLevel = $('#paramLevel').val();
+
+    		//ตรวจสอบสิทธิ์ของผู้ใชงานและทำการส้ราง Parameter ตามสิทธิ์
+			if(paramLevel=="2"){
+				ParamChange($('select#paramUniversity'), 'university');
+			}else if(paramLevel=="3"){
+				$.ajax({ 
+	    			dataType:'json',
+	    			url: "<%=dofindOrgByOrgId%>",
+	    			data: { 'orgId': $('input#idenOrgId').val() },
+	    			success: function(data){ 
+	    				/*Generate paramFaculty*/	    				
+				    	facultyOpt = $("<option value=\""+data["facultyCourseList"][0]["facultyCode"]
+				    		+"\"></option>").html(data["facultyCourseList"][0]["facultyName"]);
+				    	fac.empty().append(facultyOpt);
+
+				    	/*Generate paramCourse*/
+				    	courseOpt = $("<option value=\""+data["facultyCourseList"][0]["courseCode"]
+				    		+"\"></option>").html(data["facultyCourseList"][0]["courseName"]);
+				    	cou.empty().append(courseOpt);
+	    			}
+	    		});
+			}
+
+			//Disable ParamLevel ที่ผู้ใช้งางนไม่มีสิทธิ์เข้าใช้งาน
+			var userLevel = ${userLevel};
+			if(userLevel == "2"){
+				$('select#paramLevel option[value=1]').prop("disabled", true);
+			}else if(userLevel == "3"){
+				$('select#paramLevel option[value=1]').prop("disabled", true);
+				$('select#paramLevel option[value=2]').prop("disabled", true);
+			}
+    	}
     	function pageMessage(){
     		if($("#messageMsg").val()){
     			if($("#messageMsg").val() == 100){ //ok
@@ -87,15 +130,39 @@
     		var fac  =  $("#paramFaculty");
     		var cou = $("#paramCourse");
     		var lv = $('#paramLevel').val();
-    		if(lv==1){ uni.prop("disabled",false); fac.prop("disabled",true); cou.prop("disabled",true); }
-    		else if(lv==2){ uni.prop("disabled",false); fac.prop("disabled",false); cou.prop("disabled",true); }
-    		else if(lv==3){ uni.prop("disabled",false); fac.prop("disabled",false); cou.prop("disabled",false); }
+    		if(lv==1){ 
+    			uni.prop("disabled",false); 
+    			fac.prop("disabled",true); 
+    			cou.prop("disabled",true); 
+    		}else if(lv==2){ 
+    			uni.prop("disabled",true);
+    			fac.prop("disabled",false); 
+    			cou.prop("disabled",true); 
+    		}else if(lv==3){ 
+    			uni.prop("disabled",true); 
+    			fac.prop("disabled",false); 
+    			cou.prop("disabled",false); 
+    		}
     	}
     	function ParamLevelChange(el){
     		toggleEnableSelection();
-    		$("#paramUniversity").val(0);
+    		/*$("#paramUniversity").val(0);
     		$("#paramFaculty").val(0);
-    		$("#paramCourse").val(0);
+    		$("#paramCourse").val(0);*/
+
+    		var lv = $('#paramLevel').val();
+    		if(lv==1){
+    			$("#paramFaculty").val(0);
+    			$("#paramCourse").val(0);
+    			$('select#paramFaculty option').attr('disabled', 'disabled');
+    			$('select#paramCourse option').attr('disabled', 'disabled');
+    		}else if(lv==2){    			
+    			$('select#paramCourse option').attr('disabled', 'disabled');
+    			ParamChange($('select#paramUniversity'), 'university');
+    		}else if(lv==3){ 
+    			ParamChange($('select#paramUniversity'), 'university');
+    			ParamChange($('select#paramFaculty'), 'faculty');
+    		}
     	}
     	function ParamChange(el,changetype){
 	    	// v1 support  university,faculty,course
@@ -123,17 +190,18 @@
 	    			data: { 'levelId': value , 'university':elUniversity.val(), 'faculty': elFaculty.val()  } ,
 	    			success: function(data){
 	    			//	alert(JSON.stringify(data));
-	    				GenParamCourseList(elCouse,data["lists"]);
+		    			if($('#paramLevel').val() == "3"){
+		    				GenParamCourseList(elCouse,data["lists"]);
+		    			}
 	    			}
-	    		});
-	    		
+	    		});	    		
 	    	}else if(changetype == sups[2]){  // course change do nothing
 	    	}
     	}	
  		function GenParamFacultyList(target,data){
 	    //	var target = $('#'+elFaculty);
 	    	target.empty();
-	    	var opt = $("<option value='0'></option>").html("");
+	    	var opt; // = $("<option value='0'></option>").html("");
 	    	target.append(opt);
 	    	for(var i=0;i<data.length;i++){
 	    		opt = $("<option value=\'"+data[i]["id"]+"\'></option>").html(data[i]['name']);
@@ -143,7 +211,7 @@
  		function GenParamCourseList(target,data){
 	    //	var target = $('#'+elCourse);
 	    	target.empty();
-	    	var opt = $("<option value='0'></option>").html("");
+	    	var opt; //= $("<option value='0'></option>").html("");
 	    	target.append(opt);
 	    	for(var i=0;i<data.length;i++){
 	    		if(!(jQuery.isEmptyObject(data[i]))){
@@ -226,6 +294,7 @@
 	   	 	$('#kpiResultForm').attr("action","<%=doSubmitFilter%>");
 			$('#kpiResultForm').submit();
  		}
+
    	</script>
  
    	<style type="text/css">
@@ -374,22 +443,22 @@
 				<div class="boxFilter span3" >
 					<span>สถาบัน:</span>
 					<form:select id="paramUniversity" class="filterUniversity filterOrg"  path="identify.university" onchange="ParamChange(this,'university')">
-	   						<form:option value="0" label=""/>
+	   						<!-- <form:option value="0" label=""/> -->
 	   						<form:options items="${universitys}" />
 	   				</form:select>
 				</div>
 				<div class="boxFilter span4">
 					<span>คณะ:</span>
 					<form:select id="paramFaculty" class="filterFaculty filterOrg"  path="identify.faculty" onchange="ParamChange(this,'faculty')">
-	   						<form:option value="" label=""/>
-	   						<form:options items="${facultys}" />
+	   						<!-- <form:option value="" label=""/> -->
+	   						<!-- <form:options items="${facultys}" /> -->
 	   				</form:select>
 				</div>
 				<div class="boxFilter span4">
 					<span>หลักสูตร:</span>
 					<form:select id="paramCourse" path="identify.course"  class="filterCourse filterOrg" onchange="ParamChange(this,'course')">
-	   						<form:option value="" label=""/>
-	   						<form:options items="${courses}" />
+	   						<!-- <form:option value="" label=""/> -->
+	   						<!-- <form:options items="${courses}" /> -->
 	   				</form:select>
 				</div>
 			</div>

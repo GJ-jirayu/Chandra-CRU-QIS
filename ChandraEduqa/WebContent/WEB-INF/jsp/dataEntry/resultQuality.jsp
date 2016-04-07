@@ -113,19 +113,23 @@
         $("#assignResultQualityForm").attr("action","<%=doResultQualityBackToList%>");
         $("#assignResultQualityForm").submit();
       }
-      function evidenceSave(){
-        if($('input[name="evidenceType"]:checked').val()!=$("#evidenceCheck").val()
-            && $("table#evidenceList>tbody>tr").size()>0){
-          $("#evidenceMessage").html("ไม่สามารถเปลี่ยนประเภทหลักฐาน ต้องลบรายการหลักฐานออกก่อน");
-        }else{
-          if($('input[name="evidenceType"]:checked').val()=="L" && $("#urlPath").val()==""){
-            $("#evidenceMessage").html("ยังไม่ได้ระบุ URL");
-          }else if($('input[name="evidenceType"]:checked').val()=="F" && $("#attachFile").val()==""){
-            $("#evidenceMessage").html("ยังไม่ได้ระบุไฟล์");
+      function evidenceSave(){        
+        if($('input[name=evidenceType]').is(":checked")){
+          if($('input[name="evidenceType"]:checked').val()!=$("#evidenceCheck").val()
+              && $("table#evidenceList>tbody>tr").size()>0){
+            $("#evidenceMessage").html("ไม่สามารถเปลี่ยนประเภทหลักฐาน ต้องลบรายการหลักฐานออกก่อน");
           }else{
-              $("#evidenceQualityForm").attr("action","<%=doSaveEvidence%>");
-              $("#evidenceQualityForm").submit();
+            if($('input[name="evidenceType"]:checked').val()=="L" && $("#urlPath").val()==""){
+              $("#evidenceMessage").html("ยังไม่ได้ระบุ URL");
+            }else if($('input[name="evidenceType"]:checked').val()=="F" && $("#attachFile").val()==""){
+              $("#evidenceMessage").html("ยังไม่ได้ระบุไฟล์");
+            }else{
+                $("#evidenceQualityForm").attr("action","<%=doSaveEvidence%>");
+                $("#evidenceQualityForm").submit();
+            }
           }
+        }else{
+          $("#evidenceMessage").html("ยังไม่ได้ระบุประเภทหลักฐาน");
         }
       }
       function evidenceDel(el){
