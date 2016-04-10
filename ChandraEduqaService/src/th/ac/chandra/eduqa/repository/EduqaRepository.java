@@ -699,8 +699,8 @@ public class EduqaRepository   {
 			if(org.getUniversityCode()!=null && !org.getUniversityCode().equals("") 
 					&& org.getFacultyCode()!=null && !org.getFacultyCode().equals("")){
 				StringBuffer sb = new StringBuffer("");		
-				sb.append(" and universityCode='"+org.getUniversityCode()+"'");
-				sb.append(" and facultyCode='"+org.getFacultyCode()+"'");
+				sb.append(" and k.universityCode='"+org.getUniversityCode()+"'");
+				sb.append(" and k.facultyCode='"+org.getFacultyCode()+"'");
 				String queryString = "select k from Org k where k.levelId = 3 "+sb.toString()+" group by k.courseCode";
 				Query query = entityManager.createQuery(queryString	,	Org.class);
 				results = query.getResultList();
@@ -908,7 +908,7 @@ public class EduqaRepository   {
 		return transList;
 	}
 	public List<?> getCdsMapWithKpi(CdsResultModel model){
-		String sql = "SELECT kc.cds_id ,cds.cds_name"
+		String sql = "SELECT distinct kc.cds_id ,cds.cds_name"
 				+ " ,(select cds_value from cds_result where org_id = "+model.getOrgId()+" and month_id = "+model.getMonthId()+" and cds_id = kc.cds_id and row_type = 'header') as cdsValue"
 				+ " FROM kpi_cds_mapping kc"
 				+ " inner join cds  on kc.cds_id = cds.cds_id "

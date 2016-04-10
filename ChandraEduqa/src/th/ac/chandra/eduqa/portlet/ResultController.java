@@ -1599,8 +1599,46 @@ public class ResultController {
         connJSON.put("facultyName", orgs.getFacultyName());
         connJSON.put("courseCode", orgs.getCourseCode());
         connJSON.put("courseName", orgs.getCourseName());
+        
+        User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		String UserOrgId = userOrg.getDescCode();
+		OrgModel orgByUser = service.findOrgById(org);
+		connJSON.put("userRoleOrgId", UserOrgId);
+		
         lists.put(connJSON);
 		json.put("facultyCourseList", lists);
+		
+		//System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	
+	@ResourceMapping(value = "dofindOrgByUserName")
+	@ResponseBody
+	public void dofindOrgByUserName(ResourceRequest request, ResourceResponse response) throws IOException {
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+	
+		User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		String UserOrgId = userOrg.getDescCode();
+		
+		OrgModel org = new OrgModel();
+		org.setOrgId(Integer.parseInt(UserOrgId));
+		
+		OrgModel orgs = service.findOrgById(org);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+		connJSON.put("levelId", orgs.getLevelId());
+		
+        lists.put(connJSON);
+		json.put("userRoleId", lists);
 		
 		//System.out.println(json.toString());
 		response.getWriter().write(json.toString());
