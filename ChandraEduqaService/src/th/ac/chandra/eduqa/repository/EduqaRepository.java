@@ -539,9 +539,8 @@ public class EduqaRepository   {
 	//#####[ END: KPI STRUCTURE ]################################################################################//				
 		
 		//=====[ START: ORG ]========================================================================================//
-		public Org findOrgById(Integer orgTypeTypeId)
-				throws DataAccessException {
-			return entityManager.find(Org.class, orgTypeTypeId);
+		public Org findOrgById(Integer orgTypeTypeId) throws DataAccessException {
+			return entityManager.find(Org.class, orgTypeTypeId);		
 		}
 		public List searchOrg(Org persistentInstance,
 				Paging pagging, String keySearch) throws DataAccessException {
@@ -2168,6 +2167,21 @@ public class EduqaRepository   {
 		} 
 		// kpi result del 
 		public Integer deleteKpiResultByOrgId(KpiResultModel model){
+			//ต้องการลบข้อมูลที่ Child Table แต่ตอนนี้ทำที่ table ให้มัน on delete cascade
+			/*ALTER TABLE `eduqa`.`kpi_evidence` 
+			ADD CONSTRAINT `kpi_result_detail_kpi_evidence_fk`
+			  FOREIGN KEY (`result_detail_id`)
+			  REFERENCES `eduqa`.`kpi_result_detail` (`result_detail_id`)
+			  ON DELETE CASCADE
+			  ON UPDATE NO ACTION;
+			ALTER TABLE `eduqa`.`kpi_result_detail` 
+			ADD CONSTRAINT `kpi_result_kpi_result_detail_fk`
+			  FOREIGN KEY (`result_id`)
+			  REFERENCES `eduqa`.`kpi_result` (`result_id`)
+			  ON DELETE CASCADE
+			  ON UPDATE NO ACTION;*/
+
+
 			String sql = "DELETE FROM KpiResult k WHERE k.orgId="+model.getOrgId()+" and k.academicYear="+model.getAcademicYear();
 			int deletedCount = entityManager.createQuery(sql).executeUpdate();
 			entityManager.flush();

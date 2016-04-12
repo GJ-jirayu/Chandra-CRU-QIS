@@ -664,7 +664,7 @@ public class AssignKpiController {
 		JSONObject json = JSONFactoryUtil.createJSONObject();
 		JSONObject header = JSONFactoryUtil.createJSONObject();
 		JSONObject content = JSONFactoryUtil.createJSONObject();
-		 JSONArray orgList = 	JSONFactoryUtil.createJSONArray();
+		 JSONArray orgList = JSONFactoryUtil.createJSONArray();
 		String status = "";
 		Integer success = 0;
 		List<Integer> activeKpiIds = new ArrayList<Integer>();

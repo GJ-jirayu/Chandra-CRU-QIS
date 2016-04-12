@@ -5,31 +5,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import javax.persistence.criteria.From;
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
-import javax.portlet.StateAwareResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -43,31 +31,30 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import org.springframework.web.portlet.bind.PortletRequestDataBinder;
-import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
-import th.ac.chandra.eduqa.constant.ServiceConstant;
-import th.ac.chandra.eduqa.domain.CdsResult;
-import th.ac.chandra.eduqa.domain.CdsResultDetail;
-import th.ac.chandra.eduqa.domain.SysYear;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.model.User;
+import com.liferay.portal.util.PortalUtil;
+
 import th.ac.chandra.eduqa.form.AssignResultQualityForm;
+import th.ac.chandra.eduqa.form.AssignResultQuantityForm;
 import th.ac.chandra.eduqa.form.EvidenceQualityForm;
 import th.ac.chandra.eduqa.form.EvidenceQuantityForm;
-import th.ac.chandra.eduqa.form.CdsResultForm;
 import th.ac.chandra.eduqa.form.HierarchyAuthorityForm;
-import th.ac.chandra.eduqa.form.AssignResultQuantityForm;
+import th.ac.chandra.eduqa.form.KpiResultForm;
+import th.ac.chandra.eduqa.form.KpiResultListForm;
 import th.ac.chandra.eduqa.form.ResultQualityForm;
 import th.ac.chandra.eduqa.form.ResultQualityTable;
 import th.ac.chandra.eduqa.form.ResultQuantityForm;
-import th.ac.chandra.eduqa.form.KpiResultListForm;
-import th.ac.chandra.eduqa.form.KpiResultForm;
 import th.ac.chandra.eduqa.form.ResultQuantityTable;
 import th.ac.chandra.eduqa.mapper.CustomObjectMapper;
 import th.ac.chandra.eduqa.mapper.ResultService;
@@ -77,26 +64,17 @@ import th.ac.chandra.eduqa.model.CdsResultDetailModel;
 import th.ac.chandra.eduqa.model.CdsResultModel;
 import th.ac.chandra.eduqa.model.DescriptionModel;
 import th.ac.chandra.eduqa.model.KpiEvidenceModel;
+import th.ac.chandra.eduqa.model.KpiGroupModel;
+import th.ac.chandra.eduqa.model.KpiLevelModel;
 import th.ac.chandra.eduqa.model.KpiModel;
 import th.ac.chandra.eduqa.model.KpiResultDetailModel;
 import th.ac.chandra.eduqa.model.KpiResultModel;
+import th.ac.chandra.eduqa.model.OrgModel;
 import th.ac.chandra.eduqa.model.SysMonthModel;
 import th.ac.chandra.eduqa.model.SysYearModel;
-import th.ac.chandra.eduqa.model.KpiLevelModel;
-import th.ac.chandra.eduqa.model.KpiGroupModel;
-import th.ac.chandra.eduqa.model.OrgModel;
 //import th.ac.chandra.eduqa.model.ReComndModel;
 import th.ac.chandra.eduqa.service.EduqaService;
 import th.ac.chandra.eduqa.xstream.common.Paging;
-
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.upload.UploadPortletRequest;
-import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.User;
-import com.liferay.portal.util.PortalUtil;
 
 @Controller("resultController")
 @RequestMapping("VIEW")
@@ -254,10 +232,10 @@ public class ResultController {
 			kpiResultForm = (KpiResultForm)model.asMap().get("kpiResultForm");
 		}
 		
-		
-		model.addAttribute("userLevel", org.getLevelId().toString());
 		model.addAttribute("size",kpiResult.size());
 		model.addAttribute("lastPage",service.getResultPage());
+		model.addAttribute("currentFaculty", (org.getFacultyCode() == null ? 0 : org.getFacultyCode()));
+		model.addAttribute("currentCourse", (org.getCourseCode() == null ? 0 : org.getCourseCode()));
 		
 		return "dataEntry/resultList";
 	}
