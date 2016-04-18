@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.User;
 import com.liferay.portal.util.PortalUtil;
 
+import th.ac.chandra.eduqa.domain.Kpi;
 import th.ac.chandra.eduqa.form.AssignResultQualityForm;
 import th.ac.chandra.eduqa.form.AssignResultQuantityForm;
 import th.ac.chandra.eduqa.form.EvidenceQualityForm;
@@ -707,6 +708,11 @@ public class ResultController {
 			table.setHasResult( result.getActionFlag() );
 			tableList.add(table);
 		}
+		
+		//Get criteria_method_id 
+		KpiModel kpiModel = service.findKpiById(kpiId);
+		Integer criteriaMethodId = kpiModel.getCriteriaMethodId();
+		
 		//bind form
 		ResultQualityForm form = new ResultQualityForm();
 		form.setKpiId(kpiResult.getKpiId());
@@ -716,9 +722,11 @@ public class ResultController {
 		form.setUom(kpiResult.getKpiUomName());
 		form.setOrgId(orgId);
 		form.setMonthId(monthId);
+		form.setCriteriaMethodId(criteriaMethodId);
 		model.addAttribute("resultQualityForm",form);
 		return "dataEntry/resultQuality";
 	}
+	
 	@RequestMapping(params="action=doAssignResultQuality") 
 	public void qualityActionAssignResult(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response
 			,@ModelAttribute("ResultQualityForm") ResultQualityForm form,BindingResult result,Model model){
@@ -760,6 +768,11 @@ public class ResultController {
 			table.setHasResult( result.getActionFlag() );
 			tableList.add(table);
 		}
+		
+		//Get criteria_method_id 
+		KpiModel kpiModel = service.findKpiById(kpiId);
+		Integer criteriaMethodId = kpiModel.getCriteriaMethodId();
+
 		//bind form
 		ResultQualityForm form = new ResultQualityForm();
 		form.setKpiId(kpiResult.getKpiId());
@@ -769,6 +782,7 @@ public class ResultController {
 		form.setUom(kpiResult.getKpiUomName());
 		form.setOrgId(orgId);
 		form.setMonthId(monthId);
+		form.setCriteriaMethodId(criteriaMethodId);
 		model.addAttribute("resultQualityForm",form);
 		// ########### end copy
 		
@@ -809,6 +823,7 @@ public class ResultController {
 		model.addAttribute("assignResultQualityForm",resultForm);
 		return "dataEntry/resultQuality";
 	}
+	
 	@RequestMapping(params="action=doSaveResultQuality") 
 	public void qualityActionSaveResult(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response
 			,@ModelAttribute("AssignResultQualityForm") AssignResultQualityForm form,BindingResult result,Model model){
@@ -909,6 +924,12 @@ public class ResultController {
 			table.setHasResult( result.getActionFlag() );
 			tableList.add(table);
 		}
+		
+		//Get criteria_method_id 
+		KpiModel kpiModel = service.findKpiById(kpiId);
+		Integer criteriaMethodId = kpiModel.getCriteriaMethodId();
+				
+				
 		//bind form
 		ResultQualityForm form = new ResultQualityForm();
 		form.setKpiId(kpiResult.getKpiId());
@@ -918,6 +939,7 @@ public class ResultController {
 		form.setUom(kpiResult.getKpiUomName());
 		form.setOrgId(orgId);
 		form.setMonthId(monthId);
+		form.setCriteriaMethodId(criteriaMethodId);
 		model.addAttribute("resultQualityForm",form);
 		// end list
 		KpiEvidenceModel eviModel = new KpiEvidenceModel();

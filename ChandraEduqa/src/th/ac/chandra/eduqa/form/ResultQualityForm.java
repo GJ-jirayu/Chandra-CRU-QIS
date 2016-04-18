@@ -29,6 +29,8 @@ public class ResultQualityForm extends CommonForm implements Serializable{
 	private Integer selectCdsId; // selected
 	private Integer selectStdId;
 	private String message;
+	private Integer criteriaMethodId;
+	
 	public ResultQualityForm() {
 		super();
 		this.resultList=new ArrayList<ResultQualityTable>();
@@ -132,5 +134,13 @@ public class ResultQualityForm extends CommonForm implements Serializable{
 
 	public void setSelectStdId(Integer selectStdId) {
 		this.selectStdId = selectStdId;
+	}
+
+	public Integer getCriteriaMethodId() {
+		return criteriaMethodId;
+	}
+
+	public void setCriteriaMethodId(Integer criteriaMethodId) {
+		this.criteriaMethodId = criteriaMethodId;
 	}
 }

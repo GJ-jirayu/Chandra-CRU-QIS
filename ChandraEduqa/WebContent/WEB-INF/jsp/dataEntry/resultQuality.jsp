@@ -215,6 +215,44 @@
           });
       }
       
+	function doRadioSaveAutoSaveResult(el){
+		var checkedVal = $(el).parent("td").parent("tr").children("td:nth-child(1)").html();
+		$("#resultQualityForm #selectStdId").val(checkedVal);
+		var orgId = $("div#cdsModal input#resultOrgId").val();
+        var kpiId = $("div#cdsModal input#resultKpiId").val();
+        var monthId = $("div#cdsModal input#resultMonthId").val();
+        var selectStdId = $("div#cdsModal input#selectStdId").val()
+
+        //เนื่องจาก Radio จะต้องสามารถเลือกได้อันเดียวเท่านั้น เลยต้องทำการ Uncheck หัวข้ออื่น ๆ ก่อนแล้วค่อย check ตามมาทีหลัง
+		$('input:radio:checked').each(function(){
+			$(this).attr('checked', false);
+			var radioValues = $(this).parent("td").parent("tr").children("td:nth-child(1)").html();
+			//console.log(radioValues);
+			$.ajax({
+            	dataType: "json",
+            	async: false,
+            	url:"<%=doSaveAutoSaveResult%>",
+            	data: { orgId:orgId, kpiId:kpiId, monthId:monthId, selectStdId:radioValues, actionFlag:"false" },
+            	success:function(data){
+            		//console.log("kpiId:"+kpiId+", status: "+data["msgCode"]);
+            		return;
+            	}	 
+         	});
+		});
+
+		//Check Radio ที่ผู้ใช้งานเลือก
+		$.ajax({
+			dataType: "json",
+			async: false,
+			url:"<%=doSaveAutoSaveResult%>",
+			data: { orgId:orgId, kpiId:kpiId, monthId:monthId, selectStdId:selectStdId, actionFlag:"true" },
+			success:function(data){
+				$("#resultQualityForm").attr("action","<%=doAssignResultQuality%>");
+                $("#resultQualityForm").submit();
+			}	 
+		});
+	}
+
     </script>
  
     <style type="text/css">
@@ -312,7 +350,9 @@
 
 <body>
   <div class="box">
-  
+	<%-- criteriaMethodId: ${resultQualityForm.criteriaMethodId} <br/>
+	kpiId: ${resultQualityForm.kpiId} <br/>
+	kpiName: ${resultQualityForm.kpiName} --%>
   <!-- CDS RESULT Modal -->
   <form:form  id="resultQualityForm" modelAttribute="resultQualityForm" method="post"  name="resultQualityForm" action="${doAssignResultQuality}" enctype="multipart/form-data">
   <div id="cdsModal" class="quantity"> 
@@ -345,36 +385,40 @@
           </tr>
         </thead>
         <tbody>
-          <c:if test="${not empty resultQualityForm.resultList}"> 
-          <c:forEach items="${resultQualityForm.resultList}" var="result" varStatus="loop"> 
-                      <tr> 
-                        <td>${result.standardId}</td>
-                        <!-- <td style="text-align:center;"><button class="icon" onClick="actAssignResult(this)"><img  src="<c:url value="/resources/images/edited.png"/>"></button></td> -->
-                        <td style="text-align:center;">
-                        <c:choose>
-                    <c:when test="${result.hasResult=='1'}">
-                      <input type="checkbox" onclick='doSaveAutoSaveResult(this)' checked />
-                    </c:when>    
-                    <c:otherwise>
-                      <input type="checkbox" onclick='doSaveAutoSaveResult(this)' />
-                   </c:otherwise>
-                </c:choose>
-                        </td>
-                        <td>${result.standardName}</td>  
-                        <td>${result.cdsValue}</td>
-                        <td style="text-align:center;"> 
-                        <c:choose>
-                    <c:when test="${result.hasResult=='1'}">
-                      <button class="icon" onClick="viewEvidences(this)"><img  src="<c:url value="/resources/images/attach.png"/>"></button>
-                    </c:when>    
-                    <c:otherwise>
-                <!--   <button class="icon" onClick="viewEvidences(this)"><img  src="<c:url value="/resources/images/attach.png"/>"></button> -->
-                    </c:otherwise>
-                </c:choose>
-                        </td>  
-              </tr>
-          </c:forEach>
-          </c:if>
+		<c:if test="${not empty resultQualityForm.resultList}"> 
+		<c:forEach items="${resultQualityForm.resultList}" var="result" varStatus="loop"> 
+			<tr> 
+            	<td>${result.standardId}</td>
+            	<td style="text-align:center;">
+            		<c:choose>
+            			<%-- KPI ที่มี Creterai method = 4 จะแสดงเป็น Radio --%>
+						<c:when test="${resultQualityForm.criteriaMethodId == '4'}">
+							<input type="radio" onclick='doRadioSaveAutoSaveResult(this)' 
+							${result.hasResult=='1'?'checked':''} />
+				    	</c:when>
+
+				    	<%-- KPI ที่มี Creterai method != 4 จะแสดงเป็น Checkbox --%>
+						<c:otherwise>
+							<input type="checkbox" onclick='doSaveAutoSaveResult(this)' 
+							${result.hasResult=='1'?'checked':''} />
+						</c:otherwise>
+					</c:choose>
+                </td>
+				<td>${result.standardName}</td>  
+				<td>${result.cdsValue}</td>
+				<td style="text-align:center;"> 
+				<c:choose>
+					<c:when test="${result.hasResult=='1'}">
+						<button class="icon" onClick="viewEvidences(this)">
+							<img  src="<c:url value="/resources/images/attach.png"/>">
+						</button>
+					</c:when>    
+					<c:otherwise></c:otherwise>
+				</c:choose>
+				</td>  
+			</tr>
+		</c:forEach>
+		</c:if>
         </tbody>
       </table>
       <br/>
