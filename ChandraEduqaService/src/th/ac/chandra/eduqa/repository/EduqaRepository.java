@@ -2045,6 +2045,7 @@ public class EduqaRepository   {
 					+ " ,ct.calendar_type_name,p.period_name,uom.kpi_uom_name "
 					+ " ,(select if(count(result_id)>0,1,0) from kpi_result r where r.kpi_id = kpi.kpi_id  "
 					+ " and r.academic_year="+model.getAcademicYear()+" and org_id = "+model.getOrgId()+"  ) as used "
+					+ " ,(select cast(max(target_value) as char) from kpi_result where kpi_id = kpi.kpi.kpi_id group by kpi_id) as targetvalue "
 					+ " from (select * from kpi where academic_year = "+model.getAcademicYear()+" and kpi_level_id="+model.getKpiLevelId()+" ) kpi "
 					+ " left join kpi_structure ks on ks.kpi_structure_id = kpi.kpi_structure_id and ks.academic_year = kpi.academic_year "
 					+ " left join kpi_group grp on kpi.kpi_group_id = grp.kpi_group_id and kpi.academic_year = grp.academic_year "
@@ -2068,6 +2069,7 @@ public class EduqaRepository   {
 					km.setKpiUomName(  (String)result[7] );
 					km.setResultId(  ((BigInteger)result[8]).intValue() );  //  mean flag active field 
 				//	km.setResultId(  (Integer)result[8] );  //  mean flag active field 
+					km.setTargetValue( (result[9] != null ? Double.parseDouble(result[9].toString()) : null) );
 					kms.add(km);
 				}
 			}

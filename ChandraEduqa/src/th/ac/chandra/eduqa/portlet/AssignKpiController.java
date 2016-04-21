@@ -163,6 +163,7 @@ public class AssignKpiController {
 
 		return "dataEntry/assignKpi";
 	}
+	
 	@RequestMapping("VIEW")
 	@RenderMapping( params="render=showList")
 	public String renderKpiList(PortletRequest request,Model model){
@@ -236,7 +237,7 @@ public class AssignKpiController {
 		for(DescriptionModel cor : cors){
 			corsList.put(cor.getDescCode(),cor.getDescription());
 		}
-		model.addAttribute("corsList",corsList);
+		model.addAttribute("corsList",corsList);		
 		return "dataEntry/assignKpi";
 	}
 	//
@@ -695,6 +696,68 @@ public class AssignKpiController {
 		json.put("header",header);
 		json.put("content", content);
 		System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	@ResourceMapping(value = "dofindOrgByUserName")
+	@ResponseBody
+	public void dofindOrgByUserName(ResourceRequest request, ResourceResponse response) throws IOException {
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+	
+		User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		String UserOrgId = userOrg.getDescCode();
+		
+		OrgModel org = new OrgModel();
+		org.setOrgId(Integer.parseInt(UserOrgId));
+		
+		OrgModel orgs = service.findOrgById(org);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+		connJSON.put("levelId", orgs.getLevelId());
+		
+        lists.put(connJSON);
+		json.put("userRoleId", lists);
+		
+		//System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	@ResourceMapping(value = "dofindOrgByOrgId")
+	@ResponseBody
+	public void dofindOrgByOrgId(ResourceRequest request, ResourceResponse response) throws IOException {
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+	
+		Integer orgId = Integer.parseInt( normalRequest.getParameter("orgId"));
+		OrgModel org = new OrgModel();
+		org.setOrgId(orgId);
+		
+		OrgModel orgs = service.findOrgById(org);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+		connJSON.put("facultyCode", orgs.getFacultyCode());
+        connJSON.put("facultyName", orgs.getFacultyName());
+        connJSON.put("courseCode", orgs.getCourseCode());
+        connJSON.put("courseName", orgs.getCourseName());
+        
+        User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		String UserOrgId = userOrg.getDescCode();
+		OrgModel orgByUser = service.findOrgById(org);
+		connJSON.put("userRoleOrgId", UserOrgId);
+		
+        lists.put(connJSON);
+		json.put("facultyCourseList", lists);
+		
+		//System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
 }

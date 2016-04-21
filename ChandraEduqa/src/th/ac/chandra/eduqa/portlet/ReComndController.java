@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,11 +102,19 @@ public class ReComndController {
 		org = service.findOrgById(org);
 		
 		//Get calendar_year from SysMontModel 
-		SysMonthModel sysMonthModel = new SysMonthModel();
+		/*SysMonthModel sysMonthModel = new SysMonthModel();
 		List<SysMonthModel> sysMonths = service.searchSysMonth(sysMonthModel);
 		Map<Integer,Integer> acadYears = new HashMap<Integer,Integer>();
 		for(SysMonthModel month : sysMonths){
 			acadYears.put(month.getAcademicYear(),month.getAcademicYear());
+		}*/
+		SysYearModel sy = service.getSysYear();
+		SysMonthModel monthM = new SysMonthModel();
+		monthM.setAcademicYear( sy.getAppraisalAcademicYear() );
+		Map<String,String> yearList = new LinkedHashMap<String,String>();
+		List<SysMonthModel> sysMonths = service.getYearsByAcad(monthM);
+		for(SysMonthModel month : sysMonths){
+			yearList.put(month.getCalendarYear().toString() ,month.getCalendarYear().toString());
 		}
 				
 		//Get KPI level
@@ -156,7 +165,7 @@ public class ReComndController {
 		//kpiReComndModel.setKeySearch(keySearch);
 		//List<KpiReComndModel> reComnds = service.searchKpiReComnd(kpiReComndModel);
 		//model.addAttribute("reComnds", reComnds);
-		model.addAttribute("acadYears", acadYears);
+		model.addAttribute("acadYears", yearList);
 		model.addAttribute("groups", groups);
 		model.addAttribute("levels", levels);
 		model.addAttribute("unis",unis);
@@ -174,7 +183,9 @@ public class ReComndController {
 		hieAuth.setCourse(org.getCourseCode());
 		comndForm.setModel(comndModel);
 		comndForm.setHieAuth(hieAuth);
-		model.addAttribute("comndForm",comndForm);
+		model.addAttribute("comndForm", comndForm);
+		/*model.addAttribute("currentFaculty", (org.getFacultyCode() == null ? 0 : org.getFacultyCode()));
+		model.addAttribute("currentCourse", (org.getCourseCode() == null ? 0 : org.getCourseCode()));*/
 		return "master/ReComnd";
 	}
 	
@@ -378,6 +389,68 @@ public class ReComndController {
 		json.put("deleteMsgCode", msgCode);
 		json.put("deleteMsgDesc", msgDesc);
 		System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	@ResourceMapping(value = "dofindOrgByUserName")
+	@ResponseBody
+	public void dofindOrgByUserName(ResourceRequest request, ResourceResponse response) throws IOException {
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+	
+		User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		String UserOrgId = userOrg.getDescCode();
+		
+		OrgModel org = new OrgModel();
+		org.setOrgId(Integer.parseInt(UserOrgId));
+		
+		OrgModel orgs = service.findOrgById(org);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+		connJSON.put("levelId", orgs.getLevelId());
+		
+        lists.put(connJSON);
+		json.put("userRoleId", lists);
+		
+		//System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	@ResourceMapping(value = "dofindOrgByOrgId")
+	@ResponseBody
+	public void dofindOrgByOrgId(ResourceRequest request, ResourceResponse response) throws IOException {
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+	
+		Integer orgId = Integer.parseInt( normalRequest.getParameter("orgId"));
+		OrgModel org = new OrgModel();
+		org.setOrgId(orgId);
+		
+		OrgModel orgs = service.findOrgById(org);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+		connJSON.put("facultyCode", orgs.getFacultyCode());
+        connJSON.put("facultyName", orgs.getFacultyName());
+        connJSON.put("courseCode", orgs.getCourseCode());
+        connJSON.put("courseName", orgs.getCourseName());
+        
+        User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		String UserOrgId = userOrg.getDescCode();
+		OrgModel orgByUser = service.findOrgById(org);
+		connJSON.put("userRoleOrgId", UserOrgId);
+		
+        lists.put(connJSON);
+		json.put("facultyCourseList", lists);
+		
+		//System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
 	

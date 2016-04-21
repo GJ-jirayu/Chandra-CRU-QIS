@@ -10,4 +10,5 @@ public class TagUtils extends TagSupport{
 	public static String nl2br(String string) {
         return (string != null) ? string.replace("\n", "<br/>") : null;
     }
+	
 }

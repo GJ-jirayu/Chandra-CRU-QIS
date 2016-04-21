@@ -11,6 +11,7 @@
 <portlet:resourceURL var="doSearchOrg" id="doSearchOrg"></portlet:resourceURL>
 <portlet:resourceURL var="doInsertResult" id="doInsertResult"></portlet:resourceURL>
 <portlet:resourceURL var="doReloadResult" id="doReloadResult"></portlet:resourceURL>
+
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -45,6 +46,7 @@
     		});
     		// initial active select
     		toggleEnableSelection();
+
     	});
     	function toggleEnableSelection(){
     		var uni  = $("#filterUni");
@@ -55,6 +57,7 @@
     		else if(lv==2){ uni.prop("disabled",false); fac.prop("disabled",false); cou.prop("disabled",true); }
     		else if(lv==3){ uni.prop("disabled",false); fac.prop("disabled",false); cou.prop("disabled",false); }
     	}
+
     	/* bind element event*/
     	function actSearchOrg(el,level){
     	
@@ -241,19 +244,19 @@ select.filterOrg{  min-width:220px !important;}
 				<span>สถาบัน/มหาวิทยาลัย: </span>
 				<form:select class="wid filterOrg" id="filterUni" path="university"
 					onchange="actSearchOrg(this,1)">
-					<form:option value="" label="" />
+					<!-- <form:option value="" label="" /> -->
 					<form:options items="${uniList}" />
 				</form:select>
 				<span>คณะ: </span>
 				<form:select class="wid filterOrg" id="filterFac" path="faculty"
 					onchange="actSearchOrg(this,2)">
-					<form:option value="" label="" />
-					<form:options items="${facList}" />
+					<!-- <form:option value="" label="" /> -->
+					<!-- <form:options items="${facList}" /> -->
 				</form:select>
 				<span>หลักสูตร: </span>
 				<form:select class="wid filterOrg" id="filterCou" path="course">
-					<form:option value="" label="" />
-					<form:options items="${corsList}" />
+					<!-- <form:option value="" label="" /> -->
+					<!-- <form:options items="${corsList}" /> -->
 				</form:select>
 				<input type="button" value="เรียกดู" onclick="submitFilter()" class="btn btn-primary" style="margin-bottom: 10px;" />
 			</form:form>
@@ -305,10 +308,20 @@ select.filterOrg{  min-width:220px !important;}
 										<td class="center">${kpi.periodName}</td>
 										<td class="center">${kpi.kpiUomName}</td>
 										<td class="center"><c:choose>
-												<c:when test="${kpi.resultId>0}">
-													<a href="#" class="icon" onClick="actTarget(this)">
-														<img src="<c:url value="/resources/images/edited.png"/>" width="25" height="25">
-													</a>
+												<c:when test="${kpi.resultId>0}">												
+													<c:choose>
+														<c:when test="${not empty kpi.targetValue && kpi.targetValue > 0}">
+															<a href="#" class="icon" onClick="actTarget(this)">
+																<img src="<c:url value="/resources/images/edited-assign.png"/>" width="25" height="25">
+															</a>
+														</c:when>
+														<c:otherwise>
+															<a href="#" class="icon" onClick="actTarget(this)">
+																<img src="<c:url value="/resources/images/edited.png"/>" width="25" height="25">
+															</a>
+														</c:otherwise>
+													</c:choose>
+
 												</c:when>
 												<c:otherwise>
 													<a href="#" class="icon" onClick="actTarget(this)"

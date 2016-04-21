@@ -85,7 +85,8 @@ public class ResultController {
 	@Autowired
 	@Qualifier("eduqaServiceWSImpl")
 	private EduqaService service;
-	private String uploadDirectory = "/home/pwirun/app/Chandra/fileupload/";
+	//private String uploadDirectory = "/home/pwirun/app/Chandra/fileupload/";
+	private String uploadDirectory = "/home/ittishait/app/Chandra/fileupload/";
 	//private String uploadDirectory = "D:\\eduqa\\FileServer\\";
 	private String directoryDelimitor;
 	
@@ -156,6 +157,7 @@ public class ResultController {
 			yearList.put(month.getCalendarYear().toString() ,month.getCalendarYear().toString());
 		}
 		model.addAttribute("years", yearList);
+		
 		monthM.setCalendarYear(CurrentCalendar.getCalendarYear());
 		Map<String,String> months = new LinkedHashMap<String,String>();
 		List<DescriptionModel> resultMonths = service.getMonthAll(new DescriptionModel());
@@ -451,7 +453,6 @@ public class ResultController {
 		response.setRenderParameter("kpiId", String.valueOf(form.getKpiId()) );
 		response.setRenderParameter("monthId", String.valueOf(  form.getMonthId() ) );
 		response.setRenderParameter("cdsId", String.valueOf(  form.getSelectCdsId() ) );
-		
 	}
 	
 	@RequestMapping("VIEW")
@@ -467,6 +468,7 @@ public class ResultController {
 		if(evidenceMessage!=null && !evidenceMessage.equals("")){
 			errorMessage.add(evidenceMessage);
 		}
+		
 		//########## copy
 		KpiResultModel kpiResult = new KpiResultModel();
 		kpiResult.setOrgId(orgId);
@@ -523,12 +525,18 @@ public class ResultController {
 				List<CdsEvidenceModel> evidencesResult = service.searchCdsEvidence(evidence);
 				List<CdsEvidenceModel> evidences = new ArrayList<CdsEvidenceModel>();
 				String word = "";
-				if( !cdsResultDetail.getEvidenceFlag().isEmpty() ){
+				//if( !cdsResultDetail.getEvidenceFlag().isEmpty() ){
+				//!Strings.isNullOrEmpty(acct)
+				if( cdsResultDetail.getEvidenceFlag() != null && cdsResultDetail.getEvidenceFlag().length() != 0){
 					if(cdsResultDetail.getEvidenceFlag().toUpperCase().equals("F")){
 						String path = PortalUtil.getCurrentURL(request);
 						int inx = path.indexOf("?");
 						word  = path.substring(0, inx)+"?p_p_id=Result_WAR_ChandraEduqa&p_p_lifecycle=2&p_p_resource_id=fileDownload&filename=";	
 					}
+				}else{
+					//กรณีที่ evidenceFlag = null กรณีนี้จะไม่เกิดขึ้นเพราะหน้าจอโปรแกรมได้ดัการทำงาน user ไว้แล้วว่าจำเป็นต้องระบุ evidence flag
+					//Do something.
+					logger.info("\n -- ResultContoller.java(537) --> cdsResultDetail.EvidenceFlag() = null \n");
 				}
 				for( CdsEvidenceModel evs : evidencesResult){
 					evs.setEvidenceFileName(evs.getEvidencePath()); 
