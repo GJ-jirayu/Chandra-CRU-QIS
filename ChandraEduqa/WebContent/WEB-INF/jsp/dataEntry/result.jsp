@@ -120,8 +120,8 @@
             		}else if($('input[name="evidenceType"]:checked').val()=="F" && $("#attachFile").val()==""){
               			$("#evidenceMessage").html("ยังไม่ได้ระบุไฟล์");
             		}else{
-                		$("#evidenceQualityForm").attr("action","<%=doSaveEvidence%>");
-                		$("#evidenceQualityForm").submit();
+                		$("#evidenceQuantityForm").attr("action","<%=doSaveEvidence%>");
+        				$("#evidenceQuantityForm").submit();
             		}
           		}
         	}else{

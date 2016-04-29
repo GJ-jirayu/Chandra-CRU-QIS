@@ -60,7 +60,7 @@ public interface EduqaService {
 		
 		//ORG
 		public OrgModel findOrgById(OrgModel orgModel);
-		public List searchOrg(OrgModel  persistentInstance);
+		public OrgModel searchOrg(OrgModel  persistentInstance);
 		public List searchOrgByLevelId(OrgModel persistentInstance);
 		public List searchOrgGroupByCourseCode(OrgModel persistentInstance);
 		public List searchOrgByFacultyCode(OrgModel persistentInstance);
@@ -68,6 +68,7 @@ public interface EduqaService {
 		public List getAllUniversity(OrgModel org);
 		public List getOrgFacultyOfUniversity(OrgModel org);
 		public List getOrgCourseOfFaculty(OrgModel org);
+		public List getOrgIdByOrgDetailFilter(OrgModel org);
 		
 		//Org Type
 		@SuppressWarnings("rawtypes")

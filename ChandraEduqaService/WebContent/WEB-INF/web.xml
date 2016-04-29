@@ -6,7 +6,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
   <display-name>Services</display-name>
   <context-param>
     <param-name>org.restlet.application</param-name>
-    <param-value>th.ac.kmutt.research.rest.application.CommonResourceApplication</param-value>
+    <param-value>th.ac.chandra.eduqa.rest.application.CommonResourceApplication</param-value>
   </context-param>
   <servlet>
     <servlet-name>RestletServlet</servlet-name>

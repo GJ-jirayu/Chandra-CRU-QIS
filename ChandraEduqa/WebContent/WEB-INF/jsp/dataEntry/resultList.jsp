@@ -194,7 +194,7 @@
           fac.prop("disabled",false); 
           cou.prop("disabled",true); 
         }else if(lv==3){ 
-          uni.prop("disabled",true); 
+          uni.prop("disabled",false); 
           fac.prop("disabled",false); 
           cou.prop("disabled",false); 
         }

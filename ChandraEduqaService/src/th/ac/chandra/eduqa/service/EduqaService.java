@@ -59,7 +59,7 @@ public interface EduqaService {
 		//ORG
 		public Org findOrgById(Integer orgId);
 		@SuppressWarnings("rawtypes")
-		public List searchOrg(Org persistentInstance, Paging pagging, String keySearch) throws DataAccessException;
+		public Org searchOrg(Org persistentInstance, Paging pagging, String keySearch) throws DataAccessException;
 		public List searchOrgByLevelId(Org persistentInstance, Paging pagging, String keySearch) throws DataAccessException;
 		public List searchOrgGroupByCourseCode(Org persistentInstance, Paging pagging, String keySearch) throws DataAccessException;
 		public List searchOrgByFacultyCode(Org persistentInstance, Paging pagging, String keySearch) throws DataAccessException;
@@ -67,6 +67,7 @@ public interface EduqaService {
 		public List getAllOrgUniversity(Org org,Paging page);
 		public List getOrgFacultyOfUniversity(Org org,Paging page);
 		public List getOrgCourseOfFaculty(Org org,Paging page);
+		public List getOrgIdByOrgDetailFilter(Org org,Paging page);
 		
 		//Org Type
 		public OrgType findOrgTypeById(Integer orgTypeId);

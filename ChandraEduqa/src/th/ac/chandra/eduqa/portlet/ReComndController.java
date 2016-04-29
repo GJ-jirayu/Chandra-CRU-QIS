@@ -184,8 +184,8 @@ public class ReComndController {
 		comndForm.setModel(comndModel);
 		comndForm.setHieAuth(hieAuth);
 		model.addAttribute("comndForm", comndForm);
-		/*model.addAttribute("currentFaculty", (org.getFacultyCode() == null ? 0 : org.getFacultyCode()));
-		model.addAttribute("currentCourse", (org.getCourseCode() == null ? 0 : org.getCourseCode()));*/
+		model.addAttribute("currentFaculty", (org.getFacultyCode() == null ? 0 : org.getFacultyCode()));
+		model.addAttribute("currentCourse", (org.getCourseCode() == null ? 0 : org.getCourseCode()));
 		return "master/ReComnd";
 	}
 	
@@ -214,10 +214,6 @@ public class ReComndController {
 		paramOrg.setOrgId( Integer.parseInt(userOrg.getDescCode() ));
 		
 		JSONArray lists = JSONFactoryUtil.createJSONArray();
-		JSONObject defaultValue = JSONFactoryUtil.createJSONObject();
-		defaultValue.put("id", "");
-		defaultValue.put("name","");
-    	lists.put(defaultValue);
 		@SuppressWarnings("unchecked")
 		List<OrgModel> details = new ArrayList<OrgModel>();
 
@@ -420,6 +416,34 @@ public class ReComndController {
 		response.getWriter().write(json.toString());
 	}
 	
+	@ResourceMapping(value = "dofindOrgIdByFilter")
+	@ResponseBody
+	public void dofindOrgIdByFilter(ResourceRequest request, ResourceResponse response) throws IOException {
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+		
+		String valUniversity = normalRequest.getParameter("valUniversity");
+		String valFaculty = normalRequest.getParameter("valFaculty");
+		String valCourse = normalRequest.getParameter("valCourse");
+	
+		
+		OrgModel org = new OrgModel();
+		org.setUniversityCode(valUniversity);
+		org.setFacultyCode(valFaculty);
+		org.setCourseCode(valCourse);
+		
+		OrgModel orgModel = service.searchOrg(org);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+		connJSON.put("orgId", orgModel.getLevelId());
+		
+        lists.put(connJSON);
+		json.put("userRoleId", lists);
+		
+		response.getWriter().write(json.toString());
+	}
+	
 	@ResourceMapping(value = "dofindOrgByOrgId")
 	@ResponseBody
 	public void dofindOrgByOrgId(ResourceRequest request, ResourceResponse response) throws IOException {
@@ -453,6 +477,110 @@ public class ReComndController {
 		//System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
+	
+	@ResourceMapping(value="requestOrgFaculty")
+	@ResponseBody 
+	public void getOrgFaculty(ResourceRequest request,ResourceResponse response) throws IOException{
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		
+		//Integer groupId = ParamUtil.getInteger(request, "groupId");
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest =PortalUtil.getOriginalServletRequest(httpReq);
+		Integer levelId = Integer.parseInt(normalRequest.getParameter("levelId"));
+		String university = normalRequest.getParameter("university");
+		
+		User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		
+		OrgModel orgModel = new OrgModel();
+		orgModel.setOrgId(Integer.parseInt(userOrg.getDescCode()));
+		orgModel.setLevelId(levelId);
+		orgModel.setUniversityCode(university);
+		//orgModel.setOtherKeySearch(otherKeySearch);
+				
+		List<OrgModel> details = service.getOrgFacultyOfUniversity(orgModel);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		for(OrgModel detail:details ){
+			JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+         	connJSON.put("id", detail.getFacultyCode());
+         	connJSON.put("name", detail.getFacultyName());
+         	lists.put(connJSON);
+         }
+		json.put("lists", lists);
+		
+		/*List<OrgModel> orgId = service.searchOrgIdByOthersCode(orgModel);		
+		OrgModel orgIdModel = new OrgModel();
+		orgIdModel = orgId.get(0);
+		String orgIdStr = orgIdModel.getOrgId().toString();*/
+		
+		//System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	@ResourceMapping(value="requestOrgCourse")
+	@ResponseBody
+	public void getOrgCourse(ResourceRequest request,ResourceResponse response) throws IOException{
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		
+		//Integer groupId = ParamUtil.getInteger(request, "groupId");
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest	=	PortalUtil.getOriginalServletRequest(httpReq);
+		Integer levelId = Integer.parseInt( normalRequest.getParameter("levelId") );
+		String uniCode  = normalRequest.getParameter("university");
+		String facultyCode = normalRequest.getParameter("faculty");
+		OrgModel orgModel = new OrgModel();
+		orgModel.setLevelId(levelId);
+		orgModel.setUniversityCode(uniCode);
+		orgModel.setFacultyCode(facultyCode);
+		
+		List<OrgModel> details = service.getOrgCourseOfFaculty(orgModel);
+		 JSONArray lists = 	JSONFactoryUtil.createJSONArray();
+		for(OrgModel detail:details ){
+			JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+         	connJSON.put("id", detail.getCourseCode());
+         	connJSON.put("name", detail.getCourseName());
+         	lists.put(connJSON);
+         }     	
+		json.put("lists", lists);
+		//System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	@ResourceMapping(value="requestOrgIdByOrgDetailFilter")
+	@ResponseBody
+	public void getOrgIdByOrgDetailFilter(ResourceRequest request,ResourceResponse response) throws IOException{
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest	=	PortalUtil.getOriginalServletRequest(httpReq);
+		Integer paramLevel = Integer.parseInt(normalRequest.getParameter("paramLevel"));
+		String paramUniversity = normalRequest.getParameter("paramUniversity");
+		String paramFaculty  = normalRequest.getParameter("paramFaculty");
+		String paramCourse = normalRequest.getParameter("paramCourse");		
+		
+		OrgModel orgModel = new OrgModel();
+		orgModel.setLevelId(paramLevel);
+		orgModel.setUniversityCode(paramUniversity);
+		orgModel.setFacultyCode(paramFaculty);
+		orgModel.setCourseCode(paramCourse);
+		
+		List<OrgModel> details = service.getOrgIdByOrgDetailFilter(orgModel);
+		 JSONArray lists = 	JSONFactoryUtil.createJSONArray();
+		for(OrgModel detail:details ){
+			JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+         	connJSON.put("orgId", detail.getOrgId());
+         	connJSON.put("levelId", detail.getLevelId());
+         	connJSON.put("universityCode", detail.getUniversityCode());
+         	connJSON.put("facultyCode", detail.getFacultyCode());
+         	connJSON.put("courseCode", detail.getCourseCode());
+         	lists.put(connJSON);
+         }     	
+		json.put("lists", lists);
+		response.getWriter().write(json.toString());
+	}
+	
 	
 	/*@RequestMapping(params = "action=doInsert")
 	public void actionInsert(javax.portlet.ActionRequest request,

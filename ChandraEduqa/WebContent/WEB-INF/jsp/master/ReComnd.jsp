@@ -25,6 +25,12 @@
 <portlet:resourceURL var="requestRecomndDelete" id="requestRecomndDelete" ></portlet:resourceURL>
 <portlet:resourceURL var="requestRecomndUpdate" id="requestRecomndUpdate" ></portlet:resourceURL>
 
+<portlet:resourceURL var="dofindOrgByUserName" id="dofindOrgByUserName" ></portlet:resourceURL>
+<portlet:resourceURL var="dofindOrgByOrgId" id="dofindOrgByOrgId" ></portlet:resourceURL>
+<portlet:resourceURL var="requestOrgFaculty" id="requestOrgFaculty" ></portlet:resourceURL>
+<portlet:resourceURL var="requestOrgCourse" id="requestOrgCourse" ></portlet:resourceURL>
+<portlet:resourceURL var="requestOrgIdByOrgDetailFilter" id="requestOrgIdByOrgDetailFilter" ></portlet:resourceURL>
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -44,129 +50,242 @@
 	<script src="<c:url value="/resources/js/confirm-master/jquery.confirm.min.js"/>"></script>
 
     <script type="text/javascript"> 
-   	  	<%-- var dialog,dialog2; --%>
     	$( document ).ready(function() { 
-    		toggleEnableSelection();
-    	//convtToSelectPicker($('.selectpicker'));
-    //	setTimeout(function(){
-    	//	$('#searchData').click();
-    //	}, 500);
-    	//setTimeout(actSubmit(), 5000);
-    		/* if($("#messageMsg").val()){
-    			if($("#messageMsg").val() == 0){
-    				$("#msgAlert").removeClass().addClass("alert alert-danger");
-    				$("span#headMsg").append("<strong> ผิดพลาด! </strong>");    				
-    				$("#msgAlert").fadeTo(4000, 500).slideUp(1000, function(){
-                	    $("#msgAlert").alert('close');
-                	});
-    			}         	
-            } */
+    		ToggleEnableSelection();
+    		renderParameterCtrl(getUserRoleLevelID());
     	}); 
 
- 		function toggleEnableSelection(){
-    		var uni  =  $("#paramUniversity");
-    		var fac  =  $("#paramFaculty");
-    		var cou = $("#paramCourse");
-    		var lv = $('#paramLevel').val();
-    		if(lv==1){ uni.prop("disabled",false); fac.prop("disabled",true); cou.prop("disabled",true); }
-    		else if(lv==2){ uni.prop("disabled",false); fac.prop("disabled",false); cou.prop("disabled",true); }
-    		else if(lv==3){ uni.prop("disabled",false); fac.prop("disabled",false); cou.prop("disabled",false); }
-    	}
-    	function paramLevelChange(el){
-    		toggleEnableSelection();
-    		$("#paramUniversity").val(0);
-    		$("#paramFaculty").val(0);
-    		$("#paramCourse").val(0);
-    		$('#paramOrg').val(0);
-    	}
-		function paramUniversityChange(el){
-			$('#paramOrg').val($(el).val());
-			genParamFacultyList(); 
+		function ToggleEnableSelection(){
+			var uni  =  $("#paramUniversity");
+			var fac  =  $("#paramFaculty");
+			var cou = $("#paramCourse");
+			var lv = $('#paramLevel').val();
+			if(lv==1){ 
+				uni.prop("disabled",false); 
+				fac.prop("disabled",true); 
+				cou.prop("disabled",true); 
+			}else if(lv==2){ 
+				uni.prop("disabled",false);
+				fac.prop("disabled",false); 
+				cou.prop("disabled",true); 
+			}else if(lv==3){ 
+				uni.prop("disabled",false); 
+				fac.prop("disabled",false); 
+				cou.prop("disabled",false); 
+			}
 		}
- 		function paramFacultyChange(el){
-	    	var value = $(el).val();
-			$('#paramOrg').val(value);
-			genParamCourseList();  
-	  	}
- 		function paramCourseChange(el){
- 			$('#paramOrg').val($(el).val());
- 		}
- 		/*
-    	function paramLevelChange(el){
-	    	var value = parseInt($(el).val()); 
-	    	var valueDesc = $.trim($(el).find(':selected').html());
-	    	var elUniversity = $('#paramUniversity');
-	    	var elFaculty = $('#paramFaculty');
-	    	var elCouse = $('#paramCourse');
-	    	// default
-	    	
-			$('#paramOrg').val(elUniversity.val());
-	    	
-	    	if(value == 1){ //สถาบัน
-	    		elFaculty.empty();
-	    		elFaculty.prop('disabled', true);
-	    		elCouse.empty();
-	    		elCouse.prop('disabled', true);
-	    		// do nothing
-	    		
-	    	}else if(value == 2){ // คณะ
-	    		elFaculty.empty().prop('disabled', false);
-	    		elCouse.empty().prop('disabled', true);
-	    		genParamFacultyList();
-	    		
-	    	}else if(value == 3){ // หลักสูตร
-				elFaculty.prop('disabled', false);
-	    		elCouse.empty().prop('disabled', false);
-	    		if(typeof elFaculty.val()!="undefined" && elFaculty.val()!=""){
-	    			genParamFacultyList();
-	    		}else{
-	    			genParamCourseList();
-	    		}
-	    	}
-	    }*/
- 		function genParamFacultyList(){
- 			var target = $('#paramFaculty');
- 			var orgId = $('#paramUniversity').val();
- 			target.empty();
- 			$.ajax({ 
-    			dataType:'json',
-    			url: "<%=requestOrgList%>",
-    			data: { 'level':2, 'orgId': orgId } ,
-    			success: function(result){
-    				var data = result["lists"];
-    		    	var opt = null;
-    		    	for(var i=0;i<data.length;i++){
-    		    		opt = $("<option value=\'"+data[i]["id"]+"\'></option>").html(data[i]['name']);
-    		    		target.append(opt);
-    		    	}
-    		    //	convtToSelectPicker(target);
-    			}
-    		});
- 			
-	    }
- 		
- 		function genParamCourseList(){
-	    	var target = $('#paramCourse');
-	    	target.empty();
-	    	var orgId = $('#paramFaculty').val();
-	    	$.ajax({ 
-    			dataType:'json',
-    			url: "<%=requestOrgList%>",
-    			data: { 'level':3,'orgId': orgId  } ,
-    			success: function(result){
-    		    	var opt = null;
-    				var data = result["lists"];
-    		    	for(var i=0;i<data.length;i++){
-    		    		if(!(jQuery.isEmptyObject(data[i]))){
-    		    			opt = $("<option value=\""+data[i]['id']+"\"></option>").html(data[i]['name']);
-    			    		target.append(opt);
-    		    		}	    		
-    		    	} 
-    		    //	convtToSelectPicker(target);	
-    			}
-    		});
-	    	
-	    }
+
+		function getUserRoleLevelID(){
+			var userRoleLevel;
+			$.ajax({ 
+				dataType:'json',
+				url: "<%=dofindOrgByUserName%>",
+				async: false,
+				data: { },
+				success: function(data){
+					userRoleLevel = data["userRoleId"][0]["levelId"];
+				}
+			});
+			return userRoleLevel;
+		}
+
+		function renderParameterCtrl(userLevelId){
+			var paramLevel = $('select#paramLevel').val();
+			var paramUniversity  = $("#paramUniversity");
+			var paramFaculty  =  $("#paramFaculty");
+			var paramCourse = $("#paramCourse");
+
+			//ตรวจสอบสิทธิ์ของผู้ใชงานและทำการส้ราง Parameter ตามสิทธิ์
+			if(userLevelId == 1){
+				if(paramLevel == 1){
+					//Do not thing
+				}else if(paramLevel == 2){
+					//Generate paramFaculty and set defalut value
+					ParamChange(paramUniversity, 'university');
+					if(${currentFaculty} != 0){
+						paramFaculty.val(${currentFaculty});
+					}
+				}else if(paramLevel == 3){
+					//Generate paramFaculty and set defalut value
+					ParamChange(paramUniversity, 'university');
+					if(${currentFaculty} != 0){
+						paramFaculty.val(${currentFaculty});
+					}
+
+					//Generate paramCoures and set defalut value
+					ParamChange(paramFaculty, 'faculty');
+					if(${currentCourse} != 0){
+						paramCourse.val(${currentCourse});
+					}
+				}
+			}
+
+			else if(userLevelId == 2){
+				$("#paramLevel option[value=1]").prop("disabled", true);
+				if(paramLevel == 2){
+					//Generate paramFaculty and set defalut value
+					ParamChange(paramUniversity, 'university');
+					if(${currentFaculty} != 0){
+						paramFaculty.val(${currentFaculty});
+					}
+				}else if(paramLevel == 3){
+					//Generate paramFaculty and set defalut value
+					ParamChange(paramUniversity, 'university');
+					if(${currentFaculty} != 0){
+						paramFaculty.val(${currentFaculty});
+					}
+
+					//Generate paramCoures and set defalut value
+					ParamChange(paramFaculty, 'faculty');
+					if(${currentCourse} != 0){
+						paramCourse.val(${currentCourse});
+					}
+				}
+			}
+
+			else if(userLevelId==3){
+				$('select#paramLevel option[value=1]').prop("disabled", true);
+				$('select#paramLevel option[value=2]').prop("disabled", true);         
+				$.ajax({ 
+					dataType:'json',
+					url: "<%=dofindOrgByOrgId%>",
+					data: { 'orgId': $('input#paramOrg').val() },
+					success: function(data){ 
+						//Generate paramFaculty             
+						facultyOpt = $("<option value=\""+data["facultyCourseList"][0]["facultyCode"]
+						+"\"></option>").html(data["facultyCourseList"][0]["facultyName"]);
+						paramFaculty.empty().append(facultyOpt);
+
+						//Generate paramCourse
+						courseOpt = $("<option value=\""+data["facultyCourseList"][0]["courseCode"]
+						+"\"></option>").html(data["facultyCourseList"][0]["courseName"]);
+						paramCourse.empty().append(courseOpt);
+					}
+				});
+			}
+		}
+
+		function ParamLevelChange(el){
+			ToggleEnableSelection();
+
+			var lv = $('#paramLevel').val();
+			if(lv==1){
+				$("#paramFaculty").val(0);
+				$("#paramCourse").val(0);
+				$('select#paramFaculty option').attr('disabled', 'disabled');
+				$('select#paramCourse option').attr('disabled', 'disabled');
+
+				getOrgIdByOrgDetailFilter();
+			}else if(lv==2){          
+				$('select#paramCourse option').attr('disabled', 'disabled');
+				ParamChange($('select#paramUniversity'), 'university');
+			}else if(lv==3){ 
+				ParamChange($('select#paramUniversity'), 'university');
+				ParamChange($('select#paramFaculty'), 'faculty');
+			}
+		}
+
+		function ParamChange(el, changeType){
+			var sups = ["university","faculty","course"];
+			var value = $(el).val();
+			var elUniversity  = $("#paramUniversity");
+			var elFaculty  =  $("#paramFaculty");
+			var elCouse = $("#paramCourse");
+
+			if(changeType == sups[0]){ // university change
+				$.ajax({ 
+					dataType:'json',
+					url: "<%=requestOrgFaculty%>",
+					async: false,
+					data: { 'levelId': value , 'university':elUniversity.val()  } ,
+					success: function(data){
+						GenParamFacultyList(elFaculty,data["lists"]);
+						var x = [];
+						GenParamCourseList(elCouse,x);
+					}
+				});
+
+				getOrgIdByOrgDetailFilter();
+			}
+
+			else if(changeType == sups[1]){ // faculty change
+				$.ajax({ 
+					dataType:'json',
+					url: "<%=requestOrgCourse%>",
+					data: { 'levelId': value , 'university':elUniversity.val(), 'faculty': elFaculty.val()  } ,
+					async: false,            
+					success: function(data){
+						//  alert(JSON.stringify(data));
+						if($('select#paramLevel').val() == "3"){
+							GenParamCourseList(elCouse,data["lists"]);
+						}
+
+						//Remove class redBorder if not null value    
+						if(elCouse.val() != null){
+							elCouse.removeClass("redBorder");
+						} 
+					}
+				});
+
+				getOrgIdByOrgDetailFilter();
+			}
+
+			else if(changeType == sups[2]){ 
+				//Remove class redBorder if not null value  
+				if(elCouse.val() != null){
+					elCouse.removeClass("redBorder");
+				}
+
+				getOrgIdByOrgDetailFilter();
+			}
+		}
+
+ 		function GenParamFacultyList(target,data){
+			//  var target = $('#'+elFaculty);
+			target.empty();
+			var opt;
+			for(var i=0; i<data.length; i++){
+				opt = $("<option value=\'"+data[i]["id"]+"\'></option>").html(data[i]['name']);
+				target.append(opt);
+			}
+		}
+
+		function GenParamCourseList(target,data){
+			// var target = $('#'+elCourse);
+			target.empty();
+			var opt; //= $("<option value='0'></option>").html("");
+			target.append(opt);
+			for(var i=0;i<data.length;i++){
+				if(!(jQuery.isEmptyObject(data[i]))){
+					opt = $("<option value=\""+data[i]['id']+"\"></option>").html(data[i]['name']);
+					target.append(opt);
+				}         
+			} 
+		}
+
+		function getOrgIdByOrgDetailFilter(){
+			var paramLevel = $("select#paramLevel").val() || 0;
+			var paramUniversity  = $("select#paramUniversity").val() || 0;
+			var paramFaculty  =  $("select#paramFaculty").val() || 0;
+			var paramCourse = $("select#paramCourse").val() || 0;
+			console.log("paramLevel:"+paramLevel+", paramUniversity:"+paramUniversity+", paramFaculty:"+paramFaculty+", paramCourse:"+paramCourse);
+
+			$.ajax({ 
+				dataType:'json',
+				url: "<%=requestOrgIdByOrgDetailFilter%>",
+				data: { 
+					'paramLevel':paramLevel,
+					'paramUniversity':paramUniversity.toString(), 
+					'paramFaculty':paramFaculty.toString(), 
+					'paramCourse': paramCourse.toString() 
+				},
+				async: false,            
+				success: function(data){
+					$("input#paramOrg").val(data["lists"][0]["orgId"]);
+				}
+			});
+		}
+
     	/* bind element event */  
     	function actSubmit(){
     		//Get parameter value from element param.
@@ -182,11 +301,23 @@
     			data: { 'paramYear':paramYear, 'paramGroup':paramGroup, 'paramOrg':paramOrg } ,
     			success: function(data){
 					var dataObj = data['recomndLists'];
+
+					//Null Value
+					if(dataObj.length == 0){
+						var tbodyStr = 
+							"<tr> "
+							+	"<td> ไม่พบข้อมูล </td"	
+							+"</tr>";
+						$('table#RecomdFlagS').append(tbodyStr);
+		    			$('table#RecomdFlagW').append(tbodyStr);
+					}
+
+		    		//Generate data for data grid.
 					for(var i=0;i<dataObj.length;i++){
 						if(dataObj[i]['reComndFlag'] == 'S'){
 							recSFlag = 
 								"<tr> "
-								+	"<td>"+dataObj[i]['reComndDesc']+"</td> "							
+								+	"<td>"+dataObj[i]['reComndDesc'].replace(/\n/g, "<br/>")+"</td> "							
 								+	"<td align=\"center\"> "
 								+	"<img heigth=\"20\" width=\"20\" onClick=\"actEdit(this, 'S')\" src=\""+"<c:url value='/resources/images/edited.png'/>"+"\"> "
 								+	"</td> "
@@ -205,7 +336,7 @@
 						}else if(dataObj[i]['reComndFlag'] == 'W'){
 							recWFlag = 
 								"<tr> "
-								+	"<td>"+dataObj[i]['reComndDesc']+"</td> "							
+								+	"<td>"+dataObj[i]['reComndDesc'].replace(/\n/g, "<br/>")+"</td> "							
 								+	"<td align=\"center\"> "
 								+	"<img heigth=\"20\" width=\"20\" onClick=\"actEdit(this, 'W')\" src=\""+"<c:url value='/resources/images/edited.png'/>"+"\"> "
 								+	"</td> "
@@ -221,7 +352,7 @@
 								+"</tr> ";
 							$('table#RecomdFlagW').append(recWFlag);							
 						}
-					}				
+					}									
     			}
     		});
     	}
@@ -384,7 +515,7 @@
 	 		}else if(mode==2){
 	 			head = 'แก้ไข';
 	 			event='actSaveEdit()';
-	 			$(d1).find('#fReComndDesc').val(dataDesc["dataName"]);
+	 			$(d1).find('#fReComndDesc').val(dataDesc["dataName"].replace(/\<br>/g, "\n"));
 	 			$(d1).find('input[type=hidden]#fOrgId').val(dataDesc["orgId"]);
 	 			$(d1).find('input[type=hidden]#fGroupId').val(dataDesc["groupId"]);
 	 		}
@@ -404,26 +535,20 @@
    			$(d1).find('input[type=button].save').attr('onClick',event);
 
 		   if ( $(d1).is(':visible')) {
-		   		return false ;
+		   		$(d1).slideToggle("fast");
+		   		//return false ;
 		   	}else{
 		   		$(d1).slideToggle("slow");
 		   	}
    	 	}
  		
- 	/*	function convtToSelectPicker(el){
- 			el.selectpicker({
- 		    	//style: 'btn-info',
- 		    	size: 4
- 			});
- 			$('.selectpicker').selectpicker('refresh');
- 		} */
    	</script>
   
    	<style type="text/css">
    		div.boxAct{
-			padding: 20px 20px 20px 20px;      
+			padding: 20px 20px 20px 20px;
 			border: thin solid #CDCDCD;
-			border-radius: 10px;
+			/*border-radius: 10px;*/
 			display: block; 
 		}
 		table.tableGridTp{
@@ -471,6 +596,8 @@
   </head>
   
 <body>
+	<%-- currentFaculty: ${currentFaculty}
+	currentCourse: ${currentCourse} --%>
 
 	<div id="msgAlert" class="alert alert-danger" style="display: none">
 		<button type="button" class="close" data-dismiss="alert">x</button>
@@ -478,7 +605,7 @@
 	</div>
 
 	<div class="box">
-		<div id="formActRe" class="boxAct" style="display:none">	
+		<div id="formActRe" class="boxAct" style="display:none">
 			<%-- <form:form id="reComndForm" modelAttribute="reComndForm"
 			action="${formAction}" method="POST"
 			enctype="multipart/form-data">
@@ -561,7 +688,7 @@
 							<td style="text-align:right"><label>ระดับตัวบ่งชี้ :</label></td>
 							<td>
 								<form:select id="paramLevel" class="" path="hieAuth.level" items="${levels}"
-									onchange="paramLevelChange(this)"/>
+									onchange="ParamLevelChange(this)"/>
 								&nbsp&nbsp&nbsp
 							</td>
 							<td rowspan="2"> 
@@ -572,19 +699,19 @@
 							<td style="text-align:right"><label>สถาบัน :</label></td>
 							<td>
 								<form:select id="paramUniversity" class="" path="hieAuth.university" 
-									items="${unis}" onchange='paramUniversityChange(this)' />
+									items="${unis}" onchange="ParamChange(this,'university')" />
 								&nbsp&nbsp&nbsp
 							</td>
 							<td style="text-align:right"><label>คณะ :</label></td>
 							<td>
-								<form:select id="paramFaculty" class="" path="hieAuth.faculty"
-									items="${facultys}" onchange="paramFacultyChange(this)"/>
+								<form:select id="paramFaculty" class="" path="hieAuth.faculty" 
+									onchange="ParamChange(this,'faculty')"/>
 								&nbsp&nbsp&nbsp
 							</td>
 							<td><label>หลักสูตร :</label></td>
 							<td>
 								 <form:select id="paramCourse" class="" path="hieAuth.course"
-								 	items="${courses}" onchange="paramCourseChange(this)"/>
+								 	onchange="ParamChange(this,'course')"/>
 								&nbsp&nbsp&nbsp&nbsp&nbsp
 							</td>
 						</tr>
@@ -596,23 +723,33 @@
 		</div>
 
 		<div id="complainFS" class="complainContent">
-			<span> จุดเด่น</span>
-			<img style="margin-left:15px;" height="20" width="20" onClick="actAdd(this, 'S')" src="<c:url value="/resources/images/add.png"/>"/>
+			<div style="border:1px solid #999; border-bottom-width:0px; padding:3px 0px 3px 10px;">
+				<img style="display: inline-block" height="20" width="20" onClick="actAdd(this, 'S')" 
+				src="<c:url value="/resources/images/add.png"/>"/>
+    			&nbsp&nbsp<h4 style="display: inline-block"> จุดเด่น </h4> 	
+			</div>
 			<div class="wrapContainer"></div>
 			<table id='RecomdFlagS' class='tableGridTp'>
+				<tr>
+					<td align="center"> <h5> เลือกฟิลเตอร์ และกด "เรียกดูข้อมูล" เพื่อเรียกดูข้อมูลที่ต้องการ </h5> <td>
+				</tr>
 			</table>
 		</div>
-		<br /> <br /> 
 
 		<div id="complainFW" class="complainContent" >
-			<span> จุดที่ต้องพัฒนา</span>
-			<img style="margin-left:15px;" height="20" width="20" onClick="actAdd(this, 'W')" src="<c:url value="/resources/images/add.png"/>"/>
+			<div style="border:1px solid #999; border-bottom-width:0px; padding:3px 0px 3px 10px;">
+				<img style="display: inline-block" height="20" width="20" onClick="actAdd(this, 'W')" 
+				src="<c:url value="/resources/images/add.png"/>"/>
+				&nbsp&nbsp<h4 style="display: inline-block"> จุดที่ต้องพัฒนา </h4>		
+			</div>
 			<div class="wrapContainer"></div>
 			<table id='RecomdFlagW' class='tableGridTp'>
+				<tr>
+					<td align="center"> <h5> เลือกฟิลเตอร์ และกด "เรียกดูข้อมูล" เพื่อเรียกดูข้อมูลที่ต้องการ </h5> <td>
+				</tr>
 			</table>
 		</div>
 
 	</div>
 </body>
-</html>	
-   
+</html>

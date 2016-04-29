@@ -12,6 +12,12 @@
 <portlet:resourceURL var="doInsertResult" id="doInsertResult"></portlet:resourceURL>
 <portlet:resourceURL var="doReloadResult" id="doReloadResult"></portlet:resourceURL>
 
+<portlet:resourceURL var="dofindOrgByUserName" id="dofindOrgByUserName" ></portlet:resourceURL>
+<portlet:resourceURL var="requestOrgFaculty" id="requestOrgFaculty" ></portlet:resourceURL>
+<portlet:resourceURL var="dofindOrgByOrgId" id="dofindOrgByOrgId" ></portlet:resourceURL>
+<portlet:resourceURL var="requestOrgCourse" id="requestOrgCourse" ></portlet:resourceURL>
+
+
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -37,55 +43,222 @@
 <link rel="stylesheet" href="<c:url value="/resources/css/style.css"/>" type="text/css" />
 <script type="text/javascript"> 
     	$( document ).ready(function() {
-    		if($('#pageMessage').html()==""){
-    			$('#pageMessage').hide();
+    		if(!${not empty pageMessage}){
+    			$('#pageMessage').css("display","none");
     		}
     		$("#assignKpi_accordion").accordion({
     			 heightStyle: "content",
     			 collapsible: true
     		});
     		// initial active select
-    		toggleEnableSelection();
+    		ToggleEnableSelection();
+    		renderParameterCtrl(getUserRoleLevelID());
 
     	});
-    	function toggleEnableSelection(){
-    		var uni  = $("#filterUni");
-    		var fac  = $("#filterFac");
-    		var cou = $("#filterCou");
-    		var lv = $('#assignKpi_filter select#level').val();
-    		if(lv==1){ uni.prop("disabled",false); fac.prop("disabled",true); cou.prop("disabled",true); }
-    		else if(lv==2){ uni.prop("disabled",false); fac.prop("disabled",false); cou.prop("disabled",true); }
-    		else if(lv==3){ uni.prop("disabled",false); fac.prop("disabled",false); cou.prop("disabled",false); }
+
+    	function ToggleEnableSelection(){
+    		var filterUniversity  = $("#filterUni");
+    		var filterFaculity  = $("#filterFac");
+    		var filterCourse = $("#filterCou");
+    		var filterLevel = $('#assignKpi_filter select#level').val();
+
+			if(filterLevel==1){ 
+				filterUniversity.prop("disabled",false); 
+				filterFaculity.prop("disabled",true); 
+				filterCourse.prop("disabled",true); 
+			}else if(filterLevel==2){ 
+				filterUniversity.prop("disabled",false);
+				filterFaculity.prop("disabled",false); 
+				filterCourse.prop("disabled",true); 
+			}else if(filterLevel==3){ 
+				filterUniversity.prop("disabled",false); 
+				filterFaculity.prop("disabled",false); 
+				filterCourse.prop("disabled",false); 
+			}
     	}
 
-    	/* bind element event*/
-    	function actSearchOrg(el,level){
-    	
-    		//var types = ["univerisity","faculty","course"];
-    		//var orgType = types[parseInt(level)-1 ];
-    		var uni  = $("#filterUni");
-    		var fac  = $("#filterFac");
-    		var cou = $("#filterCou");
-    		toggleEnableSelection();
-    		$.ajax({
-       	 		dataType: "json",
-       	 		url:"<%=doSearchOrg%>",
-       	 		data: { "level":level , "university":uni.val(),"faculty":fac.val(),"course":cou.val() },
-       	 		success:function(data){
-       	 			//alert(JSON.stringify(data));
-	       	 		if(level==0){
-	       	 			createOption('filterUni',data["content"]["lists"]);
-	       	 			clearOption("filterFac");   
-	       	 			clearOption("filterCou");	
-	       	 		}else if(level==1){
-	       	 			createOption('filterFac',data["content"]["lists"]);
-	       	 			clearOption("filterCou");
-	       	 		}else if(level==2){
-	       	 			createOption('filterCou',data["content"]["lists"]);
-	       	 		}
-       	 		} 
-       	 	});
-    	}
+		function getUserRoleLevelID(){
+			var userRoleLevel;
+			$.ajax({ 
+				dataType:'json',
+				url: "<%=dofindOrgByUserName%>",
+				async: false,
+				data: { },
+				success: function(data){
+					userRoleLevel = data["userRoleId"][0]["levelId"];
+				}
+			});
+			return userRoleLevel;
+		}
+
+		function renderParameterCtrl(userLevelId){
+			var paramLevel = $('#assignKpi_filter select#level').val();
+			var paramUniversity  = $("#filterUni");
+			var paramFaculty  =  $("#filterFac");
+			var paramCourse = $("#filterCou");
+
+	        //ตรวจสอบสิทธิ์ของผู้ใชงานและทำการส้ราง Parameter ตามสิทธิ์
+	        if(userLevelId == 1){
+	          if(paramLevel == 1){
+	            //Do not thing
+
+	          }else if(paramLevel == 2){
+	            //Generate paramFaculty and set defalut value
+	            ParamChange(paramUniversity, 'university');
+	            if(${currentFaculty} != 0){
+	              paramFaculty.val(${currentFaculty});
+	            }
+
+	          }else if(paramLevel == 3){
+	            //Generate paramFaculty and set defalut value
+	            ParamChange(paramUniversity, 'university');
+	            if(${currentFaculty} != 0){
+	              paramFaculty.val(${currentFaculty});
+	            }
+
+	            //Generate paramCoures and set defalut value
+	            ParamChange(paramFaculty, 'faculty');
+	            if(${currentCourse} != 0){
+	              paramCourse.val(${currentCourse});
+	            }
+	          }
+
+	        }
+
+	        else if(userLevelId == 2){ 
+	          $("#level option[value=1]").prop("disabled", true);
+	          if(paramLevel == 2){
+	            //Generate paramFaculty and set defalut value
+	            ParamChange(paramUniversity, 'university');
+	            if(${currentFaculty} != 0){
+	              paramFaculty.val(${currentFaculty});
+	            }
+
+	          }else if(paramLevel == 3){
+	            //Generate paramFaculty and set defalut value
+	            ParamChange(paramUniversity, 'university');
+	            if(${currentFaculty} != 0){
+	              paramFaculty.val(${currentFaculty});
+	            }
+
+	            //Generate paramCoures and set defalut value
+	            ParamChange(paramFaculty, 'faculty');
+	            if(${currentCourse} != 0){
+	              paramCourse.val(${currentCourse});
+	            }
+			}
+
+	        }else if(userLevelId==3){
+	          $('select#level option[value=1]').prop("disabled", true);
+	          $('select#level option[value=2]').prop("disabled", true);         
+	          $.ajax({ 
+	              dataType:'json',
+	              url: "<%=dofindOrgByOrgId%>",
+	              data: { 'orgId': $('input#idenOrgId').val() },
+	              success: function(data){ 
+	                //Generate paramFaculty             
+	                facultyOpt = $("<option value=\""+data["facultyCourseList"][0]["facultyCode"]
+	                  +"\"></option>").html(data["facultyCourseList"][0]["facultyName"]);
+	                paramFaculty.empty().append(facultyOpt);
+
+	                //Generate paramCourse
+	                courseOpt = $("<option value=\""+data["facultyCourseList"][0]["courseCode"]
+	                  +"\"></option>").html(data["facultyCourseList"][0]["courseName"]);
+	                paramCourse.empty().append(courseOpt);
+	              }
+	            });
+	        }
+		}
+
+		function ParamLevelChange(el){
+	        ToggleEnableSelection();
+	        var paramLevelVal = $('#assignKpi_filter select#level').val();
+			var paramUniversityEl  = $("#filterUni");
+			var paramFacultyEl  =  $("#filterFac");
+			var paramCourseEl = $("#filterCou");
+	        if(paramLevelVal==1){
+	          paramFacultyEl.val(0);
+	          paramCourseEl.val(0);
+	          paramFacultyEl.find("option").attr("disabled", "disabled");
+	          paramCourseEl.find("option").attr("disabled", "disabled");
+	        }else if(paramLevelVal==2){
+	          paramCourseEl.find("option").attr("disabled", "disabled");
+	          ParamChange(paramUniversityEl, "university");
+	        }else if(paramLevelVal==3){ 
+	          ParamChange(paramUniversityEl, 'university');
+	          ParamChange(paramFacultyEl, 'faculty');
+	        }
+		}
+
+		function ParamChange(el, changeType){
+
+        var sups = ["university","faculty","course"];
+        var value = $(el).val();
+        var elUniversity  = $("#filterUni");
+		var elFaculty  =  $("#filterFac");
+		var elCouse = $("#filterCou");
+
+        if(changeType == sups[0]){ // university change
+        	$.ajax({ 
+        		dataType:'json',
+            	url: "<%=requestOrgFaculty%>",
+            	async: false,
+            	data: { 'levelId': value , 'university':elUniversity.val()  } ,
+            	success: function(data){
+              		GenParamFacultyList(elFaculty,data["lists"]);
+              		var x = [];
+              		GenParamCourseList(elCouse,x);
+            	}
+          	});
+        }else if(changeType == sups[1]){ // faculty change
+          	$.ajax({ 
+            dataType:'json',
+            url: "<%=requestOrgCourse%>",
+            data: { 'levelId': value , 'university':elUniversity.val(), 'faculty': elFaculty.val()  } ,
+            async: false,            
+            success: function(data){
+            //  alert(JSON.stringify(data));
+              if($('select#level').val() == "3"){
+                GenParamCourseList(elCouse,data["lists"]);
+
+                //Remove class redBorder if not null value    
+                if(elCouse.val() != null){
+                  elCouse.removeClass("redBorder");
+                } 
+              }
+            }
+          });
+        }else if(changeType == sups[2]){ 
+          //Remove class redBorder if not null value  
+          if(elCouse.val() != null){
+            elCouse.removeClass("redBorder");
+          }
+        }
+      }
+
+		function GenParamFacultyList(target,data){
+			//  var target = $('#'+elFaculty);
+			target.empty();
+			var opt;
+			for(var i=0; i<data.length; i++){
+				opt = $("<option value=\'"+data[i]["id"]+"\'></option>").html(data[i]['name']);
+				target.append(opt);
+			}
+		}
+
+		function GenParamCourseList(target,data){
+			// var target = $('#'+elCourse);
+			target.empty();
+			var opt; //= $("<option value='0'></option>").html("");
+			target.append(opt);
+			for(var i=0;i<data.length;i++){
+				if(!(jQuery.isEmptyObject(data[i]))){
+					opt = $("<option value=\""+data[i]['id']+"\"></option>").html(data[i]['name']);
+					target.append(opt);
+				}         
+			} 
+		}
+
    	 	function actTarget(el){
    	 		var kpiId = parseInt($(el).parent('td').parent('tr').children('tbody tr td:nth-child(1)').html());
    	 		$('#kpiListForm #kpiId').val(kpiId);
@@ -139,7 +312,7 @@
 		   	 			$('#pageMessage').addClass("alert alert-danger");
 	   	 			}
 	   	 			$('div#pageMessage').focus();
-	   	 			$('div#pageMessage').css( "display", "block" ).fadeOut( 30000 );
+	   	 			$('div#pageMessage').css( "display", "block" ).fadeOut( 5000 );
 	   	 		}
 	   	 	});
    	 	}
@@ -175,7 +348,7 @@
 							$('#pageMessage').addClass("alert alert-danger");
 						}
 						$('div#pageMessage').focus();
-						$('div#pageMessage').css("display", "block").fadeOut( 30000 );
+						$('div#pageMessage').css("display", "block").fadeOut( 5000 );
 
 					}
 				});
@@ -194,69 +367,72 @@
 	
 </script>
 <style type="text/css">
+	/* (1)+5 td*/
+	#assignKpi_accordion table.tableGridLv td:nth-child(1) {
+		display: none
+	}
 
-/* (1)+5 td*/
-#assignKpi_accordion table.tableGridLv td:nth-child(1) {
-	display: none
-}
+	#assignKpi_accordion table.tableGridLv td:nth-child(2) {
+		width: 10%;
+	}
 
-#assignKpi_accordion table.tableGridLv td:nth-child(2) {
-	width: 10%;
-}
+	#assignKpi_accordion table.tableGridLv td:nth-child(3) {
+		width: 10%
+	}
 
-#assignKpi_accordion table.tableGridLv td:nth-child(3) {
-	width: 10%
-}
+	#assignKpi_accordion table.tableGridLv td:nth-child(4) {
+		width: 40%;
+	}
 
-#assignKpi_accordion table.tableGridLv td:nth-child(4) {
-	width: 40%;
-}
+	#assignKpi_accordion table.tableGridLv td:nth-child(5) {
+		width: 16%;
+	}
 
-#assignKpi_accordion table.tableGridLv td:nth-child(5) {
-	width: 16%;
-}
+	#assignKpi_accordion table.tableGridLv td:nth-child(6) {
+		width: 13%;
+	}
 
-#assignKpi_accordion table.tableGridLv td:nth-child(6) {
-	width: 13%;
-}
-
-#assignKpi_accordion table.tableGridLv td:nth-child(6) {
-	width: 10%;
-}   
-select.filterOrg{  min-width:220px !important;}
-    .center {text-align: center;}
-    </style>
+	#assignKpi_accordion table.tableGridLv td:nth-child(6) {
+		width: 10%;
+	}   
+	.center {text-align: center;}
+</style>
 </head>
+
 <body>
-	<div id="assignKpiList" class="box bg">
-		<div id="pageMessage" class="">${pageMessage}</div>
+
+	<%-- Debug information 
+	userDetail: ${userDetail} <br/>
+	currentFaculty: ${currentFaculty} <br/>
+	currentCourse: ${currentCourse} <br/> 
+	--%>
+
+	<div id="assignKpiList" class="box bg" style="-top:50px;">
 		<div id="assignKpi_filter" class="boxHeader">
 			<form:form id="hierarchyAuthorityForm"
 				modelAttribute="hierarchyAuthorityForm" method="post"
 				name="hierarchyAuthorityForm" action="${formActionSubmitFilter}"
 				enctype="multipart/form-data">
+				<form:input type="hidden" id="idenOrgId" path="orgId" />
 				<span>ระดับตัวบ่งชี้: </span>
-				<form:select path="level" class="smallText wid"
-					onchange="actSearchOrg(this,0)">
+				<form:select path="level" class="input-medium wid"
+					onchange="ParamLevelChange(this)">
 					<form:options items="${levelList}" />
 				</form:select>
 				<br/>
 				<span>สถาบัน/มหาวิทยาลัย: </span>
-				<form:select class="wid filterOrg" id="filterUni" path="university"
-					onchange="actSearchOrg(this,1)">
-					<!-- <form:option value="" label="" /> -->
+				<form:select class="wid input-large" id="filterUni" path="university"
+					onchange="ParamChange(this,'university')">
 					<form:options items="${uniList}" />
 				</form:select>
 				<span>คณะ: </span>
-				<form:select class="wid filterOrg" id="filterFac" path="faculty"
-					onchange="actSearchOrg(this,2)">
-					<!-- <form:option value="" label="" /> -->
-					<!-- <form:options items="${facList}" /> -->
+				<form:select class="wid input-xlarge" id="filterFac" path="faculty"
+					onchange="ParamChange(this,'faculty')">
+					<!-- Generate option by GenParamFacultyList(). -->
 				</form:select>
 				<span>หลักสูตร: </span>
-				<form:select class="wid filterOrg" id="filterCou" path="course">
-					<!-- <form:option value="" label="" /> -->
-					<!-- <form:options items="${corsList}" /> -->
+				<form:select class="wid input-xlarge" id="filterCou" path="course">
+					<!-- Generate option by GenParamCourseList(). -->
 				</form:select>
 				<input type="button" value="เรียกดู" onclick="submitFilter()" class="btn btn-primary" style="margin-bottom: 10px;" />
 			</form:form>
@@ -340,16 +516,12 @@ select.filterOrg{  min-width:220px !important;}
 				</c:forEach>
 			</c:if>
 		</div>
-		<div style="text-align:center;padding:25px 10px 25px 10px;">
-		<input type="button" class="btn btn-success" onclick="insertResult()" value="บันทึก" style="margin-right:10px"/>
-		<input type="button" class="btn btn-inverse" onclick="reloadResult()" value="กลับสู่ค่าเริ่มต้น">  
-<!-- 		<div class="span12">  -->
-<!-- 			<div style="text-align: center; padding-top: 2%">  -->
-<!-- 				<input type="button" class="btn btn-success" onclick="insertResult()" value="บันทึก" style="margin-right: 10px">  -->
-<!-- 				<input type="button" class="btn btn-inverse" onclick="reloadResult()" value="กลับสู่ค่าเริ่มต้น">  -->
-<!-- 			</div>  -->
-<!-- 		</div> -->
+		<div style="text-align:center;padding:25px 10px 25px 10px;">		
+			<input type="button" class="btn btn-success" onclick="insertResult()" value="บันทึก" style="margin-right:10px"/>
+			<input type="button" class="btn btn-inverse" onclick="reloadResult()" value="กลับสู่ค่าเริ่มต้น"> 
 		</div>
-	</div>
+		<div style="text-align:center;" >
+			<div id="pageMessage" class="alert alert-success"> <strong> ${pageMessage} </strong> </div>
+		</div>
 </body>
 </html>

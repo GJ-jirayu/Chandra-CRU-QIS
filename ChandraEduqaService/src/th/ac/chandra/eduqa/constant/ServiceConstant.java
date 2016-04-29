@@ -84,6 +84,7 @@ public class ServiceConstant {
 		public static final String ORG_GET_UNIVERSITY = "searchOrgUniversity";
 		public static final String ORG_GET_FACULTY_OF_UNIVERSITY = "searchFacultyByUniversity";
 		public static final String ORG_GET_COURSE_OF_FACULTY = "searchCourseByFaculty";
+		public static final String ORG_GET_ORGID_OF_ORG_DETAIL = "getOrgIdByOrgDetailFilter";
 		
 		
 		//Org Type

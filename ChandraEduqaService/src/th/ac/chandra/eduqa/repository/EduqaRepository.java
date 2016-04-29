@@ -542,7 +542,7 @@ public class EduqaRepository   {
 		public Org findOrgById(Integer orgTypeTypeId) throws DataAccessException {
 			return entityManager.find(Org.class, orgTypeTypeId);		
 		}
-		public List searchOrg(Org persistentInstance,
+		public Org searchOrg(Org org,
 				Paging pagging, String keySearch) throws DataAccessException {
 			/*StringBuffer sbOrg = new StringBuffer("");
 			if (keySearch != null && keySearch.trim().length() > 0) {
@@ -562,6 +562,7 @@ public class EduqaRepository   {
 			long count = (Long) query.getSingleResult();
 			transList.add(String.valueOf(count));
 			return transList;*/
+			
 			return null;
 		}
 		
@@ -709,6 +710,33 @@ public class EduqaRepository   {
 			transList.add(size);
 			return transList;
 		}
+		
+		@SuppressWarnings("rawtypes")
+		public List getOrgIdByOrgDetailFilter(Org org, Paging page){
+			List transList = new ArrayList();
+			List results = null;
+			Integer size = 0;
+			String paramLev = (org.getLevelId().equals(0) || org.getLevelId().equals(null)
+					? "k.levelId is null" : "k.levelId = "+org.getLevelId());
+			String paramUni = (org.getUniversityCode().equals("0") ? "k.universityCode is null" : "k.universityCode='"+org.getUniversityCode()+"'");
+			String paramFac = (org.getFacultyCode().equals("0") ? "k.facultyCode is null" : "k.facultyCode='"+org.getFacultyCode()+"'");
+			String paramCou = (org.getCourseCode().equals("0") ? "k.courseCode is null" : "k.courseCode='"+org.getCourseCode()+"'");
+			
+			String queryString = 
+					"select k from Org k \n"
+					+ " where "+paramLev+"\n"
+					+ " and "+paramUni+"\n"
+					+ " and "+paramFac+"\n"
+					+ " and "+paramCou;
+			Query query = entityManager.createQuery(queryString	,	Org.class);
+			results = query.getResultList();
+			size = results.size();
+
+			transList.add(results);
+			transList.add(size);
+			return transList;			
+		}
+		
 	//=====[ END: ORG ]=========================================================================================//	
 		
 	//#####[ START: ORG TYPE ]###############################################################################//
@@ -2043,7 +2071,7 @@ public class EduqaRepository   {
 			List<KpiResultModel> kms = new ArrayList<KpiResultModel>();
 			String sql = " select kpi.kpi_structure_id,ks.kpi_structure_name,kpi.kpi_id,kpi.kpi_name,grp.kpi_group_short_name "
 					+ " ,ct.calendar_type_name,p.period_name,uom.kpi_uom_name "
-					+ " ,(select if(count(result_id)>0,1,0) from kpi_result r where r.kpi_id = kpi.kpi_id  "
+					+ " ,(select if(count(result_id)>0,'1','0') from kpi_result r where r.kpi_id = kpi.kpi_id  "
 					+ " and r.academic_year="+model.getAcademicYear()+" and org_id = "+model.getOrgId()+"  ) as used "
 					+ " ,(select cast(max(target_value) as char) from kpi_result where kpi_id = kpi.kpi.kpi_id group by kpi_id) as targetvalue "
 					+ " from (select * from kpi where academic_year = "+model.getAcademicYear()+" and kpi_level_id="+model.getKpiLevelId()+" ) kpi "
@@ -2067,7 +2095,7 @@ public class EduqaRepository   {
 					km.setCalendarTypeName( (String)result[5]);
 					km.setPeriodName( (String)result[6] );
 					km.setKpiUomName(  (String)result[7] );
-					km.setResultId(  ((BigInteger)result[8]).intValue() );  //  mean flag active field 
+					km.setResultId(Integer.parseInt(result[8].toString())); //km.setResultId(  ((BigInteger)result[8]).intValue() );  //  mean flag active field 
 				//	km.setResultId(  (Integer)result[8] );  //  mean flag active field 
 					km.setTargetValue( (result[9] != null ? Double.parseDouble(result[9].toString()) : null) );
 					kms.add(km);
@@ -2176,6 +2204,8 @@ public class EduqaRepository   {
 			  REFERENCES `eduqa`.`kpi_result_detail` (`result_detail_id`)
 			  ON DELETE CASCADE
 			  ON UPDATE NO ACTION;
+			ALTER TABLE `eduqa`.`kpi_result_detail` 
+			DROP FOREIGN KEY `kpi_result_kpi_result_detail_fk`;
 			ALTER TABLE `eduqa`.`kpi_result_detail` 
 			ADD CONSTRAINT `kpi_result_kpi_result_detail_fk`
 			  FOREIGN KEY (`result_id`)
@@ -2844,5 +2874,15 @@ public class EduqaRepository   {
 			returns.add(mod);
 		}
 		return returns;
+	}
+	
+	public Integer getOrgByUniFacCou(Org org){
+		String qryStr = "select o.orgId from Org o where universityCode = :paramUniversity and facultyCode = :paramFaculty and courseCode = :paramCourse";
+		Query query = entityManager.createQuery(qryStr);
+		query.setParameter("paramUniversity", org.getUniversityCode());
+		query.setParameter("paramFaculty", org.getFacultyCode());
+		query.setParameter("paramCourse", org.getCourseCode());
+		
+		return (Integer) query.getSingleResult();
 	}
 }

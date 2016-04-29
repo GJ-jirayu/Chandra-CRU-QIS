@@ -243,7 +243,7 @@ public class EduqaServiceJpaImpl  implements EduqaService {
 		}
 
 		@Override
-		public List searchOrg(Org persistentInstance, Paging pagging,
+		public Org searchOrg(Org persistentInstance, Paging pagging,
 				String keySearch) throws DataAccessException {
 			return repository.searchOrg(persistentInstance, pagging, keySearch);
 		}
@@ -285,6 +285,11 @@ public class EduqaServiceJpaImpl  implements EduqaService {
 		@Override
 		public List getOrgCourseOfFaculty(Org org, Paging page) {
 			return repository.getOrgCourseOfFaculty(org,page);
+		}
+		
+		@Override
+		public List getOrgIdByOrgDetailFilter(Org org, Paging page) {
+			return repository.getOrgIdByOrgDetailFilter(org,page);
 		}
 	//=====| END:ORG |=================================================================================//
 		

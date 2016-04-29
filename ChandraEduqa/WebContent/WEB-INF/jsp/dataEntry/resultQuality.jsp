@@ -4,6 +4,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="chandraFn" uri="http://localhost:8080/web/function" %>
+
+
 <%@ page import="java.sql.*" %>
 <portlet:actionURL var="doAssignResultQuality">
   <portlet:param name="action" value="doAssignResultQuality"/>
@@ -404,7 +407,7 @@
 						</c:otherwise>
 					</c:choose>
                 </td>
-				<td>${result.standardName}</td>  
+				<td>${chandraFn:nl2br(result.standardName)}</td>  
 				<td>${result.cdsValue}</td>
 				<td style="text-align:center;"> 
 				<c:choose>

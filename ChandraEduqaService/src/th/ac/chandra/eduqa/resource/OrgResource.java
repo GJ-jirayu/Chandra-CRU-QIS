@@ -219,6 +219,25 @@ public class OrgResource extends BaseResource {
 								return getRepresentation(entity, imakeMessage, xstream);
 							}
 						}
+						else if(serviceName.equals(ServiceConstant.ORG_GET_ORGID_OF_ORG_DETAIL)){
+							ImakeResultMessage imakeMessage = new ImakeResultMessage();
+							Paging page = xsource.getPaging(); 
+							domain.setUniversityCode(xsource.getUniversityCode());
+							domain.setFacultyCode(xsource.getFacultyCode());
+							@SuppressWarnings("rawtypes")
+							List result = (List) service.getOrgIdByOrgDetailFilter(domain, page);
+							if (result != null && result.size() == 2) {
+								java.util.ArrayList<Org> domains = (java.util.ArrayList<Org>) result.get(0); //get dataList
+								Integer domains_size = (Integer) result.get(1);  // get meta
+								List<OrgModel> models = new ArrayList<OrgModel>();
+								if (domains != null && domains_size > 0) {
+									models = getModels(domains);
+									imakeMessage.setMaxRow(String.valueOf(domains_size));
+								}
+								imakeMessage.setResultListObj(models);
+								return getRepresentation(entity, imakeMessage, xstream);
+							}
+						}
 					} else {
 					}
 					// end serviceName case handle

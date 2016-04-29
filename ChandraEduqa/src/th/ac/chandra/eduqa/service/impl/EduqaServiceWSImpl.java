@@ -468,12 +468,13 @@ public class EduqaServiceWSImpl extends PostCommon  implements EduqaService{
 			}
 			return org;
 		}
-		public List<OrgModel> searchOrg(OrgModel orgModel) {
+		
+		public OrgModel searchOrg(OrgModel orgModel) {
 			orgModel.setServiceName(ServiceConstant.ORG_SEARCH);
 			ImakeResultMessage imakeMessage = postMessage(orgModel,
 					orgModel.getClass().getName(), "orgModel", true);
 			this.resultPage = Integer.parseInt(imakeMessage.getLastpage());
-			return imakeMessage.getResultListObj();
+			return (OrgModel) imakeMessage.getResultListObj();
 		}
 		@Override
 		public List<OrgModel> searchOrgByLevelId(OrgModel orgModel) {
@@ -534,6 +535,16 @@ public class EduqaServiceWSImpl extends PostCommon  implements EduqaService{
 					orgModel.getClass().getName(), "orgModel", true);
 			this.resultPage = Integer.parseInt(imakeMessage.getLastpage());
 			return imakeMessage.getResultListObj();
+		}
+		
+		@Override
+		public List getOrgIdByOrgDetailFilter(OrgModel orgModel){
+			orgModel.setServiceName(ServiceConstant.ORG_GET_ORGID_OF_ORG_DETAIL);
+			ImakeResultMessage imakeMessage = postMessage(orgModel,
+				orgModel.getClass().getName(), "orgModel", true);
+		this.resultPage = Integer.parseInt(imakeMessage.getLastpage());
+		return imakeMessage.getResultListObj();
+			
 		}
 	//=====[ END: ORG |========================================================================================//	
 		

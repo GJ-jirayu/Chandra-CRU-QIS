@@ -85,9 +85,8 @@ public class ResultController {
 	@Autowired
 	@Qualifier("eduqaServiceWSImpl")
 	private EduqaService service;
-	//private String uploadDirectory = "/home/pwirun/app/Chandra/fileupload/";
-	private String uploadDirectory = "/home/ittishait/app/Chandra/fileupload/";
-	//private String uploadDirectory = "D:\\eduqa\\FileServer\\";
+	private String uploadDirectory = "/home/pwirun/app/Chandra/fileupload/";
+	//private String uploadDirectory = "C:\\Users\\Administrator\\My Servers\\QIS\\FileServer\\fileupload";
 	private String directoryDelimitor;
 	
 	@Autowired
@@ -1129,7 +1128,7 @@ public class ResultController {
          	connJSON.put("id", detail.getCourseCode());
          	connJSON.put("name", detail.getCourseName());
          	lists.put(connJSON);
-         }     	
+         }
 		json.put("lists", lists);
 		//System.out.println(json.toString());
 		response.getWriter().write(json.toString());

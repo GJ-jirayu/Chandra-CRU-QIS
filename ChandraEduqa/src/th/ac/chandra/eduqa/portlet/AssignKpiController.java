@@ -75,24 +75,12 @@ public class AssignKpiController {
 	@InitBinder
 	public void initBinder(PortletRequestDataBinder binder, PortletPreferences preferences) {
 		logger.debug("initBinder");
-		binder.registerCustomEditor(byte[].class, new ByteArrayMultipartFileEditor());
-/*
-		final String[] ALLOWED_FIELDS={"researchGroupM.researchGroupId","researchGroupM.createdBy","researchGroupM.createdDate",
-				"researchGroupM.groupCode","researchGroupM.permissions","researchGroupM.updatedBy",
-				"researchGroupM.updatedDate","researchGroupM.groupTh","researchGroupM.groupEng","mode", "command","keySearch"};
-			*/
-		//	binder.setAllowedFields(ALLOWED_FIELDS);		
+		binder.registerCustomEditor(byte[].class, new ByteArrayMultipartFileEditor());	
 	}
+	
 	@RequestMapping("VIEW") 
 	public String iniPage(PortletRequest request,Model model){
 		User user = (User) request.getAttribute(WebKeys.USER);
-	/* 	List<Organization> lOrg;	
-		try {
-			lOrg = OrganizationLocalServiceUtil.getUserOrganizations(user.getUserId());
-			UserOrgId = lOrg.get(0).getExpandoBridge().getAttribute("ref_id").toString();
-		} catch (SystemException e) {
-			model.addAttribute("pageMessage",e.getMessage());
-		}*/
 		DescriptionModel userOrg = new DescriptionModel();
 		userOrg.setDescription(user.getScreenName());
 		userOrg = service.getOrgOfUser(userOrg);
@@ -100,6 +88,9 @@ public class AssignKpiController {
 		OrgModel org = new OrgModel();
 		org.setOrgId(Integer.parseInt(userOrg.getDescCode()));
 		org = service.findOrgById(org);
+		//ส่งไปเพื่อแสดงผลใช้ในการทดสอบ 
+		model.addAttribute("userDetail","User: "+user.getScreenName()+""
+				+ ",  OrgId: "+org.getOrgId());
 		
 		KpiListForm kpiListForm=null;
 		if (!model.containsAttribute("kpiListForm")) {
@@ -160,6 +151,8 @@ public class AssignKpiController {
 			corsList.put(cor.getDescCode(),cor.getDescription());
 		}
 		model.addAttribute("corsList",corsList);
+		model.addAttribute("currentFaculty", (org.getFacultyCode() == null ? 0 : org.getFacultyCode()));
+		model.addAttribute("currentCourse", (org.getCourseCode() == null ? 0 : org.getCourseCode()));
 
 		return "dataEntry/assignKpi";
 	}
@@ -167,6 +160,14 @@ public class AssignKpiController {
 	@RequestMapping("VIEW")
 	@RenderMapping( params="render=showList")
 	public String renderKpiList(PortletRequest request,Model model){
+		User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		OrgModel org = new OrgModel();
+		org.setOrgId(Integer.parseInt(userOrg.getDescCode()));
+		org = service.findOrgById(org);
+		
 		String workOrgId = validParamString(request.getParameter("workOrgId"));
 		OrgModel workOrg = new OrgModel();
 		workOrg.setOrgId(Integer.parseInt(workOrgId));
@@ -182,14 +183,12 @@ public class AssignKpiController {
 		}
 		HierarchyAuthorityForm HieAuth=null;
 		if (!model.containsAttribute("hierarchyAuthorityForm")) {
-			//ชั่วคราว
-			String UserOrgId = "1";
-			OrgModel org = new OrgModel();
-			org.setOrgId(Integer.parseInt(UserOrgId));
+			//OrgModel org = new OrgModel();
+			org.setOrgId(org.getOrgId());
 			org = service.findOrgById(org);
 			HieAuth = new HierarchyAuthorityForm();
 			HieAuth = new HierarchyAuthorityForm();
-			HieAuth.setOrgId(org.getOrgId());
+			HieAuth.setOrgId(workOrg.getOrgId());
 			HieAuth.setLevel(workOrg.getLevelId());
 			HieAuth.setUniversity(workOrg.getUniversityCode());
 			HieAuth.setFaculty(workOrg.getFacultyCode());
@@ -222,10 +221,6 @@ public class AssignKpiController {
 		model.addAttribute("uniList",uniList);
 		
 		Map<String,String> facList = new HashMap<String,String>();
-		/*List<DescriptionModel> facs = service.getFacultyAll(new DescriptionModel());
-		for(DescriptionModel fac : facs){
-			facList.put(fac.getDescCode(),fac.getDescription());
-		}*/
 		List<OrgModel> facs = service.getOrgFacultyOfUniversity(workOrg);
 		for(OrgModel fac : facs){
 			facList.put(fac.getFacultyCode(),fac.getFacultyName());
@@ -237,7 +232,15 @@ public class AssignKpiController {
 		for(DescriptionModel cor : cors){
 			corsList.put(cor.getDescCode(),cor.getDescription());
 		}
-		model.addAttribute("corsList",corsList);		
+		model.addAttribute("corsList",corsList);
+
+		model.addAttribute("currentFaculty", (HieAuth.getFaculty() == null ? 0 : HieAuth.getFaculty()));
+		model.addAttribute("currentCourse", (HieAuth.getCourse() == null ? 0 : HieAuth.getCourse()));
+		model.addAttribute("userDetail","User: "+user.getScreenName()+""
+				+ ",  OrgId: "+org.getOrgId()+""
+				+ ",  CurrentFaculity: "+HieAuth.getFaculty()+""
+				+ ",  CurrentCourse: "+HieAuth.getCourse());
+		
 		return "dataEntry/assignKpi";
 	}
 	//
@@ -757,6 +760,76 @@ public class AssignKpiController {
         lists.put(connJSON);
 		json.put("facultyCourseList", lists);
 		
+		//System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	@ResourceMapping(value="requestOrgFaculty")
+	@ResponseBody 
+	public void getOrgFaculty(ResourceRequest request,ResourceResponse response) throws IOException{
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		
+		//Integer groupId = ParamUtil.getInteger(request, "groupId");
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest =PortalUtil.getOriginalServletRequest(httpReq);
+		Integer levelId = Integer.parseInt(normalRequest.getParameter("levelId"));
+		String university = normalRequest.getParameter("university");
+		
+		User user = (User) request.getAttribute(WebKeys.USER);
+		DescriptionModel userOrg = new DescriptionModel();
+		userOrg.setDescription(user.getScreenName());
+		userOrg = service.getOrgOfUser(userOrg);
+		
+		OrgModel orgModel = new OrgModel();
+		orgModel.setOrgId(Integer.parseInt(userOrg.getDescCode()));
+		orgModel.setLevelId(levelId);
+		orgModel.setUniversityCode(university);
+		//orgModel.setOtherKeySearch(otherKeySearch);
+				
+		List<OrgModel> details = service.getOrgFacultyOfUniversity(orgModel);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		for(OrgModel detail:details ){
+			JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+         	connJSON.put("id", detail.getFacultyCode());
+         	connJSON.put("name", detail.getFacultyName());
+         	lists.put(connJSON);
+         }
+		json.put("lists", lists);
+		
+		/*List<OrgModel> orgId = service.searchOrgIdByOthersCode(orgModel);		
+		OrgModel orgIdModel = new OrgModel();
+		orgIdModel = orgId.get(0);
+		String orgIdStr = orgIdModel.getOrgId().toString();*/
+		
+		//System.out.println(json.toString());
+		response.getWriter().write(json.toString());
+	}
+	
+	@ResourceMapping(value="requestOrgCourse")
+	@ResponseBody
+	public void getOrgCourse(ResourceRequest request,ResourceResponse response) throws IOException{
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		
+		//Integer groupId = ParamUtil.getInteger(request, "groupId");
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest	=	PortalUtil.getOriginalServletRequest(httpReq);
+		Integer levelId = Integer.parseInt( normalRequest.getParameter("levelId") );
+		String uniCode  = normalRequest.getParameter("university");
+		String facultyCode = normalRequest.getParameter("faculty");
+		OrgModel orgModel = new OrgModel();
+		orgModel.setLevelId(levelId);
+		orgModel.setUniversityCode(uniCode);
+		orgModel.setFacultyCode(facultyCode);
+		
+		List<OrgModel> details = service.getOrgCourseOfFaculty(orgModel);
+		 JSONArray lists = 	JSONFactoryUtil.createJSONArray();
+		for(OrgModel detail:details ){
+			JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+         	connJSON.put("id", detail.getCourseCode());
+         	connJSON.put("name", detail.getCourseName());
+         	lists.put(connJSON);
+         }     	
+		json.put("lists", lists);
 		//System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
