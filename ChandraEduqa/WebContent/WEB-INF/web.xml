@@ -15,7 +15,6 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>
     /WEB-INF/context/common.xml
-   <!--  /WEB-INF/context/research-data-hibernate.xml  -->
     </param-value>
   </context-param>
   <listener>

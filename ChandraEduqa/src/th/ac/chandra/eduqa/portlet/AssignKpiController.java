@@ -24,41 +24,34 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import org.springframework.web.portlet.bind.PortletRequestDataBinder;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
-import th.ac.chandra.eduqa.form.AssignTargetForm;
-import th.ac.chandra.eduqa.form.CdsForm;
-import th.ac.chandra.eduqa.form.HierarchyAuthorityForm;
-import th.ac.chandra.eduqa.form.KpiForm;
-import th.ac.chandra.eduqa.form.KpiListForm;
-import th.ac.chandra.eduqa.form.ResultMonthForm;
-import th.ac.chandra.eduqa.mapper.CustomObjectMapper;
-import th.ac.chandra.eduqa.mapper.ResultService;
-import th.ac.chandra.eduqa.model.*;
-import th.ac.chandra.eduqa.service.EduqaService;
-import th.ac.chandra.eduqa.xstream.common.Paging;
-
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Organization;
-import com.liferay.portal.model.Role;
 import com.liferay.portal.model.User;
-import com.liferay.portal.service.OrganizationLocalServiceUtil;
-import com.liferay.portal.service.RoleServiceUtil;
 import com.liferay.portal.util.PortalUtil;
+
+import th.ac.chandra.eduqa.form.AssignTargetForm;
+import th.ac.chandra.eduqa.form.HierarchyAuthorityForm;
+import th.ac.chandra.eduqa.form.KpiForm;
+import th.ac.chandra.eduqa.form.KpiListForm;
+import th.ac.chandra.eduqa.mapper.ResultService;
+import th.ac.chandra.eduqa.model.DescriptionModel;
+import th.ac.chandra.eduqa.model.KpiLevelModel;
+import th.ac.chandra.eduqa.model.KpiModel;
+import th.ac.chandra.eduqa.model.KpiResultModel;
+import th.ac.chandra.eduqa.model.KpiTargetModel;
+import th.ac.chandra.eduqa.model.OrgModel;
+import th.ac.chandra.eduqa.model.SysYearModel;
+import th.ac.chandra.eduqa.service.EduqaService;
+import th.ac.chandra.eduqa.xstream.common.Paging;
 
 @Controller("assignKpiController")
 @RequestMapping("VIEW")
@@ -67,17 +60,14 @@ public class AssignKpiController {
 	@Autowired
 	@Qualifier("eduqaServiceWSImpl")
 	private EduqaService service;
-	private Integer activeYear;
-	@Autowired
-	private CustomObjectMapper customObjectMapper;
 
-	private String msg = "start";
 	@InitBinder
 	public void initBinder(PortletRequestDataBinder binder, PortletPreferences preferences) {
 		logger.debug("initBinder");
 		binder.registerCustomEditor(byte[].class, new ByteArrayMultipartFileEditor());	
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping("VIEW") 
 	public String iniPage(PortletRequest request,Model model){
 		User user = (User) request.getAttribute(WebKeys.USER);
@@ -157,6 +147,8 @@ public class AssignKpiController {
 		return "dataEntry/assignKpi";
 	}
 	
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping("VIEW")
 	@RenderMapping( params="render=showList")
 	public String renderKpiList(PortletRequest request,Model model){
@@ -172,6 +164,7 @@ public class AssignKpiController {
 		OrgModel workOrg = new OrgModel();
 		workOrg.setOrgId(Integer.parseInt(workOrgId));
 		workOrg = service.findOrgById(workOrg);
+		
 		// handle mapping form		
 		KpiListForm kpiListForm=null;
 		if (!model.containsAttribute("kpiListForm")) {
@@ -183,6 +176,7 @@ public class AssignKpiController {
 		}
 		HierarchyAuthorityForm HieAuth=null;
 		if (!model.containsAttribute("hierarchyAuthorityForm")) {
+			
 			//OrgModel org = new OrgModel();
 			org.setOrgId(org.getOrgId());
 			org = service.findOrgById(org);
@@ -193,7 +187,7 @@ public class AssignKpiController {
 			HieAuth.setUniversity(workOrg.getUniversityCode());
 			HieAuth.setFaculty(workOrg.getFacultyCode());
 			HieAuth.setCourse(workOrg.getCourseCode());
-			model.addAttribute("hierarchyAuthorityForm",	HieAuth);
+			model.addAttribute("hierarchyAuthorityForm", HieAuth);
 		}else{
 			HieAuth = (HierarchyAuthorityForm)model.asMap().get("hierarchyAuthorityForm");
 		}
@@ -243,7 +237,8 @@ public class AssignKpiController {
 		
 		return "dataEntry/assignKpi";
 	}
-	//
+	
+	
 	@RequestMapping(params="action=doSubmitFilter") 
 	public void actionSubmitFilter(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response
 			,@ModelAttribute("HierarchyAuthorityForm") HierarchyAuthorityForm HieAuth,BindingResult result,Model model){
@@ -360,9 +355,12 @@ public class AssignKpiController {
 			return "dataEntry/assignKpi";
 	}
 	// detail request
+	
+	
 	/* #####  function */
 	private List<KpiListForm> convertAccordion(List<KpiResultModel> kpis){
 		ListIterator<KpiResultModel> kpisIter = kpis.listIterator();
+		
 		//required sort data from service;
 		List<KpiResultModel> listKpi = new ArrayList<KpiResultModel>();
 		KpiListForm form = new KpiListForm();
@@ -397,42 +395,8 @@ public class AssignKpiController {
 		}	// end while iterator 
 		return forms;
 	}
-	private List<KpiListForm> convertAccordion2(List<KpiModel> kpis){
-		ListIterator<KpiModel> kpisIter = kpis.listIterator();
-		//required sort data from service;
-		List<KpiModel> listKpi = new ArrayList<KpiModel>();
-		KpiListForm form = new KpiListForm();
-		List<KpiListForm> forms = new ArrayList<KpiListForm>();
-		Integer previousId = null;
-		while(kpisIter.hasNext()){
-			KpiModel kpi = (KpiModel) kpisIter.next();
-			if(!kpi.getStructureId().equals(previousId) || previousId==null){ // if not
-				form = new KpiListForm();
-				form.setStructureName(kpi.getStructureName());
-				listKpi = new ArrayList<KpiModel>();
-				listKpi.add(kpi);
-			}
-			else{ // equals previousId
-				listKpi.add(kpi);
-			}
-			//
-			if(kpisIter.hasNext()){
-				Integer current = kpi.getStructureId();
-				KpiModel next = (KpiModel) kpisIter.next();
-				if(!next.getStructureId().equals(current)){
-					form.setKpis(listKpi);
-					forms.add(form);
-				}
-				kpisIter.previous();
-			}else{ // last
-				form.setKpis(listKpi);
-				forms.add(form);
-			}
-			// last thing 
-			previousId = kpi.getStructureId();
-		}	// end while iterator 
-		return forms;
-	}
+		
+	
 	@ResourceMapping(value = "doSaveTarget" )
 	@ResponseBody 
 	public void saveTargetAjax(ResourceRequest request,ResourceResponse response) 
@@ -611,6 +575,7 @@ public class AssignKpiController {
 		System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
+	
 	@ResourceMapping(value="doInsertResult")
 	@ResponseBody 
 	public void saveResultOfOrg(ResourceRequest request,ResourceResponse response) 
@@ -621,12 +586,12 @@ public class AssignKpiController {
 		JSONObject json = JSONFactoryUtil.createJSONObject();
 		JSONObject header = JSONFactoryUtil.createJSONObject();
 		JSONObject content = JSONFactoryUtil.createJSONObject();
-		 JSONArray orgList = 	JSONFactoryUtil.createJSONArray();
 		String status = "";
-		Integer size = 0;
 		Integer success = 0;
 		User user = (User) request.getAttribute(WebKeys.USER);
-		if( normalRequest.getParameter("orgId")!=null && normalRequest.getParameter("orgId")!=""){
+		
+		/* เป็นการบันทึกข้อมูล Assign แบบเดิม คือลบข้อมูลทั้งหมดก่อน แล้วค่อยบันทึกลงไปใหม่ */
+		/*if( normalRequest.getParameter("orgId")!=null && normalRequest.getParameter("orgId")!=""){
 			String kpis = normalRequest.getParameter("kpis");
 			Integer orgId = Integer.parseInt(normalRequest.getParameter("orgId"));
 			String[] kpispart = kpis.split("-");
@@ -649,7 +614,79 @@ public class AssignKpiController {
 				}else{  status = rsDel.getMsgDesc(); }
 		}else{
 			status = "invalid parameters";
+		}*/
+		
+		/* แบบใหม่จะลบเฉพาะที่ลบ บันทึกเท่าที่บันทึก */
+		if( normalRequest.getParameter("orgId")!=null && normalRequest.getParameter("orgId")!=""){
+			Integer orgId = Integer.parseInt(normalRequest.getParameter("orgId"));
+			String deleteKpis = normalRequest.getParameter("deleteKpis");
+			String insertKpis = normalRequest.getParameter("insertKpis");
+			Integer deleteStatusCode = null, insertStatusCode = null; 
+			String deleteStatusDesc = "", insertStatusDesc = "";
+			
+			/*delete result of org before insert*/ 
+			if(deleteKpis != null && deleteKpis != ""){
+				String[] kpisPart = deleteKpis.split("-");
+				List<Integer> kpisList = new ArrayList<Integer>();
+				for(String part : kpisPart){
+					kpisList.add(Integer.parseInt(part));
+				}
+				
+				KpiResultModel kpiResultM = new KpiResultModel();
+				kpiResultM.setOrgId(orgId);
+				kpiResultM.setKpiIds(kpisList);
+				kpiResultM.setCreatedBy(user.getFullName());
+				kpiResultM.setUpdatedBy(user.getFullName());
+				
+				ResultService rsDel = service.deleteResultByOrg(kpiResultM);
+				if(!rsDel.isError()){
+					deleteStatusCode = 1;
+					deleteStatusDesc = "ลบข้อมูล kpi_result ที่มี kpi_id in("+deleteKpis+") เสร็จสิ้น";
+				}else{
+					deleteStatusCode = 0;
+					deleteStatusDesc = rsDel.getMsgDesc();
+				}
+			}else{
+				deleteStatusCode = 1;
+			}
+			
+			//Save kpi_result
+			if(insertKpis != null && insertKpis != ""){
+				String[] kpisPart = insertKpis.split("-");
+				List<Integer> kpisList = new ArrayList<Integer>();
+				for(String part : kpisPart){
+					kpisList.add(Integer.parseInt(part));
+				}
+				
+				KpiResultModel kpiResultM = new KpiResultModel();
+				kpiResultM.setOrgId(orgId);
+				kpiResultM.setKpiIds(kpisList);
+				kpiResultM.setCreatedBy(user.getFullName());
+				kpiResultM.setUpdatedBy(user.getFullName());
+				
+				ResultService rsDel = service.saveResultOfOrg(kpiResultM);
+				if(!rsDel.isError()){
+					insertStatusCode = 1;
+					insertStatusDesc = "บันทึกข้อมูล kpi_result ที่มี kpi_id in("+insertKpis+") เสร็จสิ้น";
+				}else{
+					insertStatusCode = 0;
+					insertStatusDesc = rsDel.getMsgDesc();
+				}
+			}else{
+				insertStatusCode = 1;
+			}
+			
+			//ตรวจสอบการทำงานในส่วนการลบ และบันทึก
+			if(insertStatusCode == 1 && deleteStatusCode == 1){
+				success = 1;
+			}else{
+				status = "insertStatusDesc: "+insertStatusDesc+",  deleteStatusDesc: "+deleteStatusDesc;
+			}
+			
+		}else{
+			status = "invalid parameters";
 		}
+		
 		content.put("lists","");
 		header.put("status", status);
 		header.put("success",success );
@@ -658,6 +695,7 @@ public class AssignKpiController {
 		System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
+	
 	@ResourceMapping(value="doReloadResult")
 	@ResponseBody 
 	public void reloadResultOfOrg(ResourceRequest request,ResourceResponse response) 
@@ -796,7 +834,7 @@ public class AssignKpiController {
          }
 		json.put("lists", lists);
 		
-		/*List<OrgModel> orgId = service.searchOrgIdByOthersCode(orgModel);		
+		/*List<OrgModel> orgId = service.searchOrgIdByOthersCode(orgModel);
 		OrgModel orgIdModel = new OrgModel();
 		orgIdModel = orgId.get(0);
 		String orgIdStr = orgIdModel.getOrgId().toString();*/

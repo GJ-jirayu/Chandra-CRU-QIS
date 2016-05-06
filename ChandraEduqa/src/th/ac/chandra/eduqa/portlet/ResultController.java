@@ -85,8 +85,8 @@ public class ResultController {
 	@Autowired
 	@Qualifier("eduqaServiceWSImpl")
 	private EduqaService service;
-	private String uploadDirectory = "/home/pwirun/app/Chandra/fileupload/";
-	//private String uploadDirectory = "C:\\Users\\Administrator\\My Servers\\QIS\\FileServer\\fileupload";
+	//private String uploadDirectory = "/home/pwirun/app/Chandra/fileupload/";
+	private String uploadDirectory = "C:\\Users\\Administrator\\My Servers\\QIS\\FileServer\\fileupload";
 	private String directoryDelimitor;
 	
 	@Autowired

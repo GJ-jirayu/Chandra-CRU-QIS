@@ -48,6 +48,7 @@ public class KpiResultModel extends ImakeXML implements Serializable{
 	private Timestamp updatedDate;
 	private List<Integer> kpiIds;
 	private String hasResult;
+	private Integer active;
 	
 	public KpiResultModel() {
 	}
@@ -346,6 +347,14 @@ public class KpiResultModel extends ImakeXML implements Serializable{
 
 	public void setHasResult(String hasResult) {
 		this.hasResult = hasResult;
-	}	
+	}
+
+	public Integer getActive() {
+		return active;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
+	}
 	
 }

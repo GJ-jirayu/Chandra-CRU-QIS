@@ -190,7 +190,7 @@
           fac.prop("disabled",true); 
           cou.prop("disabled",true); 
         }else if(lv==2){ 
-          uni.prop("disabled",true);
+          uni.prop("disabled",false);
           fac.prop("disabled",false); 
           cou.prop("disabled",true); 
         }else if(lv==3){ 
@@ -479,7 +479,7 @@
     .rectred{ background-color:#FF0000;}
     .rectgreen{ background-color:#00FF00;}
     #paramMain .boxFilter>span{ font-size:105%;display:inline-block; text-align:right;}
-    #paramMain .boxFilter>select.filterOrg{ min-width:200px; } 
+
     .redBorder{
       border-color: #66afe9;
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(255, 44, 44, 0.7);
@@ -508,45 +508,45 @@
         <form:input type="hidden" id="monthId" path="monthId" />
         <div class="boxFilter span3" >
           <span>ปี พ.ศ.:</span>
-          <form:select id="paramYear"  path="calendarYear" class="filterYear">
+          <form:select id="paramYear"  path="calendarYear" class="filterYear input-small">
             <form:options items="${years}" />         
           </form:select>
         </div>
         <div class="boxFilter span2">
           <span>เดือน:</span>
-          <form:select id="paramMonth" class="filterMonth"  path="monthNo" >
+          <form:select id="paramMonth" class="filterMonth input-small"  path="monthNo" >
               <form:options items="${months}" />
           </form:select>
         </div>
         <div class="boxFilter span2" >
           <span>กลุ่มตัวบ่งชี้:</span>
-          <form:select id="paramGroup"  class="filterGroup" path="groupId">
+          <form:select id="paramGroup"  class="filterGroup input-small" path="groupId">
             <form:options items="${groups}" />
           </form:select>
         </div>
         <div class="boxFilter span3">
           <span>ระดับตัวบ่งชี้:</span>
-          <form:select id="paramLevel" class="filterLevel" path="identify.level" onchange="ParamLevelChange(this)">
+          <form:select id="paramLevel" class="filterLevel input-small" path="identify.level" onchange="ParamLevelChange(this)">
                 <form:options items="${levels}" />
             </form:select>
         </div>
         <div class="boxFilter span3" >
           <span>สถาบัน:</span>
-          <form:select id="paramUniversity" class="filterUniversity filterOrg"  path="identify.university" onchange="ParamChange(this,'university')">
+          <form:select id="paramUniversity" class="filterUniversity input-large"  path="identify.university" onchange="ParamChange(this,'university')">
                 <!-- <form:option value="0" label=""/> -->
                 <form:options items="${universitys}" />
             </form:select>
         </div>
         <div class="boxFilter span4">
           <span>คณะ:</span>
-          <form:select id="paramFaculty" class="filterFaculty filterOrg"  path="identify.faculty" onchange="ParamChange(this,'faculty')">
+          <form:select id="paramFaculty" class="filterFaculty input-xlarge"  path="identify.faculty" onchange="ParamChange(this,'faculty')">
                 <!-- <form:option value="" label=""/> -->
                 <!-- <form:options items="${facultys}" /> -->
             </form:select>
         </div>
         <div class="boxFilter span4">
           <span>หลักสูตร:</span>
-          <form:select id="paramCourse" path="identify.course"  class="filterCourse filterOrg" onchange="ParamChange(this,'course')">
+          <form:select id="paramCourse" path="identify.course"  class="filterCourse input-xlarge" onchange="ParamChange(this,'course')">
                 <!-- <form:option value="" label=""/> -->
                 <!-- <form:options items="${courses}" /> -->
             </form:select>

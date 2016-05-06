@@ -53,6 +53,7 @@
     		// initial active select
     		ToggleEnableSelection();
     		renderParameterCtrl(getUserRoleLevelID());
+    		KpiResultDefalutValueTemp();
 
     	});
 
@@ -288,17 +289,41 @@
    	 		}
    	 	}
    	 	function insertResult(){
-   	 		var arId = [];
+   	 		var currentValArr = [];
    	 		$("#assignKpi_accordion table.tableGridLv>tbody>tr").each(function(){
    	 			if($(this).children("td:nth-child(2)").children('input[type="checkbox"]').is(':checked')){
-   	   	 			arId.push($(this).children("td:nth-child(1)").html());	
+   	   	 			currentValArr.push($(this).children("td:nth-child(1)").html());	
    	 			}
    	 		});
+
+   	 		/*ทำการหาข้อมูลที่ต้องการจะลบ (Base - Current)*/
+   	 		var baseValArr = $("input#cbxBaseVal").val().split("-");
+   	 		var deleteVal = [];
+   	 		$.each( baseValArr, function( key, value ) {
+			    var index = $.inArray( value, currentValArr );
+			    if( index == -1 ) {
+			        deleteVal.push(value);
+			    }
+			});
+
+			/*ทำการหาข้อมูลที่ต้องการ insert (Base - Current)*/
+			var insertVal = [];
+			$.each( currentValArr, function( key, value ) {
+			    var index = $.inArray( value, baseValArr );
+			    if( index == -1 ) {
+			        insertVal.push(value);
+			    }
+			});
+
+			console.log("deleteVal:"+deleteVal.join("-")+", insertVal:"+insertVal.join("-"));
+
    	 		var orgId = $("#kpiListForm #orgId").val();
 	   	 	$.ajax({
 	   	 		dataType: "json",
 	   	 		url:"<%=doInsertResult%>",
-	   	 		data: { "orgId":orgId ,"kpis":arId.join('-') },
+	   	 		data: { "orgId":orgId ,"deleteKpis":deleteVal.join("-"), "insertKpis":insertVal.join("-") },
+	   	 		//data: { "orgId":orgId ,"kpis":currentValArr.join("-")},	   	 		
+	   	 		async: false,
 	   	 		success:function(data){
 	   	 			//alert(JSON.stringify(data));
 	   	 			if(data['header']['success']>0){
@@ -315,6 +340,8 @@
 	   	 			$('div#pageMessage').css( "display", "block" ).fadeOut( 5000 );
 	   	 		}
 	   	 	});
+
+	   	 	KpiResultDefalutValueTemp(); 
    	 	}
    	 	function reloadResult(){
    	 		var orgId = $("#kpiListForm #orgId").val();
@@ -364,6 +391,16 @@
 					}
 				});
 	}
+
+	function KpiResultDefalutValueTemp(){
+		var arId = [];
+   	 	$("#assignKpi_accordion table.tableGridLv>tbody>tr").each(function(){
+   	 		if($(this).children("td:nth-child(2)").children('input[type="checkbox"]').is(':checked')){
+   	   			arId.push($(this).children("td:nth-child(1)").html());	
+   	 		}
+   	 	});
+   	 	$("input#cbxBaseVal").empty().val(arId.join('-'));
+	}
 	
 </script>
 <style type="text/css">
@@ -400,6 +437,8 @@
 </head>
 
 <body>
+	<!-- Input สำหรับเก็บ kpi_result id เดิมที่มีอยู่ใน database -->
+	<input type="hidden" id="cbxBaseVal" value=""></input> <br/>
 
 	<%-- Debug information 
 	userDetail: ${userDetail} <br/>

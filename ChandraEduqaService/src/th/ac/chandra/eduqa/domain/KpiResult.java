@@ -122,7 +122,10 @@ public class KpiResult implements Serializable {
 	
 	@Column(name="UPDATED_DTTM")
 	private Timestamp updatedDate;
-
+	
+	@Column(name="ACTIVE")
+	private Integer active;
+	
 	/*//bi-directional many-to-one association to ResearcherGroup
 	@OneToMany(mappedBy="researchGroup")
 	private List<ResearcherGroup> researcherGroups;*/
@@ -408,5 +411,13 @@ public class KpiResult implements Serializable {
 
 	public void setUpdatedDate(Timestamp updatedDate) {
 		this.updatedDate = updatedDate;
+	}
+
+	public Integer getActive() {
+		return active;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
 	}
 }
