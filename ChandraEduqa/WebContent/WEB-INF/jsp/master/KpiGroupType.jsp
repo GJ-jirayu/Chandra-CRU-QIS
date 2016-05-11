@@ -3,6 +3,7 @@
 <%@ page import="javax.portlet.PortletURL" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page import="java.sql.*" %>
+<%@ taglib prefix="chandraFn" uri="http://localhost:8080/web/function" %>
 
 <portlet:actionURL var="formActionInsert"> <portlet:param name="action" value="doInsert"/> </portlet:actionURL> 
 <portlet:actionURL var="formActionEdit"> <portlet:param name="action" value="doEdit"/> </portlet:actionURL> 
@@ -325,7 +326,7 @@
 							<tr>
 								<td class="padL">${(loop.count+((PageCur-1)*pageSize))}</td>
 								<td>${groupType.groupTypeId}</td>
-								<td>${groupType.groupTypeName} </td>
+								<td>${chandraFn:nl2br(groupType.groupTypeName)} </td>
 								<td>${groupType.academicYear}</td>
 								<td align="center">
 									<img src="<c:url value="/resources/images/edited.png"/>" width="22" height="22" onClick="actEdit(this)" style="cursor: pointer;">

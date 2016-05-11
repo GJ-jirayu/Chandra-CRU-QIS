@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ page import="javax.portlet.PortletURL"%>
+<%@ taglib prefix="chandraFn" uri="http://localhost:8080/web/function" %>
 
 <portlet:actionURL var="formActionSubmitFilter">
 	<portlet:param name="action" value="doSubmitFilter" />
@@ -517,11 +518,11 @@
 													<input type="checkbox" name="isUsed" value="1">
 												</c:otherwise>
 											</c:choose></td>
-										<td>${kpi.kpiGroupShortName}</td>
-										<td>${kpi.kpiName}</td>
-										<td>${kpi.calendarTypeName}</td>
-										<td class="center">${kpi.periodName}</td>
-										<td class="center">${kpi.kpiUomName}</td>
+										<td>${chandraFn:nl2br(kpi.kpiGroupShortName)}</td>
+										<td>${chandraFn:nl2br(kpi.kpiName)}</td>
+										<td>${chandraFn:nl2br(kpi.calendarTypeName)}</td>
+										<td class="center">${chandraFn:nl2br(kpi.periodName)}</td>
+										<td class="center">${chandraFn:nl2br(kpi.kpiUomName)}</td>
 										<td class="center"><c:choose>
 												<c:when test="${kpi.resultId>0}">												
 													<c:choose>

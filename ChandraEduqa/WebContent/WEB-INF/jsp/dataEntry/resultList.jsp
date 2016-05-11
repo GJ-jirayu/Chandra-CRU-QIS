@@ -5,6 +5,7 @@
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="java.sql.*" %>
+<%@ taglib prefix="chandraFn" uri="http://localhost:8080/web/function" %>
 
 <%-- <portlet:actionURL var="listTableInsert"> 
   <portlet:param name="action" value="doInsert"/>
@@ -600,11 +601,11 @@
                       </c:otherwise>
                   </c:choose>
                         </td>
-                        <td>${kpiResult.kpiGroupName}</td>  
-                        <td>${kpiResult.kpiName}</td>  
-                        <td>${kpiResult.calendarTypeName}</td> 
-                        <td>${kpiResult.periodName}</td>
-                        <td>${kpiResult.kpiUomName}</td>  
+                        <td>${chandraFn:nl2br(kpiResult.kpiGroupName)}</td>  
+                        <td>${chandraFn:nl2br(kpiResult.kpiName)}</td>  
+                        <td>${chandraFn:nl2br(kpiResult.calendarTypeName)}</td> 
+                        <td>${chandraFn:nl2br(kpiResult.periodName)}</td>
+                        <td>${chandraFn:nl2br(kpiResult.kpiUomName)}</td>  
                         <td>${kpiResult.targetValue}</td>
                         <td class="column-center"><button class="icon" onClick="actResult(this)"><img  src="<c:url value="/resources/images/edited.png"/>"></button>
                     </td>

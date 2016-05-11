@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <%@ page contentType="text/html; charset=utf-8" %> 
 <%@ page import="javax.portlet.PortletURL"%>
+<%@ taglib prefix="chandraFn" uri="http://localhost:8080/web/function" %>
 
 <portlet:actionURL var="formActionNew">
 	<portlet:param name="action" value="doNew"/>
@@ -158,10 +159,10 @@
 		       				<c:forEach items="${accordion.kpis}" var="kpi" varStatus="loop"> 
 		                	<tr> 
 		                		<td>${kpi.kpiId}</td>
-		                		<td>${kpi.groupName}</td>  
-			               	 	<td>${kpi.kpiName}</td>  
-			               	 	<td>${kpi.criteriaTypeName}</td> 
-			               	 	<td>${kpi.typeName}</td>  
+		                		<td>${chandraFn:nl2br(kpi.groupName)}</td>  
+			               	 	<td>${chandraFn:nl2br(kpi.kpiName)}</td>  
+			               	 	<td>${chandraFn:nl2br(kpi.criteriaTypeName)}</td> 
+			               	 	<td>${chandraFn:nl2br(kpi.typeName)}</td>  
 			                	<td style="text-align: center;">
 			                		<img height="24" width="24"  onClick="actEdit(this)"  src="<c:url value="/resources/images/edited.png"/>">
 		       					</td>	

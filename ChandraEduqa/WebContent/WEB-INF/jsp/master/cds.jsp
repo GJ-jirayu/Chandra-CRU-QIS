@@ -1,6 +1,8 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <%@ page contentType="text/html; charset=utf-8" %> 
 <%@ page import="javax.portlet.PortletURL"%>
+<%@ taglib prefix="chandraFn" uri="http://localhost:8080/web/function" %>
+
 <portlet:actionURL var="formActionNew">
 	<portlet:param name="action" value="doNew"/>
 </portlet:actionURL>
@@ -287,8 +289,8 @@
 					<c:forEach items="${listCds}" var="cds" varStatus="loop">
 						<tr>
 							<td>${cds.cdsId}</td>
-							<td>${cds.cdsName}</td>
-							<td>${cds.levelDesc}</td>
+							<td>${chandraFn:nl2br(cds.cdsName)}</td>
+							<td>${chandraFn:nl2br(cds.levelDesc)}</td>
 							<td style="text-align:center">
 								<img height="24" width="24" src="<c:url value="/resources/images/edited.png"/>" onClick="actEdit(this)" >
 							</td>

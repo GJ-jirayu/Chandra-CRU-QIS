@@ -3,6 +3,7 @@
 <%@ page import="javax.portlet.PortletURL" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page import="java.sql.*" %>
+<%@ taglib prefix="chandraFn" uri="http://localhost:8080/web/function" %>
 
 <portlet:actionURL var="formActionInsert">
 	<portlet:param name="action" value="doInsert"/>
@@ -397,9 +398,9 @@
 						<c:forEach items="${strucs}" var="struc" varStatus="loop">
 							<tr>
 								<td style="text-align:center;">${(loop.count+((PageCur-1)*pageSize))}</td>
-								<td>${struc.strucName} </td>
-								<td>${struc.strucTypeName}</td>
-								<td>${struc.groupName}</td>					
+								<td>${chandraFn:nl2br(struc.strucName)} </td>
+								<td>${chandraFn:nl2br(struc.strucTypeName)}</td>
+								<td>${chandraFn:nl2br(struc.groupName)}</td>					
 								<td align="center">
 									<img src="<c:url value="/resources/images/edited.png"/>" width="22" height="22" onClick="actEdit(this)" style="cursor: pointer;">
 								</td>
