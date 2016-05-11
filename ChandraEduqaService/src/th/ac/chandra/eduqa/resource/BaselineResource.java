@@ -200,6 +200,28 @@ public class BaselineResource extends BaseResource {
 							System.out.print(updateRecord);
 							return returnUpdateRecord(entity,xsource,updateRecord);
 						}
+						else if( serviceName.equals( ServiceConstant.BASELINE_DELETE_BY_KPIID)){
+							ImakeResultMessage imakeMessage = new ImakeResultMessage();
+							List<BaselineModel> list = new ArrayList<BaselineModel>();
+							int updateRecord = 0;
+							if(xsource.getResultType().equals("quan")){
+								BaselineQuan quan = new BaselineQuan();
+								quan.setKpiId(xsource.getKpiId());
+								updateRecord = service.deleteBaselineQuanByKpiId(quan);
+							}
+							/*else if(xsource.getResultType().equals("range")){
+								BaselineRange range = new BaselineRange();
+								range.setBaselineId(xsource.getBaselineId());
+								updateRecord = service.deleteRangeBaseline(range);
+							}*/
+							else if(xsource.getResultType().equals("spec")){
+								/*BaselineSpec spec = new BaselineSpec();
+								spec.setBaselineId(xsource.getBaselineId());*/
+								Integer kpiId = xsource.getKpiId();
+								updateRecord = service.deleteBaselineSpecDetailByKpiId(kpiId);
+							}
+							return returnUpdateRecord(entity,xsource,updateRecord);
+						}
 						// end serviceName case handle
 					}
 				}

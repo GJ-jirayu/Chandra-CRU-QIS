@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 
 import th.ac.chandra.eduqa.constant.ServiceConstant;
+import th.ac.chandra.eduqa.domain.CriteriaStandard;
 import th.ac.chandra.eduqa.domain.Kpi;
+import th.ac.chandra.eduqa.domain.KpiXCds;
 import th.ac.chandra.eduqa.domain.SysYear;
 import th.ac.chandra.eduqa.model.CdsModel;
 import th.ac.chandra.eduqa.model.KpiModel;
@@ -141,7 +143,14 @@ public class KpiResource extends BaseResource {
 							}
 							return getRepresentation(entity, imakeMessage, xstream);
 						}
-					} else {
+						else if(serviceName.equals(ServiceConstant.KPI_CDS_MAPPING_DELETE)){
+							KpiXCds std = new KpiXCds();
+							std.setKpiId(xsource.getKpiId());
+							Integer updateRecord = service.deleteKpiXCds(std);
+							return returnUpdateRecord(entity,xsource,updateRecord);
+						}
+					} 
+					else {
 					}
 					// end serviceName case handle
 				}

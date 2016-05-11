@@ -242,4 +242,11 @@ public interface EduqaService {
 
 	public Integer generateSysMonth(SysYearModel model) throws DataAccessException ;
 	
+	public Integer deleteKpiXCds(KpiXCds model) throws DataAccessException;
+	public Integer deleteBaselineSpecDetailByKpiId(Integer kpiId) throws DataAccessException;
+	public Integer deleteBaselineQuanByKpiId(BaselineQuan model) throws DataAccessException;
+	public Integer deleteCriteriaStandardByKpiI(CriteriaStandard model) throws DataAccessException;
+	public Integer deleteKpiResultByKpiId(KpiResultModel model) throws DataAccessException;
+	public Integer deleteRangeBaselineByKpiId(KpiResultModel model) throws DataAccessException;
+	
 }

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import th.ac.chandra.eduqa.constant.ServiceConstant;
 import th.ac.chandra.eduqa.domain.KpiResult;
+import th.ac.chandra.eduqa.domain.KpiXCds;
 import th.ac.chandra.eduqa.domain.SysYear;
 import th.ac.chandra.eduqa.model.KpiResultModel;
 import th.ac.chandra.eduqa.service.EduqaService;
@@ -201,6 +202,21 @@ public class KpiResultResource extends BaseResource {
 							imakeMessage.setResultListObj(models);
 							return getRepresentation(entity, imakeMessage, xstream);
 						}
+						
+						else if(serviceName.equals(ServiceConstant.KPI_RESULT_DELETE_BY_KPIID)){
+							KpiResultModel kpiResultModel = new KpiResultModel();
+							kpiResultModel.setKpiId(xsource.getKpiId());
+							Integer updateRecord = service.deleteKpiResultByKpiId(kpiResultModel);
+							return returnUpdateRecord(entity,xsource,updateRecord);
+						}
+						
+						else if(serviceName.equals(ServiceConstant.RANGE_BASELINE_DELETE_BY_KPIID)){
+							KpiResultModel kpiResultModel = new KpiResultModel();
+							kpiResultModel.setKpiId(xsource.getKpiId());
+							Integer updateRecord = service.deleteRangeBaselineByKpiId(kpiResultModel);
+							return returnUpdateRecord(entity,xsource,updateRecord);
+						}
+						
 					} else {
 					}
 					// end serviceName case handle

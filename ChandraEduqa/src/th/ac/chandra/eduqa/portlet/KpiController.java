@@ -30,6 +30,7 @@ import org.springframework.web.portlet.bind.PortletRequestDataBinder;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
+import th.ac.chandra.eduqa.domain.CriteriaStandard;
 import th.ac.chandra.eduqa.form.CdsForm;
 import th.ac.chandra.eduqa.form.KpiForm;
 import th.ac.chandra.eduqa.form.KpiListForm;
@@ -900,7 +901,7 @@ public class KpiController {
              }
 		}
 		header.put("size", size);
-		header.put("currentPage", normalRequest.getParameter("pageNo") );
+		header.put("currentPage", normalRequest.getParameter("pageNo"));
 		header.put("pageTotal", pageTotal);
 		content.put("lists",dataList);
 		json.put("header",header);
@@ -908,6 +909,93 @@ public class KpiController {
 		System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
+	
+	
+	@ResourceMapping(value="doGetCriteraiMethod")
+	@ResponseBody 
+	public void doGetCriteraiMethod(ResourceRequest request,ResourceResponse response) 
+			throws IOException{
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest	=	PortalUtil.getOriginalServletRequest(httpReq);		
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		Integer criteraiTypeId = Integer.parseInt(normalRequest.getParameter("criteraiTypeId"));
+		
+		DescriptionModel descriptionModel = new DescriptionModel();
+		descriptionModel.setGroupId(criteraiTypeId);
+		List<DescriptionModel> crMthods = service.getCriMethods(descriptionModel);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		for(DescriptionModel crMethod: crMthods){
+			JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+         	connJSON.put("id", crMethod.getDescCode());
+         	connJSON.put("name", crMethod.getDescription());
+         	lists.put(connJSON);
+        }
+		json.put("lists", lists);
+		response.getWriter().write(json.toString());
+	}
+	
+	
+	@ResourceMapping(value="doDeleteKpiChildTable")
+	@ResponseBody 
+	public void doDeleteKpiChildTable(ResourceRequest request,ResourceResponse response) 
+			throws IOException{
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);		
+		Integer kpiId = Integer.parseInt(normalRequest.getParameter("kpiId"));
+		
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		
+		/* Delete kpi_result before other table */
+		KpiResultModel kpiResultModel = new KpiResultModel();
+		kpiResultModel.setKpiId(kpiId);
+		Integer delCountKpiResult = service.deleteKpiResultByKpiId(kpiResultModel);
+		Integer delCountRange = service.deleteRangeBaselineByKpiId(kpiResultModel);
+		
+		if(delCountKpiResult != -1){
+			BaselineModel baselineModel = new BaselineModel();
+			baselineModel.setKpiId(kpiId);
+			baselineModel.setResultType("spec");
+			Integer delCountBaseSpec = service.deleteBaselineSpecDetailByKpiId(baselineModel);
+			
+			baselineModel.setResultType("quan");
+			Integer delCountBaseQuan = service.deleteBaselineQuanByKpiId(baselineModel);
+			
+			CriteriaModel criteriaModel = new CriteriaModel();
+			criteriaModel.setKpiId(kpiId);
+			Integer delCountCriQuan = service.deleteCriteriaStandardByKpiI(criteriaModel);
+			
+			KpiModel kpiModel = new KpiModel();
+			kpiModel.setKpiId(kpiId);
+			Integer delCountKpiCds = service.deleteKpiXCds(kpiModel);		
+			
+			JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+			if(delCountKpiResult != -1
+					&& delCountRange != -1
+					&& delCountBaseSpec != -1
+					&& delCountBaseQuan != -1
+					&& delCountCriQuan != -1
+					&& delCountKpiCds != -1){
+				connJSON.put("statusCode", "1");
+				connJSON.put("statusDesc", "Processe Success.");
+			}else{
+				connJSON.put("statusCode", "0");
+				connJSON.put("statusDesc", "Processe Error!! --> "
+						+"delCountKpiResult:"+delCountKpiResult
+						+", delCountRange:"+delCountRange
+						+", delCountBaseSpec:"+delCountBaseSpec
+						+", delCountBaseQuan:"+delCountBaseQuan
+						+", delCountCriQuan:"+delCountCriQuan
+						+", delCountKpiCds:"+delCountKpiCds);
+			}
+			lists.put(connJSON);
+		}
+		
+		json.put("lists", lists);
+		response.getWriter().write(json.toString());
+	}
+	
+	
 	private Integer validParam2int(String paramValue){
 		Integer ret=null;
 			if(  paramValue!=null && !paramValue.trim().equals("") ){

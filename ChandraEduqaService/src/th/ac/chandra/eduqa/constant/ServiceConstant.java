@@ -250,5 +250,11 @@ public class ServiceConstant {
 		public static final String KPI_RESULT_DETAIL_FIND_BY_IDENTIFY = "kpiResultDetailFindByIdentify";
 		public static final String RESULT_DETAIL_QUALITY_SAVE = "saveKpiResultDetail";		// kpi_result_detail
 		public static final String RESULT_DETAIL_QUALITY_UPDATE_EVIDENCE = "updateKpiResultDetailEvidence";		// kpi_result_detail
+
+		public static final String BASELINE_DELETE_BY_KPIID = "deleteBaselineByKpiId";
+		public static final String CRITERIA_STD_DELETE_By_KPIID = "deleteCriteriaStdByKpiId";
+		public static final String KPI_CDS_MAPPING_DELETE = "kpiCdsMappingDelete";
+		public static final String KPI_RESULT_DELETE_BY_KPIID = "deleteKpiResultByKpiId";
+		public static final String RANGE_BASELINE_DELETE_BY_KPIID = "deleteRangeBaselineByKpiId";
 		
 }

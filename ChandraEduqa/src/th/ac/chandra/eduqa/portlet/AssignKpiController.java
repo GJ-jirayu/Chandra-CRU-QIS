@@ -590,33 +590,6 @@ public class AssignKpiController {
 		Integer success = 0;
 		User user = (User) request.getAttribute(WebKeys.USER);
 		
-		/* เป็นการบันทึกข้อมูล Assign แบบเดิม คือลบข้อมูลทั้งหมดก่อน แล้วค่อยบันทึกลงไปใหม่ */
-		/*if( normalRequest.getParameter("orgId")!=null && normalRequest.getParameter("orgId")!=""){
-			String kpis = normalRequest.getParameter("kpis");
-			Integer orgId = Integer.parseInt(normalRequest.getParameter("orgId"));
-			String[] kpispart = kpis.split("-");
-			List<Integer> kpisList = new ArrayList<Integer>();
-			for(String part : kpispart){
-				kpisList.add(Integer.parseInt(part));
-			}
-				KpiResultModel kpiResultM = new KpiResultModel();
-				kpiResultM.setOrgId(orgId);
-				kpiResultM.setKpiIds(kpisList);
-				kpiResultM.setCreatedBy(user.getFullName());
-				kpiResultM.setUpdatedBy(user.getFullName());
-				//delete result of org before insert 
-				ResultService rsDel =	service.deleteResultByOrg(kpiResultM);
-				if(!rsDel.isError()){
-					ResultService rsSave = service.saveResultOfOrg(kpiResultM);
-					if(!rsSave.isError()){
-						success = 1;
-					}else{ status = rsDel.getMsgDesc(); }
-				}else{  status = rsDel.getMsgDesc(); }
-		}else{
-			status = "invalid parameters";
-		}*/
-		
-		/* แบบใหม่จะลบเฉพาะที่ลบ บันทึกเท่าที่บันทึก */
 		if( normalRequest.getParameter("orgId")!=null && normalRequest.getParameter("orgId")!=""){
 			Integer orgId = Integer.parseInt(normalRequest.getParameter("orgId"));
 			String deleteKpis = normalRequest.getParameter("deleteKpis");

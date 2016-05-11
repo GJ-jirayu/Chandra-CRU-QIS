@@ -99,11 +99,17 @@ public class CriteriaResource extends BaseResource {
 							}
 							return returnUpdateRecord(entity,xsource,updateRecord);
 						}
-						else 	if(serviceName.equals(ServiceConstant.CRITERIA_STD_DELETE)){
+						else if(serviceName.equals(ServiceConstant.CRITERIA_STD_DELETE)){
 							
 							CriteriaStandard std = new CriteriaStandard();
 							std.setStandardId(xsource.getStandardId());
 							Integer updateRecord = service.deleteCriteriaStandard(std);
+							return returnUpdateRecord(entity,xsource,updateRecord);
+						}
+						else if(serviceName.equals(ServiceConstant.CRITERIA_STD_DELETE_By_KPIID)){	
+							CriteriaStandard std = new CriteriaStandard();
+							std.setKpiId(xsource.getKpiId());
+							Integer updateRecord = service.deleteCriteriaStandardByKpiI(std);
 							return returnUpdateRecord(entity,xsource,updateRecord);
 						}
 					} // end serviceName case handle

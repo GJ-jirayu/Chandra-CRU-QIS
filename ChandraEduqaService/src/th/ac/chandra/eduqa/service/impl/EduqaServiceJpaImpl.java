@@ -847,9 +847,41 @@ public class EduqaServiceJpaImpl  implements EduqaService {
 				return repository.updateKpiResultDetailEvidence(model);
 			}
 
-
-
+			@Override
+			public Integer deleteKpiXCds(KpiXCds model)
+				throws DataAccessException {
+				return repository.deleteKpiXCds(model);
+			}
 			
+			@Override
+			public Integer deleteBaselineSpecDetailByKpiId(Integer kpiId) 
+				throws DataAccessException{
+				return repository.deleteBaselineSpecDetailByKpiId(kpiId);
+			}
+			
+			@Override
+			public Integer deleteBaselineQuanByKpiId(BaselineQuan model)
+				throws DataAccessException{
+				return repository.deleteBaselineQuanByKpiId(model);
+			}
+			
+			@Override
+			public Integer deleteCriteriaStandardByKpiI(CriteriaStandard model)
+					throws DataAccessException{
+				return repository.deleteCriteriaStandardByKpiId(model);
+			}
+			
+			@Override
+			public Integer deleteKpiResultByKpiId(KpiResultModel model) 
+					throws DataAccessException{
+				return repository.deleteKpiResultByKpiId(model);
+			}
+			
+			@Override
+			public Integer deleteRangeBaselineByKpiId(KpiResultModel model) 
+					throws DataAccessException{
+				return repository.deleteRangeBaselineByKpiId(model);
+			}
 			
 	//##### target
 	public KpiTargetModel getKpiTarget(KpiTargetModel model){

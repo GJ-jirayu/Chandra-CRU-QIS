@@ -23,6 +23,9 @@
 <portlet:resourceURL var="doSaveFormula" id="doSaveFormula" ></portlet:resourceURL>
 <portlet:resourceURL var="requestCriteriaGroupDetail" id="requestCriteriaGroupDetail" ></portlet:resourceURL>
 <portlet:resourceURL var="listCds" id="listCds" ></portlet:resourceURL>
+<portlet:resourceURL var="doGetCriteraiMethod" id="doGetCriteraiMethod" ></portlet:resourceURL>
+<portlet:resourceURL var="doDeleteKpiChildTable" id="doDeleteKpiChildTable" ></portlet:resourceURL>
+
 
 <html lang="en">
   <head>
@@ -101,8 +104,11 @@
 	          });*/
 	          //blind criterieType // quan or qual
 	          //bind event
-	       	 scoreNumChangeEvent();
+	       	scoreNumChangeEvent();
+	       	$("#criteriaTypeStr").val($("#criteriaMethod").val());
+	       	getCriteraiMethod();
 	    });
+
 	    function pageMessage(){
 	    	if($('#pageMessage').val()==0){ //ok
 	    		$('#kpi-msg').removeClass().addClass('alert');
@@ -200,14 +206,82 @@
 	    			}
 	    		});
 		}
+
+
+		function getCriteraiMethod(){
+			var baseVal = $("#criteriaMethod").val();
+			var traget = $("#criteriaMethod").empty();
+			$.ajax({
+				dataType:'json',
+				url:"<%=doGetCriteraiMethod%>",
+				data:{'criteraiTypeId':$("#criteriaTypeId").val() },
+				async:false,
+				success: function(data){
+					console.log(data);
+					for(var i=0;i<data["lists"].length;i++){
+		    		    var opt = '<option value="'+data["lists"][i]["id"]+'"> '+data["lists"][i]["name"]+' </option>';
+		    			traget.append(opt);
+		    		} 
+				}
+			});
+			if(baseVal.length > 0){
+				traget.val(baseVal);
+			}
+		}
+
+
     	function doSubmitDetail(){
-    		if($('#kpiDetail #kpiId').val()==""){
-    			$('#kpiDetail #kpiFormDetail').attr("action","<%=formActionInsert%>");
+    		var baseCriteriaType = $("#criteriaTypeStr").val();
+    		var newCriteriaType = $("select#criteriaMethod option:selected").val();
+
+    		if(baseCriteriaType != newCriteriaType){
+    			$.confirm({
+				    text: '"วิธีการประเมิน" มีการเปลี่ยนแปลง รายละเอียดของข้อมูลตัวบ่งชี้จะถูกลบ ท่านยืนยันการบันทึกหรือไม่',
+				    title: "ยืนยันการบันทึก ตัวบ่งชี้",
+				    confirm: function(button) {
+						if(doDeleteKpiChildTable() == "1"){
+							doSubmit(); 
+						}
+
+				    },
+				    cancel: function(button) {
+				        // nothing to do
+				    },
+				    confirmButton: "ยืนยัน",
+				    cancelButton: "ยกเลิก",
+				    post: true,
+				    confirmButtonClass: "btn-primary",
+				    cancelButtonClass: "btn-danger",
+				    dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
+				});
     		}else{
-    			$('#kpiDetail #kpiFormDetail').attr("action","<%=formActionEdit%>");
+    			doSubmit();
     		}
-    		$('#kpiDetail #kpiFormDetail').submit();
     	}
+
+    	function doSubmit(){
+    		if($('#kpiDetail #kpiId').val()==""){
+	    		$('#kpiDetail #kpiFormDetail').attr("action","<%=formActionInsert%>");
+	    	}else{
+	    		$('#kpiDetail #kpiFormDetail').attr("action","<%=formActionEdit%>");
+	    	}
+	    	$('#kpiDetail #kpiFormDetail').submit(); 
+    	}
+
+    	function doDeleteKpiChildTable(){
+    		var proStatus;
+    		$.ajax({
+				dataType:'json',
+				url:"<%=doDeleteKpiChildTable%>",
+				data:{'kpiId':$("input#kpiId").val() },
+				async:false,
+				success: function(data){
+					proStatus = data["lists"][0]["statusCode"];
+				}
+			});
+			return proStatus;
+    	}
+
     	function doBack2List(){
     		$('#kpiDetail #kpiFormDetail').attr("action","<%=formActionBack%>");
 			$('#kpiDetail #kpiFormDetail').submit();
@@ -601,6 +675,8 @@
     			//$('select#criteriaMethod option[value="3"]').prop("disabled",true);
         		//$('select#criteriaMethod option[value="4"]').prop("disabled",true);
     		}
+
+    		getCriteraiMethod();
     	}
     	function clearCnt(jCnt){
     		if(typeof jCnt != 'undefined'){
@@ -1313,6 +1389,7 @@
 </head>
 <body>
 	<div id="kpiDetail" class="box">
+		<input type="hidden" id="criteriaTypeStr" value=""></input>
 		<input type="hidden" id="pageMessage" value="${actionMessageCode}"/>
 		<c:if test="${not empty actionMessage}"> 
 			<div id="kpi-msg" class="alert">${actionMessage}</div>
@@ -1348,7 +1425,7 @@
 					<form:radiobutton id="radioCriteriaScore1" name="radioCriteriaScore" path="radioCriteriaScore" value="integer" />  เทียบคะแนนเต็มเท่ากับร้อยละ <form:input id="criteriaScore" path="kpiModel.criteriaScore" type="text" style="width:30px" class="numbersOnly"/>
 						&nbsp<form:radiobutton id="radioCriteriaScore2" name="radioCriteriaScore" path="radioCriteriaScore" value="pass"/> ผ่าน/ไม่ผ่าน</td>
 				</tr>
-				<tr><td><label>วิธีการประเมิน</label><form:select id="criteriaMethod"  onchange="toggleBaselineLayout()"   path="kpiModel.criteriaMethodId" items="${criteriaMethodList}" /></td>
+				<tr><td><label>วิธีการประเมิน</label><form:select id="criteriaMethod" class="input-large" onchange="toggleBaselineLayout()"   path="kpiModel.criteriaMethodId" items="${criteriaMethodList}" /></td>
 				</tr>
 				<tr style="display:none;"> <td> <form:input type="text" path="kpiModel.createdBy" /> </td> </tr>
 				<tr style="display:none;"> <td> <form:input type="text" path="kpiModel.createdDate" /> </td> </tr>

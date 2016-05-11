@@ -1,10 +1,36 @@
 package th.ac.chandra.eduqa.service;
 
 import java.util.List;
-import th.ac.chandra.eduqa.domain.SysMonth;
-import th.ac.chandra.eduqa.model.*;
+
 import th.ac.chandra.eduqa.mapper.ResultService;
-import th.ac.chandra.eduqa.xstream.common.Paging;
+import th.ac.chandra.eduqa.model.BaselineModel;
+import th.ac.chandra.eduqa.model.CdsEvidenceModel;
+import th.ac.chandra.eduqa.model.CdsModel;
+import th.ac.chandra.eduqa.model.CdsResultDetailModel;
+import th.ac.chandra.eduqa.model.CdsResultModel;
+import th.ac.chandra.eduqa.model.CriteriaGroupModel;
+import th.ac.chandra.eduqa.model.CriteriaModel;
+import th.ac.chandra.eduqa.model.DbConnModel;
+import th.ac.chandra.eduqa.model.DbQueryModel;
+import th.ac.chandra.eduqa.model.DescriptionModel;
+import th.ac.chandra.eduqa.model.KpiEvidenceModel;
+import th.ac.chandra.eduqa.model.KpiGroupModel;
+import th.ac.chandra.eduqa.model.KpiGroupTypeModel;
+import th.ac.chandra.eduqa.model.KpiLevelModel;
+import th.ac.chandra.eduqa.model.KpiModel;
+import th.ac.chandra.eduqa.model.KpiReComndModel;
+import th.ac.chandra.eduqa.model.KpiResultDetailModel;
+import th.ac.chandra.eduqa.model.KpiResultModel;
+import th.ac.chandra.eduqa.model.KpiStrucModel;
+import th.ac.chandra.eduqa.model.KpiTargetModel;
+import th.ac.chandra.eduqa.model.KpiTypeModel;
+import th.ac.chandra.eduqa.model.KpiUomModel;
+import th.ac.chandra.eduqa.model.OrgModel;
+import th.ac.chandra.eduqa.model.OrgTypeModel;
+import th.ac.chandra.eduqa.model.StrucTypeModel;
+import th.ac.chandra.eduqa.model.SysMonthModel;
+import th.ac.chandra.eduqa.model.SysYearModel;
+import th.ac.chandra.eduqa.model.ThresholdModel;
 
 public interface EduqaService { 
 	public Integer getResultPage();
@@ -211,10 +237,16 @@ public interface EduqaService {
 	public KpiResultDetailModel findKpiResultDetailByIdentify(KpiResultDetailModel model);
 	public Integer saveKpiResultDetail(KpiResultDetailModel model);
 	public Integer updateKpiResultDetailEvidence(KpiResultDetailModel model);
-		//evidence
+	
+	//evidence
 	public Integer saveKpiEvidence(KpiEvidenceModel model);
 	public Integer deleteKpiEvidence(KpiEvidenceModel model);
 	public List<KpiEvidenceModel> searchKpiEvidence(KpiEvidenceModel model);
 
-	
+	public Integer deleteKpiXCds(KpiModel model);
+	public Integer deleteBaselineSpecDetailByKpiId(BaselineModel kpiId);
+	public Integer deleteBaselineQuanByKpiId(BaselineModel model);
+	public Integer deleteCriteriaStandardByKpiI(CriteriaModel model);
+	public Integer deleteKpiResultByKpiId(KpiResultModel model);
+	public Integer deleteRangeBaselineByKpiId(KpiResultModel model);
 }

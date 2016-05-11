@@ -12,6 +12,9 @@ import th.ac.chandra.eduqa.mapper.ResultService;
 import th.ac.chandra.eduqa.model.*;
 import th.ac.chandra.eduqa.service.EduqaService;
 import th.ac.chandra.eduqa.constant.ServiceConstant;
+import th.ac.chandra.eduqa.domain.BaselineQuan;
+import th.ac.chandra.eduqa.domain.CriteriaStandard;
+import th.ac.chandra.eduqa.domain.KpiXCds;
 import th.ac.chandra.eduqa.domain.SysMonth;
 import th.ac.chandra.eduqa.xstream.common.ImakeMessage;
 import th.ac.chandra.eduqa.xstream.common.ImakeResultMessage;
@@ -1603,6 +1606,66 @@ public class EduqaServiceWSImpl extends PostCommon  implements EduqaService{
 			ImakeResultMessage imakeMessage =postMessage(model,model.getClass().getName(),"sysYearModel",true);
 			if(imakeMessage.getResultListObj()!=null && imakeMessage.getResultListObj().size()>0)
 				return ((SysYearModel)imakeMessage.getResultListObj().get(0)).getUpdateRecord();
+			else
+				return null;
+		}
+		
+		@Override
+		public Integer deleteKpiXCds(KpiModel model){
+			model.setServiceName(ServiceConstant.KPI_CDS_MAPPING_DELETE);
+			ImakeResultMessage imakeMessage =postMessage(model,model.getClass().getName(),"kpiModel",true);
+			if(imakeMessage.getResultListObj()!=null && imakeMessage.getResultListObj().size()>0)
+				return ((KpiModel)imakeMessage.getResultListObj().get(0)).getUpdateRecord();
+			else
+				return null;
+		}
+		
+		@Override
+		public Integer deleteBaselineSpecDetailByKpiId(BaselineModel model){
+			model.setServiceName(ServiceConstant.BASELINE_DELETE_BY_KPIID);
+			ImakeResultMessage imakeMessage =postMessage(model,model.getClass().getName(),"BaselineModel",true);
+			if(imakeMessage.getResultListObj()!=null && imakeMessage.getResultListObj().size()>0)
+				return ((BaselineModel)imakeMessage.getResultListObj().get(0)).getUpdateRecord();
+			else
+				return null;
+		}
+		
+		@Override
+		public Integer deleteBaselineQuanByKpiId(BaselineModel model){
+			model.setServiceName(ServiceConstant.BASELINE_DELETE_BY_KPIID);
+			ImakeResultMessage imakeMessage =postMessage(model,model.getClass().getName(),"BaselineModel",true);
+			if(imakeMessage.getResultListObj()!=null && imakeMessage.getResultListObj().size()>0)
+				return ((BaselineModel)imakeMessage.getResultListObj().get(0)).getUpdateRecord();
+			else
+				return null;
+		}
+		
+		@Override
+		public Integer deleteCriteriaStandardByKpiI(CriteriaModel model){
+			model.setServiceName(ServiceConstant.CRITERIA_STD_DELETE_By_KPIID);
+			ImakeResultMessage imakeMessage =postMessage(model,model.getClass().getName(),"CriteriaModel",true);
+			if(imakeMessage.getResultListObj()!=null && imakeMessage.getResultListObj().size()>0)
+				return ((CriteriaModel)imakeMessage.getResultListObj().get(0)).getUpdateRecord();
+			else
+				return null;
+		}
+		
+		@Override
+		public Integer deleteKpiResultByKpiId(KpiResultModel model){
+			model.setServiceName(ServiceConstant.KPI_RESULT_DELETE_BY_KPIID);
+			ImakeResultMessage imakeMessage =postMessage(model,model.getClass().getName(),"kpiResultModel",true);
+			if(imakeMessage.getResultListObj()!=null && imakeMessage.getResultListObj().size()>0)
+				return ((KpiResultModel)imakeMessage.getResultListObj().get(0)).getUpdateRecord();
+			else
+				return null;
+		}
+		
+		@Override
+		public Integer deleteRangeBaselineByKpiId(KpiResultModel model){
+			model.setServiceName(ServiceConstant.RANGE_BASELINE_DELETE_BY_KPIID);
+			ImakeResultMessage imakeMessage =postMessage(model,model.getClass().getName(),"kpiResultModel",true);
+			if(imakeMessage.getResultListObj()!=null && imakeMessage.getResultListObj().size()>0)
+				return ((KpiResultModel)imakeMessage.getResultListObj().get(0)).getUpdateRecord();
 			else
 				return null;
 		}

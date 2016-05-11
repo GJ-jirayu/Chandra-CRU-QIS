@@ -1287,7 +1287,7 @@ public class EduqaRepository   {
 				" left join criteria_group_detail gd "+
 				" on cr.criteria_group_detail_id = gd.criteria_group_detail_id "+
 				" where kpi_id = "+kpiId+
-				" order by cr.criteria_id ";
+				" order by cr.running_no ";
 		Query query =  entityManager.createNativeQuery(sql);
 //		query.setFirstResult((pagging.getPageNo()-1) * pagging.getPageSize()); 
 //		query.setMaxResults(pagging.getPageSize());	
@@ -2015,14 +2015,6 @@ public class EduqaRepository   {
 		public List searchKpiResult(KpiResult domain, Paging pagging,
 				String keySearch, String[] otherKeySearch) throws DataAccessException {
 			ArrayList transList = new ArrayList();
-			/*String sql  = "  select kr.kpi_structure_id,kr.kpi_structure_name"
-					+ " ,kr.kpi_id,kr.kpi_group_name,kr.kpi_name"
-					+ " ,kr.calendar_type_name,kr.period_name,kpi_uom_name"
-					+ " ,kr.target_value,kr.actual_value ,kr.criteria_type_id"
-					+ " from (select kpi_id from kpi_org_mapping where org_id = "+domain.getOrgId()+" order by kpi_id) as map  "
-					+ " left join kpi_result kr on map.kpi_id = kr.kpi_id "
-					+ " where  kr.kpi_group_id = "+domain.getKpiGroupId()+" and kr.academic_year = "+domain.getAcademicYear()+" and kr.month_id = "+domain.getMonthID();
-			*/
 			String sql = "select kr.kpi_structure_id,kr.kpi_structure_name ,kr.kpi_id,kr.kpi_group_name,kr.kpi_name "
 					+ "	,kr.calendar_type_name,kr.period_name,kpi_uom_name ,kr.target_value"
 					+ " ,kr.actual_value "
@@ -2070,11 +2062,12 @@ public class EduqaRepository   {
 			transList.add(String.valueOf(query.getResultList().size()));
 			return transList;
 		}
+		
+		
 		public List searchKpiResultWithActiveKpi(KpiResultModel model){
 			List<KpiResultModel> kms = new ArrayList<KpiResultModel>();
 			String sql = " select kpi.kpi_structure_id,ks.kpi_structure_name,kpi.kpi_id,kpi.kpi_name,grp.kpi_group_short_name "
 					+ " ,ct.calendar_type_name,p.period_name,uom.kpi_uom_name "
-					//+ " ,(select if(count(result_id)>0,'1','0') from kpi_result r where r.kpi_id = kpi.kpi_id  "
 					+ " ,(select ifnull(max(active),0) from kpi_result r where r.kpi_id = kpi.kpi_id  "
 					+ " and r.academic_year="+model.getAcademicYear()+" and org_id = "+model.getOrgId()+"  ) as used "
 					+ " ,(select cast(max(target_value) as char) from kpi_result where kpi_id = kpi.kpi.kpi_id group by kpi_id) as targetvalue "
@@ -2133,7 +2126,7 @@ public class EduqaRepository   {
 							+" and kpi_id = "+kid;
 					Query verifyKpiResultQuery = entityManager.createNativeQuery(verifyKpiResult);
 					Integer rowSize = verifyKpiResultQuery.getResultList().size();
-					System.out.println("\n --kpiId "+kid+" rowSize--> : "+rowSize+"\n");
+					//System.out.println("\n --kpiId "+kid+" rowSize--> : "+rowSize+"\n");
 					
 					/*กรณียังไม่มี result ทำการ insert ทั้ง 12 เดือน*/
 					if(rowSize == 0){
@@ -2768,7 +2761,8 @@ public class EduqaRepository   {
 				 		+ " left join (select cds_id,cds_value from cds_result where org_id = "+model.getOrgId()+" and month_id = "+model.getMonthId()+" ) cr on qc.cds_id = cr.cds_id "
 				 		+ " left join (select krd.criteria_id,krd.action_flag from kpi_result kr inner join kpi_result_detail krd on kr.result_id = krd.result_id "
 				 		+ " where kr.kpi_id = "+model.getKpiId()+" and org_id = "+model.getOrgId()+" and month_id = "+model.getMonthId()+") result "
-				 		+ " on qc.criteria_id = result.criteria_id ";
+				 		+ " on qc.criteria_id = result.criteria_id "
+				 		+ " order by qc.running_no";
 				Query query = entityManager.createNativeQuery(qStr);
 				query.setMaxResults(100); // Limiter
 				List<Object[]> results = query.getResultList();
@@ -2798,7 +2792,8 @@ public class EduqaRepository   {
 						 	+ " left join (select krd.criteria_id,krd.action_flag,krd.evidence_flag from kpi_result kr inner join kpi_result_detail krd on kr.result_id = krd.result_id "
 					 		+ " where kr.kpi_id = "+model.getKpiId()+" and org_id = "+model.getOrgId()+" and month_id = "+model.getMonthId()+") result "
 					 		+ " on qc.criteria_id = result.criteria_id "
-					 		+ " where qc.criteria_id = "+model.getCriteriaId();		
+					 		+ " where qc.criteria_id = "+model.getCriteriaId()
+					 		+ " order by qc.running_no";		
 				Query query = entityManager.createNativeQuery(str);
 				if(query.getResultList().size()>0){
 					Object[] result = (Object[]) query.getResultList().get(0);
@@ -3010,7 +3005,7 @@ public class EduqaRepository   {
 		List returns = new ArrayList();
 		StringBuffer sb = new StringBuffer("");
 		if( model.getGroupId()!=null){
-			sb.append(" where criteria_group_id = "+ model.getGroupId());
+			sb.append(" where criteria_type_id = "+ model.getGroupId());
 		}
 		String qStr = "SELECT criteria_method_id,criteria_method_name FROM eduqa.criteria_method "+sb.toString();
 		
@@ -3109,5 +3104,47 @@ public class EduqaRepository   {
 		query.setParameter("paramCourse", org.getCourseCode());
 		
 		return (Integer) query.getSingleResult();
+	}
+	
+	/*delete kpi_cds_mapping by kpi_id*/
+	public Integer deleteKpiXCds(KpiXCds model){
+		int deletedCount = entityManager.createQuery(
+				"DELETE FROM KpiXCds e WHERE e.kpiId="+model.getKpiId()).executeUpdate();
+		return deletedCount;
+	}
+
+	/*delete specified_baseline by kpi_id*/
+	public Integer deleteBaselineSpecDetailByKpiId(Integer kpiId){
+		String queryStr = "delete from specified_baseline where kpi_id = "+kpiId;		
+		Integer deleteCount = entityManager.createNativeQuery(queryStr).executeUpdate();
+		return deleteCount;
+	}
+	
+	/*delete quantitative_baseline by kpi_id*/
+	public Integer deleteBaselineQuanByKpiId(BaselineQuan model){
+		int deletedCount = entityManager.createQuery(
+				"DELETE FROM BaselineQuan e WHERE e.kpiId="+model.getKpiId()).executeUpdate();
+		return deletedCount;
+	}
+	
+	/*delete qualitative_criteria by kpi_id*/
+	public Integer deleteCriteriaStandardByKpiId(CriteriaStandard model){
+		int deletedCount = entityManager.createQuery(
+				"DELETE FROM CriteriaStandard e WHERE e.kpiId="+model.getKpiId()).executeUpdate();
+		return deletedCount;
+	}
+	
+	/*delete kpi_result by kpi_id*/
+	public Integer deleteKpiResultByKpiId(KpiResultModel model){
+		Integer deleteCount = entityManager.createQuery(
+				"delete from KpiResult where kpiId = "+model.getKpiId()).executeUpdate();		
+		return deleteCount;
+	}
+	
+	/*delete range_baseline by kpi_id*/
+	public Integer deleteRangeBaselineByKpiId(KpiResultModel model){
+		Integer deleteCount = entityManager.createNativeQuery(
+				"delete from range_baseline where kpi_id = "+model.getKpiId()).executeUpdate();
+		return deleteCount;
 	}
 }
