@@ -184,8 +184,8 @@ public class ReComndController {
 		comndForm.setModel(comndModel);
 		comndForm.setHieAuth(hieAuth);
 		model.addAttribute("comndForm", comndForm);
-		model.addAttribute("currentFaculty", (org.getFacultyCode() == null ? 0 : org.getFacultyCode()));
-		model.addAttribute("currentCourse", (org.getCourseCode() == null ? 0 : org.getCourseCode()));
+		model.addAttribute("currentFaculty", (org.getFacultyCode() == null || org.getFacultyCode() == "" ? 0 : org.getFacultyCode()));
+		model.addAttribute("currentCourse", (org.getCourseCode() == null || org.getCourseCode() == "" ? 0 : org.getCourseCode()));
 		return "master/ReComnd";
 	}
 	

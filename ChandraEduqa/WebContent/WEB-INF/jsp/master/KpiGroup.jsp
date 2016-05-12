@@ -122,14 +122,12 @@
    	 			$('label#ckInputText').css( "display", "block" ).fadeOut( 5000 );
    	 		}else{
 	   	 		$('#kpiGroupForm').attr('action',"<%=formActionInsert%>");	 		
-	   	 		$('#kpiGroupForm').submit().trigger('reset');
-	   	 		$('#fGroupStName, #fGroupName').val('');
+	   	 		$('#kpiGroupForm').submit(); 
    	 		}
    	 	}
    	 	function actSaveEdit(){
 	 		$('#kpiGroupForm').attr("action","<%=formActionEdit%>");
-	 		$('#kpiGroupForm').submit().trigger('reset');
-	 		$('#fGroupStName, #fGroupName').val('');
+	 		$('#kpiGroupForm').submit(); 
 	 	}
 	 	function actCancel(el){
 	  		//dialog.dialog( "close" );
@@ -419,4 +417,3 @@
 
 </body>
 </html>	
-   

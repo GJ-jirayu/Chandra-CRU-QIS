@@ -174,7 +174,11 @@ public class EduqaRepository   {
 
 		public Integer updateKpiGroup(KpiGroup transientInstance)
 				throws DataAccessException {
-			String qryStr = "SELECT k FROM KpiGroup k WHERE KPI_GROUP_NAME ='"+transientInstance.getGroupName()+"'";
+			String qryStr = "SELECT k FROM KpiGroup k "
+					+ "WHERE groupName ='"+transientInstance.getGroupName()+"' "
+					+ "AND groupShortName = '"+transientInstance.getGroupShortName()+"'"
+					+ "AND orgTypeId = "+transientInstance.getOrgTypeId()
+					+ "AND groupTypeId = "+transientInstance.getGroupTypeId();
 			List query = entityManager.createQuery(qryStr).getResultList();
 			if(query.isEmpty()){ //0=Error, 1=OK
 				entityManager.merge(transientInstance);
@@ -331,7 +335,8 @@ public class EduqaRepository   {
 		public Integer updateKpiType(KpiType transientInstance)
 				throws DataAccessException {
 			String qryStr = "SELECT k FROM KpiType k "
-					+ "WHERE k.typeName ='"+transientInstance.getTypeName()+"'";
+					+ "WHERE k.typeName ='"+transientInstance.getTypeName()+"' "
+					+ "AND k.typeShortName = '"+transientInstance.getTypeShortName()+"'";
 			List query = entityManager.createQuery(qryStr).getResultList();
 			if(query.isEmpty()){ //0=Error, 1=OK
 				entityManager.merge(transientInstance);
@@ -461,7 +466,10 @@ public class EduqaRepository   {
 		}
 		public Integer updateKpiStruc(KpiStruc transientInstance)
 				throws DataAccessException {
-				String qryStr = "SELECT k FROM KpiStruc k WHERE KPI_STRUCTURE_NAME ='"+transientInstance.getStrucName()+"'";
+				String qryStr = "SELECT k FROM KpiStruc k "
+						+ "WHERE k.strucName ='"+transientInstance.getStrucName()+"' "
+						+ "AND k.structureType = "+transientInstance.getStructureType()
+						+ "AND k.groupId = "+transientInstance.getGroupId();
 				List query = entityManager.createQuery(qryStr).getResultList();
 				if(query.isEmpty()){ //0=Error, 1=OK
 						entityManager.merge(transientInstance);

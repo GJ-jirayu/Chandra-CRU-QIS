@@ -141,8 +141,8 @@ public class AssignKpiController {
 			corsList.put(cor.getDescCode(),cor.getDescription());
 		}
 		model.addAttribute("corsList",corsList);
-		model.addAttribute("currentFaculty", (org.getFacultyCode() == null ? 0 : org.getFacultyCode()));
-		model.addAttribute("currentCourse", (org.getCourseCode() == null ? 0 : org.getCourseCode()));
+		model.addAttribute("currentFaculty", (org.getFacultyCode() == null || org.getFacultyCode() == "" ? 0 : org.getFacultyCode()));
+		model.addAttribute("currentCourse", (org.getCourseCode() == null || org.getCourseCode() == "" ? 0 : org.getCourseCode()));
 
 		return "dataEntry/assignKpi";
 	}
@@ -228,8 +228,8 @@ public class AssignKpiController {
 		}
 		model.addAttribute("corsList",corsList);
 
-		model.addAttribute("currentFaculty", (HieAuth.getFaculty() == null ? 0 : HieAuth.getFaculty()));
-		model.addAttribute("currentCourse", (HieAuth.getCourse() == null ? 0 : HieAuth.getCourse()));
+		model.addAttribute("currentFaculty", (HieAuth.getFaculty() == null || HieAuth.getFaculty() == "" ? 0 : HieAuth.getFaculty()));
+		model.addAttribute("currentCourse", (HieAuth.getCourse() == null || HieAuth.getCourse() == "" ? 0 : HieAuth.getCourse()));
 		model.addAttribute("userDetail","User: "+user.getScreenName()+""
 				+ ",  OrgId: "+org.getOrgId()+""
 				+ ",  CurrentFaculity: "+HieAuth.getFaculty()+""

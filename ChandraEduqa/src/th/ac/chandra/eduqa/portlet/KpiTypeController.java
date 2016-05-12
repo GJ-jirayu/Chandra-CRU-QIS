@@ -268,31 +268,4 @@ public class KpiTypeController {
 		return "master/KpiType";
 	}
 	
-	/*@RequestMapping("VIEW")
-	@RenderMapping(params = "render=actionList")
-	public String RenderInsert(@RequestParam("messageCode") String messageCode, 
-			@RequestParam("messageDesc") String messageDesc, Model model) {
-		KpiTypeModel kpiTypeModel = new KpiTypeModel();
-		Paging page = new Paging(); //default pageNo=1
-		kpiTypeModel.setPaging(page);
-		kpiTypeModel.getPaging().setPageSize(10);
-		List<KpiTypeModel> types = service.searchKpiType(kpiTypeModel);
-		model.addAttribute("types", types);
-		model.addAttribute("lastPage", service.getResultPage());
-		model.addAttribute("PageCur", 1);
-		model.addAttribute("messageCode", messageCode);
-		model.addAttribute("messageDesc", messageDesc);
-		return "master/KpiType";
-	}*/
-	/*
-	 * @ResourceMapping(value="getPlan")
-	 * 
-	 * @ResponseBody public void Echo(ResourceRequest request,ResourceResponse
-	 * response) throws IOException{ String id=request.getParameter("p1");
-	 * JSONObject json = JSONFactoryUtil.createJSONObject();
-	 * json.put("description",id);
-	 * 
-	 * System.out.println(json.toString());
-	 * response.getWriter().write(json.toString()); }
-	 */
 }

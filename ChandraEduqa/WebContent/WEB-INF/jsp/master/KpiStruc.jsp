@@ -145,14 +145,13 @@
    	 		}else{
 	   	 		$('#kpiStrucForm').attr('action',"<%=formActionInsert%>");   	 		
 	   	 		$("#fGroupId").val($('#fGroupType').val());
-	   	 		$('#kpiStrucForm').submit().trigger('reset');
-	   	 		$('#fStrucName').val('');
+	   	 		$('#kpiStrucForm').submit();
    	 		}
    	 	}
    	 	function actSaveEdit(){
 	 		$('#kpiStrucForm').attr("action","<%=formActionEdit%>");
-	 		$('#kpiStrucForm').submit().trigger('reset');
-	 		$('#fStrucName').val('');
+	 		$("#fGroupId").val($('#fGroupType').val());
+	 		$('#kpiStrucForm').submit();
 	 	}
 	 	function actCancel(el){
 	  		//dialog.dialog( "close" );
