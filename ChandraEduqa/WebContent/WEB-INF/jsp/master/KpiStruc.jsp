@@ -44,7 +44,7 @@
 	<script src="<c:url value="/resources/js/confirm-master/jquery.confirm.min.js"/>"></script>
 	
     <script type="text/javascript"> 
-   	  	var dialog,dialog2;
+   	  	var dialog,dialog2, gobalStucName, gobalGroupVal, gobalCriVal;
     	$( document ).ready(function() {
     		setDefault();
     		paging();
@@ -61,13 +61,13 @@
     			if($("#messageMsg").val() == 100){ //ok
     				$("#msgAlert").removeClass().addClass("alert");
     				$("span#headMsg").html("");
-    				$("#msgAlert").fadeTo(10000, 500).slideUp(1000, function(){
+    				$("#msgAlert").fadeTo(1000, 100).slideUp(500, function(){
                 	    $("#msgAlert").alert('close');
                 	});
     			}else{
     				$("#msgAlert").removeClass().addClass("alert alert-danger");
     				$("span#headMsg").append("<strong> ผิดพลาด! </strong>");    				
-    				$("#msgAlert").fadeTo(10000, 500).slideUp(1000, function(){
+    				$("#msgAlert").fadeTo(1000, 100).slideUp(500, function(){
                 	    $("#msgAlert").alert('close');
                 	});
     			}
@@ -149,9 +149,15 @@
    	 		}
    	 	}
    	 	function actSaveEdit(){
-	 		$('#kpiStrucForm').attr("action","<%=formActionEdit%>");
-	 		$("#fGroupId").val($('#fGroupType').val());
-	 		$('#kpiStrucForm').submit();
+   	 		if($.trim(gobalStucName) == $.trim($("input#fStrucName").val())
+   	 			&& $.trim(gobalGroupVal) == $.trim($("select#fGroupType").val())
+   	 			&& $.trim(gobalCriVal) == $.trim($("form#kpiStrucForm input[type=radio]:checked").val()) ){
+   	 			actCancel();
+   	 		}else{
+		 		$('#kpiStrucForm').attr("action","<%=formActionEdit%>");
+		 		$("#fGroupId").val($('#fGroupType').val());
+		 		$('#kpiStrucForm').submit();
+   	 		}
 	 	}
 	 	function actCancel(el){
 	  		//dialog.dialog( "close" );
@@ -175,6 +181,10 @@
 	 			$(d1).find('input[type=text]#fStrucName').val(dataDesc["name"]);
 	 			$(d1).find('select#fGroupType').val(dataDesc["groupID"]);
 	 			$("#ST"+dataDesc["typeID"]).prop('checked', true);
+
+	 			gobalStucName = dataDesc["name"];
+	 			gobalGroupVal = dataDesc["groupID"];
+	 			gobalCriVal = dataDesc["typeID"];
 	 		}
    	 		$(d1).find('span').html(head);
    	 		$(d1).find('input[type=hidden]#fStrucId').val(dataId);

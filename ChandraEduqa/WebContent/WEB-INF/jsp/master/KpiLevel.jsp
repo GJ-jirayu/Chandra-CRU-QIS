@@ -32,7 +32,7 @@
 	<link rel="stylesheet" href="<c:url value="/resources/css/common-element.css"/>" type="text/css"/>
 	
     <script type="text/javascript"> 
-   	  	var dialog,dialog2;
+   	  	var dialog,dialog2, levelName;
     	$( document ).ready(function() {
     		paging();
     		$('#numPage').val(${PageCur});
@@ -122,9 +122,13 @@
    	 		}
    	 	}
    	 	function actSaveEdit(){
-	 		$('#kpiLevelForm').attr("action","<%=formActionEdit%>");
-	 		$('#kpiLevelForm').submit().trigger('reset');
-	 		$('input:text#fLevelDesc').val('');
+   	 		if($.trim(levelName) == $.trim($("input#fLevelDesc").val())){
+	 			actCancel();
+	 		}else{
+	 			$('#kpiLevelForm').attr("action","<%=formActionEdit%>");
+		 		$('#kpiLevelForm').submit().trigger('reset');
+		 		$('input:text#fLevelDesc').val('');
+	 		}	 		
 	 	}
 	 	function actCancel(el){
 	  		//dialog.dialog( "close" );
@@ -145,6 +149,7 @@
 	 			head = 'แก้ไข';
 	 			event='actSaveEdit()';
 	 			$(d1).find('input[type=hidden]#fLevelNo').val(levelNo);
+	 			levelName = value;
 	 		}
    	 		$(d1).find('span').html(head);
    	 		$(d1).find('input[type=hidden]#fLevelId').val(rowNum);

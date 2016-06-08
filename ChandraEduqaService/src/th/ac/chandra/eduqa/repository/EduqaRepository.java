@@ -182,11 +182,17 @@ public class EduqaRepository   {
 			List query = entityManager.createQuery(qryStr).getResultList();
 			if(query.isEmpty()){ //0=Error, 1=OK
 				entityManager.merge(transientInstance);
-				//return transientInstance.getGroupId();
 				return 1;
 			}else{
 				return 0;
 			}
+			/*try {
+				entityManager.merge(transientInstance);
+				return 1;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return 0;
+			}*/
 		}
 
 		public Integer deleteKpiGroup(KpiGroup persistentInstance)
@@ -277,6 +283,13 @@ public class EduqaRepository   {
 			}else{
 				return 0;
 			}
+			/*try{
+				entityManager.merge(transientInstance);
+				return 1;
+			}catch(Exception ex){
+				ex.printStackTrace();
+				return 0;
+			}*/
 		}
 
 		public Integer deleteKpiGroupType(KpiGroupType persistentInstance)
@@ -344,8 +357,13 @@ public class EduqaRepository   {
 			}else{
 				return 0;
 			}
-			//entityManager.merge(transientInstance);
-			//return 1;
+			/*try{
+				entityManager.merge(transientInstance);
+				return 1;
+			}catch(Exception ex){
+				ex.printStackTrace();
+				return 0;
+			}*/
 		}
 
 		public Integer deleteKpiType(KpiType persistentInstance)
@@ -413,8 +431,13 @@ public class EduqaRepository   {
 		} else {
 			return 0;
 		}
-		// entityManager.merge(transientInstance);
-		// return 1;
+		/*try{
+			entityManager.merge(transientInstance);
+			return 1;
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return 0;
+		}*/
 	}
 
 	public Integer deleteKpiUom(KpiUom persistentInstance)
@@ -439,7 +462,7 @@ public class EduqaRepository   {
 		Query query = entityManager.createQuery(
 				" select p from KpiUom p " + sb.toString(), KpiUom.class);
 		query.setFirstResult((pagging.getPageNo() - 1) * pagging.getPageSize());
-		query.setMaxResults(pagging.getPageSize());
+		//query.setMaxResults(pagging.getPageSize());
 		transList.add(query.getResultList());
 		query = entityManager.createQuery("select count(p) from KpiUom p "
 				+ sb.toString());
@@ -466,20 +489,26 @@ public class EduqaRepository   {
 		}
 		public Integer updateKpiStruc(KpiStruc transientInstance)
 				throws DataAccessException {
-				String qryStr = "SELECT k FROM KpiStruc k "
-						+ "WHERE k.strucName ='"+transientInstance.getStrucName()+"' "
-						+ "AND k.structureType = "+transientInstance.getStructureType()
-						+ "AND k.groupId = "+transientInstance.getGroupId();
-				List query = entityManager.createQuery(qryStr).getResultList();
-				if(query.isEmpty()){ //0=Error, 1=OK
-						entityManager.merge(transientInstance);
-					return 1;
-				}else{
-					return 0;
-				}
-				//entityManager.merge(transientInstance);
-				//return 1;
+			String qryStr = "SELECT k FROM KpiStruc k "
+					+ "WHERE k.strucName ='"+transientInstance.getStrucName()+"' "
+					+ "AND k.structureType = "+transientInstance.getStructureType()
+					+ "AND k.groupId = "+transientInstance.getGroupId();
+			List query = entityManager.createQuery(qryStr).getResultList();
+			if(query.isEmpty()){ //0=Error, 1=OK
+					entityManager.merge(transientInstance);
+				return 1;
+			}else{
+				return 0;
 			}
+			/*try{
+				entityManager.merge(transientInstance);
+				return 1;
+			}catch(Exception ex){
+				ex.printStackTrace();
+				return 0;
+			}*/
+		}
+		
 		public Integer deleteKpiStruc(KpiStruc persistentInstance)
 				throws DataAccessException {
 			int deletedCount = entityManager.createQuery(
@@ -835,14 +864,20 @@ public class EduqaRepository   {
 		   else if(matcher.group(1).equals("max")){ 	allFunc.add("0"); }
 		   else{  	allFunc.add("0");		}
 		 }
-		 for(int i=0;i<allMatch.size();i++){
-			 //query
-			KpiXCds kc = new KpiXCds();
-			BeanUtils.copyProperties(kpi, kc);
-			kc.setCdsId( Integer.parseInt(allCds.get(i) ));
-			kc.setAccum( Integer.parseInt(allFunc.get(i) )); 
-			entityManager.persist(kc);
-		 }
+		// ทำากรลบข้อมูลที่ตาราง kpi_cds_mapping ตาม kpi_id เพื่อไม่ให้ข้อมูลซ้ำ // 
+		Integer kpiCdeMapDel = entityManager.createNativeQuery(
+				"delete from kpi_cds_mapping where KPI_ID="+ kpi.getKpiId()
+			).executeUpdate();
+		if(kpiCdeMapDel != -1){
+			for(int i=0;i<allMatch.size();i++){
+				 //query
+				KpiXCds kc = new KpiXCds();
+				BeanUtils.copyProperties(kpi, kc);
+				kc.setCdsId( Integer.parseInt(allCds.get(i) ));
+				kc.setAccum( Integer.parseInt(allFunc.get(i) )); 
+				entityManager.persist(kc);
+			 }			
+		}
 		return updatedCount;
 	}
 
@@ -2999,7 +3034,7 @@ public class EduqaRepository   {
 	}
 	public List getCriteriaTypeAll(DescriptionModel model)	throws DataAccessException {
 		List returns = new ArrayList();
-		Query query = entityManager.createNativeQuery("SELECT criteria_type_id,criteria_type_name FROM eduqa.criteria_type;");
+		Query query = entityManager.createNativeQuery("SELECT criteria_type_id,criteria_type_name FROM eduqa.criteria_type");
 		List<Object[]> results = query.getResultList();
 		for(Object[] result: results){
 			DescriptionModel mod = new DescriptionModel();

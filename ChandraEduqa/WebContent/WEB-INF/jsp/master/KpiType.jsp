@@ -33,7 +33,7 @@
 	<link rel="stylesheet" href="<c:url value="/resources/css/common-element.css"/>" type="text/css"/>
 	
     <script type="text/javascript"> 
-   	  	var dialog,dialog2;
+   	  	var dialog,dialog2,gobalTypeName,gobalTypeStName;
     	$( document ).ready(function() {
     		paging();
     		$('.numPage').val(${PageCur});
@@ -124,12 +124,17 @@
    	 		}
    	 	}
    	 	function actSaveEdit(){
-   	 	if($.trim($('#fTypeName').val()) == "" || $.trim($('#fTypeStName').val()) == ""){
+   	 		var currentTypeName = $.trim($('#fTypeName').val());
+   	 		var currentTypeStName = $.trim($('#fTypeStName').val());
+   	 	if(currentTypeName == "" || currentTypeStName == ""){
 	 			$('label#ckInputText').css( "display", "block" ).fadeOut( 5000 );
 	 		}else{
-		 		$('#kpiTypeForm').attr("action","<%=formActionEdit%>");
-		 		$('#kpiTypeForm').submit();
-		 		$('#fTypeName, #fTypeStName').val("");
+	 			if($.trim(gobalTypeName) == currentTypeName && $.trim(gobalTypeStName) == currentTypeStName){
+	 				actCancel();
+	 			}else{	 				
+			 		$('#kpiTypeForm').attr("action","<%=formActionEdit%>");
+			 		$('#kpiTypeForm').submit();
+	 			}
 	 		}
 	 	}
 	 	function actCancel(el){
@@ -153,7 +158,9 @@
 	 			event='actSaveEdit()';
 	 			$(d1).find('input[type=text]#fTypeName').val(dataDesc["name"]);
 	 			$(d1).find('input[type=text]#fTypeStName').val(dataDesc["shortName"]);
-	 		}
+	 			gobalTypeName = dataDesc["name"];
+	 			gobalTypeStName = dataDesc["shortName"];
+	 		}	 		 
    	 		$(d1).find('span').html(head);
    	 		$(d1).find('input[type=hidden]#fTypeId').val(dataId);
    	 		$(d1).find('input[type=hidden]#fTypecreateBy').val(dataDesc["createBy"]);
@@ -388,4 +395,3 @@
 
 </body>
 </html>	
-   

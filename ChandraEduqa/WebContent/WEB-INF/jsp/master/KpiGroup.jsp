@@ -33,7 +33,7 @@
 	<link rel="stylesheet" href="<c:url value="/resources/css/common-element.css"/>" type="text/css"/>
 	
     <script type="text/javascript"> 
-   	  	var dialog,dialog2;
+   	  	var dialog,dialog2, globalGroupStName, globalGroupName, globalGroupType, globalOrgType;
     	$( document ).ready(function() {
     		paging();
     		$('.numPage').val(${PageCur});
@@ -46,13 +46,13 @@
     			if($("#messageMsg").val() == 100){ //ok
     				$("#msgAlert").removeClass().addClass("alert");
     				$("span#headMsg").html("");
-    				$("#msgAlert").fadeTo(10000, 500).slideUp(1000, function(){
+    				$("#msgAlert").fadeTo(1000, 100).slideUp(500, function(){
                 	    $("#msgAlert").alert('close');
                 	});
     			}else{
     				$("#msgAlert").removeClass().addClass("alert alert-danger");
     				$("span#headMsg").append("<strong> ผิดพลาด! </strong>");    				
-    				$("#msgAlert").fadeTo(10000, 500).slideUp(1000, function(){
+    				$("#msgAlert").fadeTo(1000, 100).slideUp(500, function(){
                 	    $("#msgAlert").alert('close');
                 	});
     			}
@@ -119,15 +119,26 @@
    	 	}
    	 	function actSaveInsert(){
    	 		if($.trim($('#fGroupName').val()) == "" || $.trim($('#fGroupStName').val()) == ""){
-   	 			$('label#ckInputText').css( "display", "block" ).fadeOut( 5000 );
+   	 			$('label#ckInputText').css( "display", "block" ).fadeOut( 2000 );
    	 		}else{
 	   	 		$('#kpiGroupForm').attr('action',"<%=formActionInsert%>");	 		
 	   	 		$('#kpiGroupForm').submit(); 
    	 		}
    	 	}
    	 	function actSaveEdit(){
-	 		$('#kpiGroupForm').attr("action","<%=formActionEdit%>");
-	 		$('#kpiGroupForm').submit(); 
+   	 		var currentName = $("input#fGroupName").val(); 
+   	 		var currentStName = $("input#fGroupStName").val();
+   	 		var currentGroup = $("select#fGroupType").val();
+   	 		var currentOrgType = $("select#fOrgType").val();
+   	 		if($.trim(globalGroupName) == $.trim(currentName) 
+   	 			&& $.trim(globalGroupStName) == $.trim(currentStName)
+   	 			&& $.trim(globalGroupType) == $.trim(currentGroup)
+   	 			&& $.trim(globalOrgType) == $.trim(currentOrgType)){
+   	 			actCancel();
+   	 		}else{
+   	 			$('#kpiGroupForm').attr("action","<%=formActionEdit%>");
+	 			$('#kpiGroupForm').submit(); 
+   	 		}	 		
 	 	}
 	 	function actCancel(el){
 	  		//dialog.dialog( "close" );
@@ -149,6 +160,11 @@
 	 			$(d1).find('select#fOrgType').val(valDesc["orgId"]);
 	   			$(d1).find('select#fGroupType').val(valDesc["groupType"]);
 	 		}
+	 		globalGroupName = valDesc["name"]; 
+	   		globalGroupStName = valDesc["shortName"];
+	   		globalGroupType = valDesc["groupType"];
+	   		globalOrgType = valDesc["orgId"];
+
    	 		$(d1).find('span').html(head);
    	 		$(d1).find('input[type=hidden]#fGroupId').val(rowNum);
    	 		$(d1).find('input[type=hidden]#fGroupCreateBy').val(valDesc["createBy"]);

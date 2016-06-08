@@ -298,6 +298,8 @@ public class ResultController {
 		response.setRenderParameter("monthId", String.valueOf(form.getMonthId() ) );
 		response.setRenderParameter("cdsId", String.valueOf(form.getSelectCdsId() ) );	
 	}
+	
+	
 	@RequestMapping("VIEW")
 	@RenderMapping(params="render=assignResultQuantity")
 	public String quantityRenderAssignResult(PortletRequest request,Model model){
@@ -360,18 +362,21 @@ public class ResultController {
 		if(cdsResult.getCdsValue()!=null){
 			resultForm.setCdsValue( Double.parseDouble(cdsResult.getCdsValue()));
 		}
-		resultForm.setYearName("ปีการศึกษา");
-		resultForm.setYearNo("2558");
+		
 		SysMonthModel monthM = new SysMonthModel();
 		monthM.setMonthId(monthId);
 		monthM = service.findSysMonthById(monthId);
 		resultForm.setMonthId(monthId);
 		resultForm.setMonthName( monthM.getThMonthName() );
 		resultForm.setMessage(resultMessage);
+		resultForm.setYearName("ปีปฎิทิน"); //ปีการศึกษา
+		resultForm.setYearNo(monthM.getCalendarYear().toString()); //2558
 		model.addAttribute("assignResultQuantityForm",resultForm);
 		
 		return "dataEntry/result";
 	}
+	
+	
 	@RequestMapping(params="action=doBackFromQuantity")
 	public void doBackFromQuantity(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response
 			,@ModelAttribute("ResultQuantityForm") ResultQuantityForm form,BindingResult result,Model model){

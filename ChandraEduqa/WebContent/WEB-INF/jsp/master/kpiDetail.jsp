@@ -2,6 +2,9 @@
 <%@ page contentType="text/html; charset=utf-8" %> 
 <%@page import="javax.portlet.PortletURL"%>
 
+<portlet:actionURL var="actionNew">
+	<portlet:param name="action" value="doNew"/>
+</portlet:actionURL>
 <portlet:actionURL var="formActionInsert">
 	<portlet:param name="action" value="doInsertKpi"/>
 </portlet:actionURL> 
@@ -25,6 +28,7 @@
 <portlet:resourceURL var="listCds" id="listCds" ></portlet:resourceURL>
 <portlet:resourceURL var="doGetCriteraiMethod" id="doGetCriteraiMethod" ></portlet:resourceURL>
 <portlet:resourceURL var="doDeleteKpiChildTable" id="doDeleteKpiChildTable" ></portlet:resourceURL>
+<portlet:resourceURL var="doGetSuperKpi" id="doGetSuperKpi" ></portlet:resourceURL>
 
 
 <html lang="en">
@@ -50,6 +54,7 @@
     <script type="text/javascript"> 
 		var portletBoxName = "kpiDetail";
 		var standardCriteriaId = 2;
+		var levelId, calendarTypeId, periodId, criteriaTypeId, criteriaMethodId, radioCriteriaScore
 	    $(function() {
 	    	 $(".actionCnt div").hide();
 	    	 $( "#accordion" ).accordion({ active:false,collapsible:true,autoHeight: false ,
@@ -105,7 +110,21 @@
 	          //blind criterieType // quan or qual
 	          //bind event
 	       	scoreNumChangeEvent();
-	       	$("#criteriaTypeStr").val($("#criteriaMethod").val());
+	       	//$("#criteriaTypeStr").val($("#criteriaMethod").val());
+	       	$("#detailCalendarTypeStr").val($("#detailCalendarType").val());
+	       	$("#detailPeriodStr").val($("#detailPeriod").val());
+			
+	     	// In case kpi edit // 
+	       	if($("input#actionStatus").val() == "editKpi"){
+	       		// KPI base value //				
+				levelId = "${kpiForm.kpiModel.levelId}";				
+				calendarTypeId = "${kpiForm.kpiModel.calendarTypeId}";
+				periodId = "${kpiForm.kpiModel.periodId}";				
+				criteriaTypeId = "${kpiForm.kpiModel.criteriaTypeId}";
+				criteriaMethodId = "${kpiForm.kpiModel.criteriaMethodId}";
+				radioCriteriaScore = "${kpiForm.radioCriteriaScore}";
+	       	}
+	     
 	       	getCriteraiMethod();
 	    });
 
@@ -207,7 +226,6 @@
 	    		});
 		}
 
-
 		function getCriteraiMethod(){
 			var baseVal = $("#criteriaMethod").val();
 			var traget = $("#criteriaMethod").empty();
@@ -219,47 +237,112 @@
 				success: function(data){
 					console.log(data);
 					for(var i=0;i<data["lists"].length;i++){
-		    		    var opt = '<option value="'+data["lists"][i]["id"]+'"> '+data["lists"][i]["name"]+' </option>';
-		    			traget.append(opt);
+						if($.trim(criteriaMethodId) == $.trim(data["lists"][i]["id"])){
+							traget.append(
+								'<option selected value="'+data["lists"][i]["id"]+'"> '+data["lists"][i]["name"]+' </option>'
+								);
+						}else{
+							traget.append(
+								'<option value="'+data["lists"][i]["id"]+'"> '+data["lists"][i]["name"]+' </option>'
+								);
+						}
+		    			
 		    		} 
 				}
 			});
-			if(baseVal.length > 0){
+			/*if(baseVal.length > 0){
 				traget.val(baseVal);
-			}
+			}*/
+		}
+		
+		function getSuperKpi(){
+			var baseVal = $("#detailGroup").val();
+			var traget = $("#detailStructure").empty();
+			$.ajax({
+				dataType:'json',
+				url:"<%=doGetSuperKpi%>",
+				data:{'kpiGroupId':baseVal },
+				async:false,
+				success: function(data){
+					for(var i=0;i<data["lists"].length;i++){
+						traget.append('<option value="'+data["lists"][i]["id"]+'"> '+data["lists"][i]["name"]+' </option>');
+					} 
+				}
+			});
+		}
+		
+		function getSuperKpi(){
+			var baseVal = $("#detailGroup").val();
+			var traget = $("#detailStructure").empty();
+			$.ajax({
+				dataType:'json',
+				url:"<%=doGetSuperKpi%>",
+				data:{'kpiGroupId':baseVal },
+				async:false,
+				success: function(data){
+					for(var i=0;i<data["lists"].length;i++){
+						traget.append('<option value="'+data["lists"][i]["id"]+'"> '+data["lists"][i]["name"]+' </option>');
+					} 
+				}
+			});
 		}
 
-
     	function doSubmitDetail(){
-    		var baseCriteriaType = $("#criteriaTypeStr").val();
-    		var newCriteriaType = $("select#criteriaMethod option:selected").val();
-
-    		if(baseCriteriaType != newCriteriaType){
-    			$.confirm({
-				    text: '"วิธีการประเมิน" มีการเปลี่ยนแปลง รายละเอียดของข้อมูลตัวบ่งชี้จะถูกลบ ท่านยืนยันการบันทึกหรือไม่',
-				    title: "ยืนยันการบันทึก ตัวบ่งชี้",
-				    confirm: function(button) {
-						if(doDeleteKpiChildTable() == "1"){
-							doSubmit(); 
-						}
-
-				    },
-				    cancel: function(button) {
-				        // nothing to do
-				    },
-				    confirmButton: "ยืนยัน",
-				    cancelButton: "ยกเลิก",
-				    post: true,
-				    confirmButtonClass: "btn-primary",
-				    cancelButtonClass: "btn-danger",
-				    dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
-				});
+    		if(levelId != $("#detailLevel").val()
+    			||calendarTypeId != $("#detailCalendarType").val()
+    			||periodId != $("#detailPeriod").val()
+    			||criteriaTypeId != $("#criteriaTypeId").val()
+    			||criteriaMethodId != $("#criteriaMethod").val()
+    			||radioCriteriaScore != $('input[name=radioCriteriaScore]:checked').val()
+        		){
+    			
+    			// Information changed //
+		    	if($("input#actionStatus").val() == "editKpi"){
+		    		var baseCriteriaType = $("#criteriaTypeStr");
+		    		var baseDetailCalendarType = $("#detailCalendarTypeStr");
+		    		var baseDetailPeriod = $("#detailPeriodStr");
+	
+		    		var newCriteriaType = $("select#criteriaMethod option:selected");
+		    		var newDetailCalendarType = $("select#detailCalendarType option:selected");
+		    		var newDetailPeriod = $("select#detailPeriod option:selected");
+	
+		    		if(baseCriteriaType.val() != newCriteriaType.val() 
+		    			|| baseDetailCalendarType.val() != newDetailCalendarType.val() 
+		    			|| baseDetailPeriod.val() != newDetailPeriod.val()){
+		    			$.confirm({
+						    text: 'ท่านได้ทำการเปลี่ยนแปลงข้อมูลที่มีผล ทำให้เกณฑ์การประเมิน, เป้าหมาย หรือผลการดำเนินงาน อาจไม่ถูกต้อง <br/><br/> <font style="color:red"> <u style="color:red">หมายเหตุ</u> ถ้าท่านยืนบันทึกข้อมูล ระบบจะทำการลบข้อมูล เกณฑ์การประเมิน, เป้าหมาย และผลการดำเนินงาน เพื่อให้ข้อมูลถูกต้องท่านต้องบันทึกข้อมูลที่ถูกลบดังกล่าวใหม่</font>',
+						    title: "ยืนยันการบันทึก ตัวบ่งชี้",
+						    confirm: function(button) {
+								if(doDeleteKpiChildTable() == "1"){
+									doSubmit(); 
+								}
+	
+						    },
+						    cancel: function(button) {
+						        // nothing to do
+						    },
+						    confirmButton: "ยืนยัน",
+						    cancelButton: "ยกเลิก",
+						    post: true,
+						    confirmButtonClass: "btn-primary",
+						    cancelButtonClass: "btn-danger",
+						    dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
+						});
+		    		}else{
+		    			doSubmit();
+		    		}
+		    	}else{
+		    		doSubmit();
+		    	}
     		}else{
     			doSubmit();
     		}
     	}
 
     	function doSubmit(){
+    		$("#tempFormula").val($("#formula").val());
+    		$("#tempFormulaDesc").val($("#formulaDesc").val());
+    		
     		if($('#kpiDetail #kpiId').val()==""){
 	    		$('#kpiDetail #kpiFormDetail').attr("action","<%=formActionInsert%>");
 	    	}else{
@@ -346,7 +429,7 @@
 	    	}
 	    	return id;
 	    }
-	    function getActiveTab(elName){
+	    function getActiveTab(elName){getSuperKpi()
 	    	var activeDiv = $("div#"+elName+".ui-tabs>div.ui-tabs-panel[aria-expanded=\"true\"]");
 	    	var str = activeDiv.attr("id");
 	    	return str;
@@ -576,6 +659,28 @@
 	    }
 	    // result criteria tabs
 	     function showCriteriaGroup(current,elName,editMode){
+	     	// ตรวจสอบกานเพิ่ม tabs แบ่งกลุ่ม เพราะว่าการเพิ่มคะแนนจำเป็นต้องทการแบ่งกลุ่มเสียก่อน //
+	     	if(elName == "actRangeDetail"){
+	     		var groupChildTab = $("#rangeBaselineTab").children("div");
+	     		if(groupChildTab.length == 0){
+	     			$.confirm({
+						title: "เกณฑ์แปลงคะแนน / เพิ่มคะแนน",
+					    text: "<font size='3' color='#FF0000'> กรุณาทำการเพิ่มกลุ่มก่อนการเพิ่มคะแนน !! </font>",						    
+					    confirm: function(button) { 
+					    	showCriteriaGroup(current,'actRangeGroup',0) 
+					    },
+						cancel: function(button) { /*// Not thing to do and hidden//*/ },
+						confirmButton: "ตกลง",
+						cancelButton: "ยกเลิก",
+						post: true,
+						confirmButtonClass: "btn-primary",
+						cancelButtonClass: "btn-danger",
+						dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
+					});
+					$(".btn-danger").hide()
+	     		}
+	     	}	    	
+
 	    	//hide , show
 	    	var cnt = $(current).closest('.tabAction');
 		    var target = cnt.children("div#"+elName);
@@ -677,6 +782,7 @@
     		}
 
     		getCriteraiMethod();
+    		toggleBaselineLayout();
     	}
     	function clearCnt(jCnt){
     		if(typeof jCnt != 'undefined'){
@@ -1309,7 +1415,46 @@
 				cnt.append(li);
 			}
 		}
+		
+		function verifyDataOnSubmit(){
+			var collection = $(".Required");
+			var data1 = collection.get();
+			var elCount = 0;
+			$.each(data1,function(index,indexEntry){
+				if($(indexEntry).val() == "" || $(indexEntry).val() == null){
+					$(indexEntry).css({"border-color": "#e9322d", "box-shadow": "0 0 6px #f8b9b7"}); 					
+					elCount++;
+					$(indexEntry).focus();
+				}else{
+					$(indexEntry).css({"border-color": "", "box-shadow": ""}); 				}
+				
+			});
+
+			if(elCount == 0){ 
+				doSubmitDetail(); 
+			}else{ 
+				$.confirm({
+					title: "ยืนยันการบันทึก ตัวบ่งชี้",
+				    text: "<font size='3' color='#FF0000'> กรุณากรอกข้อมูลให้ครบถ้วน !! </font>",						    
+				    confirm: function(button) { /*// Not thing to do //*/ },
+					cancel: function(button) { /*// Not thing to do //*/ },
+					confirmButton: "ตกลง",
+					cancelButton: "ยกเลิก",
+					post: true,
+					confirmButtonClass: "btn-primary",
+					cancelButtonClass: "btn-danger",
+					dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
+				});
+				$(".btn-danger").hide()
+			}
+		}
+		
+		function actAdd(){
+			$('#kpiFormDetail').attr("action","<%=actionNew%>");
+			$('#kpiFormDetail').submit();			
+		}
     </script>
+    
     <style type="text/css">
     	table.tableKpiDetail,table.tableKpiCriteria{ width:100%;}
     	table.tableKpiDetail td,table.tableKpiCriteria td{	width:50%;	}
@@ -1330,7 +1475,7 @@
     		vertical-align:text-top;
     	}
     	div.formula-calc{
-    		border:2px solid #bcbcbc;
+    		border:1px solid #bcbcbc;
     	}
     	.formula-calc{
     		padding:10px 10px 20px 10px;
@@ -1369,7 +1514,7 @@
     	#cds-list{ clear:both; }
     	.actionMessage{ background-color:#CCCCFF; border:1px solid red;padding:15px 15px 15px 15px; display:inline; }
     	body *{color:black;}
-    	#kpi-Detail select{ min-width:150px;max-width:300px;}
+    	/* #kpi-Detail select{ min-width:150px;max-width:300px;} */
     	.aui select{
 			color:black;
 			width:auto;
@@ -1389,51 +1534,118 @@
 </head>
 <body>
 	<div id="kpiDetail" class="box">
+
+		<input type="hidden" id="actionStatus" value="${actionStatus}"></input>
+
 		<input type="hidden" id="criteriaTypeStr" value=""></input>
+		<input type="hidden" id="detailCalendarTypeStr" value=""></input>
+	    <input type="hidden" id="detailPeriodStr" value=""></input>
+
 		<input type="hidden" id="pageMessage" value="${actionMessageCode}"/>
 		<c:if test="${not empty actionMessage}"> 
 			<div id="kpi-msg" class="alert">${actionMessage}</div>
        	</c:if>
 		<div id="kpi-Detail" class="boxPadding">
-		   	<form:form  id="kpiFormDetail" modelAttribute="kpiForm" method="post"  name="kpiForm" action="${formActionNew}" enctype="multipart/form-data">
-			<form:input type="text" id="kpiId" path="kpiModel.kpiId" style="display:none"/>
-			<table class="tableKpiDetail">
-				<tr><td colspan="2"><label>ชื่อตัวบ่งชี้</label><form:textarea id="detailKpiName" style="width:80%;" path="kpiModel.kpiName" rows="2" />
-				</tr>
-				<tr><td><label>ระดับตัวบ่งชี้</label><form:select id="detailLevel"  path="kpiModel.levelId" items="${levelList}" /></td>
-					<td><label>องค์ประกอบ</label> <form:select id="detailStructure"  path="kpiModel.structureId" items="${structureList}" /></td>
-				</tr>
-				<tr><td><label>กลุ่มตัวบ่งชี้</label><form:select id="detailGroup"  path="kpiModel.groupId" items="${groupList}" /></td>
-					<td><label>ชนิดตัวบ่งชี้</label><form:select id="detailType" path="kpiModel.typeId" items="${typeList}" /></td>
-				</tr>
-				<tr><td><label>ประเภทปฏิทิน</label><form:select id="detailCalendarType"  path="kpiModel.calendarTypeId" items="${calendarTypeList}" /></td>
-					<td> <label>ช่วงเวลา </label> <form:select id="detailPeriod"  path="kpiModel.periodId" items="${periodList}" /> </td>
-				</tr>
-				<tr><td><label>หน่วยวัด </label><form:select id="detailUom" path="kpiModel.uomId" items="${uomList}" /></td>	
-					<td><label>ภายใต้ตัวบ่งชี้</label> <form:select id="detailParent"  path="kpiModel.parentId" items="${ parentList}" />
-					<img height="24" width="24" style="cursor: pointer" src="<c:url value="/resources/images/refresh-rect-bw.png"/>" onclick="getKpiParentList()" />
-					<img height="24" width="24" style="display:none;" src="<c:url value="/resources/images/loading_blue_32.gif"/>" />
-				</tr>
-				<tr><td> <label>ค่าเปรียบเทียบ</label> <form:input type="text" class="numbersOnly" id="detailBenchmark" path="kpiModel.benchmark" /> (ตามหน่วยวัด)</td>
-					<td> <label>ค่าคะแนนต่ำสุด</label> <form:input type="text" class="numbersOnly" id="detailMinScore" path="kpiModel.minScore" style="width:30px" /></td>
-				</tr>				
-			</table>
-			<table class="tableKpiCriteria"> 
-				<tr><td><label>ประเภทเกณฑ์ประเมิน</label> <form:select id="criteriaTypeId" onchange="criteriaTypeChange()" path="kpiModel.criteriaTypeId" items="${criteriaTypeList}" /></td>
-				</tr>
-				<tr><td><label>เกณฑ์คะแนน</label>
-					<form:radiobutton id="radioCriteriaScore1" name="radioCriteriaScore" path="radioCriteriaScore" value="integer" />  เทียบคะแนนเต็มเท่ากับร้อยละ <form:input id="criteriaScore" path="kpiModel.criteriaScore" type="text" style="width:30px" class="numbersOnly"/>
-						&nbsp<form:radiobutton id="radioCriteriaScore2" name="radioCriteriaScore" path="radioCriteriaScore" value="pass"/> ผ่าน/ไม่ผ่าน</td>
-				</tr>
-				<tr><td><label>วิธีการประเมิน</label><form:select id="criteriaMethod" class="input-large" onchange="toggleBaselineLayout()"   path="kpiModel.criteriaMethodId" items="${criteriaMethodList}" /></td>
-				</tr>
-				<tr style="display:none;"> <td> <form:input type="text" path="kpiModel.createdBy" /> </td> </tr>
-				<tr style="display:none;"> <td> <form:input type="text" path="kpiModel.createdDate" /> </td> </tr>
-			</table>			
-			<div style="text-align:center;"><input onClick="doSubmitDetail()" type="button" class="save" value="บันทึก" style="{margin-right:10px;}" /> <input type="button" class="cancel" onClick="doBack2List()" value="ยกเลิก" /> 
-			</div>
+			<form:form id="kpiFormDetail" modelAttribute="kpiForm" method="post" name="kpiForm" action="${formActionNew}" enctype="multipart/form-data">
+				<form:input type="text" id="kpiId" path="kpiModel.kpiId" style="display:none" />
+				<table class="tableKpiDetail">
+					<tr>
+						<td colspan="2"><label>ชื่อตัวบ่งชี้</label>
+						<form:textarea id="detailKpiName" style="width:75%;" path="kpiModel.kpiName" rows="2" class="Required"/>
+					</tr>
+					<tr>
+						<td>
+							<label>ระดับตัวบ่งชี้</label>
+							<form:select id="detailLevel" path="kpiModel.levelId" items="${levelList}" class="Required"/>
+						</td>
+						<td>
+							<label>องค์ประกอบ</label> 
+							<form:select id="detailStructure" path="kpiModel.structureId" items="${structureList}" class="input-xlarge Required"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label>กลุ่มตัวบ่งชี้</label>
+							<form:select id="detailGroup" class="input-xlarge Required" path="kpiModel.groupId" items="${groupList}" onchange="getSuperKpi()"/>
+						</td>
+						<td>
+							<label>ชนิดตัวบ่งชี้</label>
+							<form:select id="detailType" path="kpiModel.typeId"	items="${typeList}" class="Required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label>ประเภทปฏิทิน</label>
+							<form:select id="detailCalendarType" path="kpiModel.calendarTypeId" items="${calendarTypeList}" class="Required"/>
+						</td>
+						<td>
+							<label>ช่วงเวลา </label> 
+							<form:select id="detailPeriod" path="kpiModel.periodId" items="${periodList}" class="Required"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label>หน่วยวัด </label>
+							<form:select id="detailUom" path="kpiModel.uomId" items="${uomList}" class="Required"/>
+						</td>
+						<td>
+							<label>ภายใต้ตัวบ่งชี้</label> 
+							<form:select id="detailParent" class="input-xlarge" path="kpiModel.parentId" items="${parentList}" /> 
+							<img height="24" width="24"	style="cursor: pointer" src="<c:url value="/resources/images/refresh-rect-bw.png"/>" onclick="getKpiParentList()" /> 
+							<img height="24" width="24" style="display: none;" src="<c:url value="/resources/images/loading_blue_32.gif"/>" />
+						</td>	
+					</tr>
+					<tr>
+						<td>
+							<label>ค่าเปรียบเทียบ</label> <form:input type="text" class="numbersOnly" id="detailBenchmark" path="kpiModel.benchmark" /> (ตามหน่วยวัด)
+						</td>
+						<td>
+							<label>ค่าคะแนนต่ำสุด</label> <form:input type="text" class="numbersOnly" id="detailMinScore" path="kpiModel.minScore" style="width:30px" />
+						</td>
+					</tr>
+				</table>
+				<table class="tableKpiCriteria">
+					<tr>
+						<td>
+							<label>ประเภทเกณฑ์ประเมิน</label> 
+							<form:select id="criteriaTypeId" onchange="criteriaTypeChange()" path="kpiModel.criteriaTypeId" items="${criteriaTypeList}" class="Required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label>เกณฑ์คะแนน</label> 
+							<form:radiobutton id="radioCriteriaScore1" name="radioCriteriaScore" path="radioCriteriaScore" value="integer" />
+							เทียบคะแนนเต็มเท่ากับร้อยละ 
+							<form:input id="criteriaScore" path="kpiModel.criteriaScore" type="text" style="width:30px" class="numbersOnly" /> 
+							&nbsp
+							<form:radiobutton id="radioCriteriaScore2" name="radioCriteriaScore" path="radioCriteriaScore" value="pass" /> 
+							ผ่าน/ไม่ผ่าน
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label>วิธีการประเมิน</label>
+							<form:select id="criteriaMethod" class="input-large Required" onchange="toggleBaselineLayout()" path="kpiModel.criteriaMethodId" items="${criteriaMethodList}" />
+						</td>
+					</tr>
+					<tr style="display: none;">
+						<td><form:input type="text" path="kpiModel.createdBy" /></td>
+					</tr>
+					<tr style="display: none;">
+						<td><form:input type="text" path="kpiModel.createdDate" /></td>
+					</tr>
+				</table>
+				<div style="text-align: center;">
+					<input onClick="verifyDataOnSubmit()" type="button" class="save" value="บันทึก" /> 
+					<input type="button" class="cancel" onClick="doBack2List()" value="ยกเลิก" />
+					<input type="button" class="btn btn-success" onClick="actAdd()" value="เพิ่มตัวบ่งชี้ใหม่" /> 
+				</div>
+				<form:input id="tempFormula" type="hidden" path="kpiModel.formula" />
+				<form:input id="tempFormulaDesc" type="hidden" path="kpiModel.formulaDesc" />
 			</form:form>
-		</div> <!--  end detail box --> 
+		</div>
+		<!-- end detail box -->
+		
 		<div id="accordionStateMessage" style="{text-align:center;color:red}"></div>
 		<div id="accordion" class="eduqa-kpi-calc">
 			<h3>เกณฑ์มาตราฐาน/เกณฑ์ประเมิน</h3>
@@ -1658,6 +1870,7 @@
 				<div class="formula-calc">
 					<label>สูตรการคำนวน</label><form:textarea id="formula" name="formula" path="kpiModel.formula" cols="70" rows="4" ></form:textarea>
 				</div>
+				<br/>
 				<div style="text-align:center;"><input onclick="doSubmitFormula()" type="button" value="บันทึก" style="{margin-right:10px;}" class="save" />
 					<!-- <input type="button" onclick="doCloseAccordFormula" value="ปิด" /> -->
 				</div>

@@ -33,7 +33,7 @@
 	<link rel="stylesheet" href="<c:url value="/resources/css/common-element.css"/>" type="text/css"/>
 	
     <script type="text/javascript"> 
-   	  	var dialog,dialog2;
+   	  	var dialog,dialog2,gobalTypeName;
     	$( document ).ready(function() {
     		paging();
     		$('.numPage').val(${PageCur});
@@ -94,8 +94,8 @@
    	 		var dataId = parseInt($(el).parent('td').parent('tr').children('tbody tr td:nth-child(2)').html());
 	    	var dataName = $(el).parent('td').parent('tr').children('tbody tr td:nth-child(3)').text();
 	   	 	$.confirm({
-		   	     text: "ยืนยันการลบประเภทกลุ่มตัวบ่งชี้ \"".concat(dataName, "\""),
-		   	     title: "ลบประเภทกลุ่มตัวบ่งชี้",
+		   	     text: "ยืนยันการลบประเภทตัวบ่งชี้ \"".concat(dataName, "\""),
+		   	     title: "ลบประเภทตัวบ่งชี้",
 		   	     confirm: function(button) {		   	    	
 		   	 		$('#kpiGroupTypeForm').attr("action","<%=formActionDelete%>");
 			 		$('#kpiGroupTypeForm '+'#fGroupTypeId').val(dataId);
@@ -122,9 +122,13 @@
    	 		}
    	 	}
    	 	function actSaveEdit(){
-	 		$('#kpiGroupTypeForm').attr("action","<%=formActionEdit%>");
-	 		$('#kpiGroupTypeForm').submit();
-	 		$('#fGroupTypeDesc').val('');
+   	 		if($.trim(gobalTypeName) == $.trim($("input#fGroupTypeDesc").val())){
+   	 			actCancel();
+   	 		}else{
+		 		$('#kpiGroupTypeForm').attr("action","<%=formActionEdit%>");
+		 		$('#kpiGroupTypeForm').submit();
+		 		$('#fGroupTypeDesc').val('');
+		 	}
 	 	}
 	 	function actCancel(el){
 	  		//dialog.dialog( "close" );
@@ -142,6 +146,7 @@
 	 		}else if(mode==2){
 	 			head = 'แก้ไข';
 	 			event='actSaveEdit()';
+	 			gobalTypeName = value;
 	 		}
    	 		$(d1).find('span').html(head);
    	 		$(d1).find('input[type=hidden]#fGroupTypeId').val(rowNum);
@@ -256,7 +261,7 @@
 			<form:form id="kpiGroupTypeForm" modelAttribute="kpiGroupTypeForm" action="${formAction}" method="POST" enctype="multipart/form-data">
 				<fieldset>
 					<legend style="font:16px bold;">
-						<span></span>ประเภทกลุ่มตัวบ่งชี้
+						<span></span>ประเภทตัวบ่งชี้
 					</legend>
 					<div style="text-align: center;">
 						<form:input type="hidden" id="pageNo" path="pageNo" value="${PageCur}"/>
@@ -266,7 +271,7 @@
 						<form:input type="hidden" id="fGroupTypecreateBy" path="kpiGroupTypeModel.createdBy" />
 						<form:input type="hidden" id="fGroupTypecreateDate" path="createDate" />
 						
-						ชื่อประเภทกลุ่มตัวบ่งชี้:
+						ชื่อประเภทตัวบ่งชี้:
 						<form:input id="fGroupTypeDesc" path="kpiGroupTypeModel.groupTypeName" maxlength="255"/> <br/>
 						<label id="ckInputText" style="color:red; display:none;">*กรุณากรอกข้อมูลให้ครบถ้วน</label> <br/>
 						<button class="save btn btn-primary" type="button" onClick="actSaveInsert()">บันทึก</button>
@@ -278,7 +283,7 @@
 		
 		<div class="row-fluid">
 			<div class="span6">
-				<span>ค้นหาประเภทกลุ่มตัวบ่งชี้ : </span> 
+				<span>ค้นหาประเภทตัวบ่งชี้ : </span> 
 				<input type="text" id="textSearch" value="${keySearch}"  placeholder="ค้นหาจากชื่อ" style="margin-bottom: 0px;"/>				
 					<img src="<c:url value="/resources/images/search.png"/>" width="20" height="20" onClick="actSearch(this)" style="cursor: pointer;">
 					<img src="<c:url value="/resources/images/add.png"/>" width="18" height="18" onClick="actAdd(this)" style="cursor: pointer;">		
@@ -314,7 +319,7 @@
 					<tr>
 						<th>ลำดับ</td>
 						<th>รหัส</td>
-						<th>ชื่อประเภทกลุ่มตัวบ่งชี้</td>
+						<th>ชื่อประเภทตัวบ่งชี้</td>
 						<th>ปี</td>
 						<th>แก้ไข</td>
 						<th>ลบ</td>
@@ -372,4 +377,3 @@
 
 </body>
 </html>	
-   

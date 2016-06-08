@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
@@ -80,7 +81,7 @@ public class KpiController {
 				"researchGroupM.groupCode","researchGroupM.permissions","researchGroupM.updatedBy",
 				"researchGroupM.updatedDate","researchGroupM.groupTh","researchGroupM.groupEng","mode", "command","keySearch"};
 			*/
-		//	binder.setAllowedFields(ALLOWED_FIELDS);		
+		//	binder.setAllowedFields(ALLOWED_FIELDS);
 	}
 	@RequestMapping("VIEW") 
 	public String listRows(PortletRequest request,Model model){
@@ -119,6 +120,7 @@ public class KpiController {
 	public void newDetail(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response,
 			@ModelAttribute("kpiListForm") KpiListForm kpiListForm,BindingResult result,Model model){
 		response.setRenderParameter("render", "showDetail");
+		response.setRenderParameter("actionStatus", "newkpi");
 	}
 	@RequestMapping(params="action=doEdit") 
 	public void editDetail(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response,
@@ -126,10 +128,11 @@ public class KpiController {
 
 		response.setRenderParameter("render", "showDetail");
 		response.setRenderParameter("kpiId",String.valueOf( kpiListForm.getKpiId()) );
+		response.setRenderParameter("actionStatus", "editKpi");
 	}
 	@RequestMapping("VIEW")
 	@RenderMapping(params="render=showDetail")
-	public String showDetail(PortletRequest request,Model model){
+	public String showDetail(PortletRequest request,Model model, @RequestParam("actionStatus") String actionStatus){
 	//	if(request.getParameter("message")!=null){
 			model.addAttribute("actionMessage",request.getParameter("message"));
 			model.addAttribute("actionMessageCode",request.getParameter("messageCode"));
@@ -202,9 +205,8 @@ public class KpiController {
 		for(DescriptionModel crType: crTypes){
 			criteriaTypeList.put(crType.getDescCode(),crType.getDescription());
 		}
-		//	criteriaTypeList.put(1, "เชิงปริมาณ");
-		//	criteriaTypeList.put(2, "เชิงคุณภาพ");
-		model.addAttribute("criteriaTypeList", criteriaTypeList);
+		Map<String, String> criteriaTypeListSortedMap = new TreeMap<String, String>(criteriaTypeList);
+		model.addAttribute("criteriaTypeList", criteriaTypeListSortedMap);
 		
 		Map<String,String> criteriaMethodList = new HashMap<String,String>();
 		List<DescriptionModel> crMthods = service.getCriMethods(new DescriptionModel());
@@ -257,6 +259,7 @@ public class KpiController {
 			kpiForm.setKpiModel(kpiM);
 			model.addAttribute("kpiForm",kpiForm);
 		}
+		model.addAttribute("actionStatus", actionStatus);
 		return "master/kpiDetail";
 	}
 	
@@ -343,7 +346,9 @@ public class KpiController {
 		response.setRenderParameter("kpiId", String.valueOf(kpiId) );
 		response.setRenderParameter("message", message);
 		response.setRenderParameter("messageCode", messageCode);
+		response.setRenderParameter("actionStatus", "editKpi");
 	}
+	
 	@RequestMapping(params = "action=doUpdateKpi") 
 	public void UpdateKpi(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response,
 			@ModelAttribute("kpiForm") KpiForm kpiForm,BindingResult result,Model model) { 
@@ -360,7 +365,7 @@ public class KpiController {
 		else{
 			kpi.setPassFlag(null);
 			kpi.setScoreFlag(null);
-		}
+		}		
 		kpi.setAcademicYear(getCurrentYear());
 		kpi.setUpdatedBy(user.getFullName());
 		service.updateKpi(kpi);
@@ -368,12 +373,13 @@ public class KpiController {
 		response.setRenderParameter("kpiId", String.valueOf(kpiForm.getKpiModel().getKpiId()) );
 		response.setRenderParameter("message", "บันทึกสำเร็จ");
 		response.setRenderParameter("messageCode", "0");
+		response.setRenderParameter("actionStatus", "editKpi");
 	}
+	
 	@RequestMapping(params = "action=doBack2List") 
 	public void back2List(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response,
 			@ModelAttribute("kpiForm") KpiForm kpiForm,BindingResult result,Model model) { 
 			User user = (User) request.getAttribute(WebKeys.USER);
-			
 	}
 	/* #####  function */
 	private List<KpiListForm> convertAccordion(List<KpiModel> kpis){
@@ -413,7 +419,7 @@ public class KpiController {
 		}	// end while iterator 
 		return forms;
 	}
-	// ajax 
+	// ajax //
 	@ResourceMapping(value="doSearchKpiName")
 	@ResponseBody 
 	public void getKpiNames(ResourceRequest request,ResourceResponse response) throws IOException{
@@ -574,7 +580,8 @@ public class KpiController {
 		System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
-	//doDeleteCriteria
+	
+	// doDeleteCriteria //
 	@ResourceMapping(value="doDeleteCriteria")
 	@ResponseBody 
 	public void deleteCriteria(ResourceRequest request,ResourceResponse response) 
@@ -995,6 +1002,29 @@ public class KpiController {
 		response.getWriter().write(json.toString());
 	}
 	
+	@ResourceMapping(value="doGetSuperKpi")
+	@ResponseBody 
+	public void doGetSuperKpi(ResourceRequest request,ResourceResponse response) 
+			throws IOException{
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest	=	PortalUtil.getOriginalServletRequest(httpReq);		
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		Integer kpiGroupId = Integer.parseInt(normalRequest.getParameter("kpiGroupId"));
+		
+		KpiStrucModel kst = new KpiStrucModel();
+		kst.setPaging(new Paging());
+		kst.setGroupId(kpiGroupId);
+		List<KpiStrucModel> strucs = service.searchKpiStruc(kst);
+		JSONArray lists = JSONFactoryUtil.createJSONArray();
+		for(KpiStrucModel crStrucs: strucs){
+			JSONObject connJSON = JSONFactoryUtil.createJSONObject();
+         	connJSON.put("id", crStrucs.getStrucId());
+         	connJSON.put("name", crStrucs.getStrucName());
+         	lists.put(connJSON);
+        }
+		json.put("lists", lists);
+		response.getWriter().write(json.toString());
+	}	
 	
 	private Integer validParam2int(String paramValue){
 		Integer ret=null;

@@ -31,7 +31,7 @@
 	<script src="<c:url value="/resources/js/confirm-master/jquery.confirm.min.js"/>"></script>
 	
     <script type="text/javascript"> 
-   	  	var dialog,dialog2;
+   	  	var dialog,dialog2, gobalOumName;
     	$( document ).ready(function() {
     		paging();
     		$('.numPage').val(${PageCur});
@@ -124,9 +124,12 @@
    	 		if($.trim($('#fUomName').val()) == ""){
 	 			$('label#ckInputText').css( "display", "block" ).fadeOut( 5000 );
 	 		}else{
-		 		$('#kpiUomForm').attr("action","<%=formActionEdit%>");
-		 		$('#kpiUomForm').submit();
-		 		$('#fUomName').val("");
+	 			if($.trim(gobalOumName) == $.trim($("input#fUomName").val())){
+	 				actCancel();
+	 			}else{
+	 				$('#kpiUomForm').attr("action","<%=formActionEdit%>");
+			 		$('#kpiUomForm').submit();
+	 			}
 	 		}
 	 	}
 	 	function actCancel(el){
@@ -147,6 +150,7 @@
 	 			head = 'แก้ไข';
 	 			event='actSaveEdit()';
 	 			$(d1).find('input[type=text]#fUomName').val(dataDesc["name"]);
+	 			gobalOumName = dataDesc["name"];
 	 		}
    	 		$(d1).find('span').html(head);
    	 		$(d1).find('input[type=hidden]#fUomId').val(dataId);
@@ -374,5 +378,4 @@
 		
 	</div>
 </body>
-</html>	
-   
+</html>

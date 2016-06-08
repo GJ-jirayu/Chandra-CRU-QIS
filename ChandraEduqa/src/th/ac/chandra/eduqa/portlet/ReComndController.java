@@ -65,12 +65,6 @@ public class ReComndController {
 	@Autowired
 	@Qualifier("eduqaServiceWSImpl")
 	private EduqaService service;
-	
-	// ชั่วคราว	
-	private Integer sysYear = 2558;
-	
-	@Autowired
-	private CustomObjectMapper customObjectMapper;
 
 	@InitBinder
 	public void initBinder(PortletRequestDataBinder binder,

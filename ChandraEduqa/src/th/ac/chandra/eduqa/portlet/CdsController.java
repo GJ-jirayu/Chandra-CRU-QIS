@@ -175,12 +175,14 @@ public class CdsController {
 			@ModelAttribute("cdsForm") CdsForm cdsForm,BindingResult result,Model model){
 		//CdsModel cds = service.findCdsById(1);
 		response.setRenderParameter("render", "displayDetail");
+		response.setRenderParameter("pageAction", "new");
 	}
 	@RequestMapping(params="action=doEdit") 
 	public void editDetail(javax.portlet.ActionRequest request, javax.portlet.ActionResponse response,
 			@ModelAttribute("cdsForm") CdsForm cdsForm,BindingResult result,Model model){
 		response.setRenderParameter("render", "displayDetail");
 		response.setRenderParameter("cdsId",String.valueOf( cdsForm.getCdsModel().getCdsId() ) ) ;
+		response.setRenderParameter("pageAction", "edit");
 	}
 	@RequestMapping("VIEW")
 	@RenderMapping(params="render=displayDetail")
@@ -265,6 +267,7 @@ public class CdsController {
 		model.addAttribute("qDetailList",qDetailList);
 		model.addAttribute("qYearList",qYearList);
 		model.addAttribute("qMonthList",qMonthList);
+		model.addAttribute("pageAction", request.getParameter("pageAction"));
 		
 		return "master/cdsDetail";
 	}
