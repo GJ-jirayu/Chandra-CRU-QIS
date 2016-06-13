@@ -255,7 +255,7 @@
    	</style>
   </head>
   
-<body> 
+<body>
 	<input type="hidden" id="messageMsg" value="${messageCode}"> 
 	<div id="msgAlert" style="display:none">
 	    <button type="button" class="close" data-dismiss="alert">x</button>

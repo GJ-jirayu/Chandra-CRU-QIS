@@ -79,7 +79,7 @@ import th.ac.chandra.eduqa.xstream.common.Paging;
 @Transactional
 public class EduqaRepository   {
 	//private static final String SELECT_QUERY = "select p from JournalPaper p";
-
+	
 	@Autowired
 	@PersistenceContext(unitName="HibernatePersistenceUnit") 
 	private EntityManager entityManager;
@@ -1219,6 +1219,7 @@ public class EduqaRepository   {
 		transList.add(records);
 		return transList;
 	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List previewOracleQueryResult(DbQueryModel q){
 		/*maxColumnNo is deprecated*/
@@ -2039,7 +2040,7 @@ public class EduqaRepository   {
 				throws DataAccessException {
 			return entityManager.find(KpiResult.class, kpiResultId);
 		}
-		public KpiResult findKpiResultByKpi(KpiResult kpi) 			throws DataAccessException {
+		public KpiResult findKpiResultByKpi(KpiResult kpi) throws DataAccessException {			
 			KpiResult result  = new KpiResult();
 			String sql ="select p from KpiResult p where p.kpiId="+kpi.getKpiId()+" and p.orgId="+kpi.getOrgId()+" and p.monthID="+kpi.getMonthID();
 			entityManager.flush();

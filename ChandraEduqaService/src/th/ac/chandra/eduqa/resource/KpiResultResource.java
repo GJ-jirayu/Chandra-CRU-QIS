@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import th.ac.chandra.eduqa.constant.ServiceConstant;
 import th.ac.chandra.eduqa.domain.KpiResult;
-import th.ac.chandra.eduqa.domain.KpiXCds;
 import th.ac.chandra.eduqa.domain.SysYear;
 import th.ac.chandra.eduqa.model.KpiResultModel;
 import th.ac.chandra.eduqa.service.EduqaService;

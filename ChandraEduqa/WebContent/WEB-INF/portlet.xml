@@ -11,7 +11,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/level-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/level-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -26,7 +29,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/group-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/group-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -42,7 +48,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/group-type-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/group-type-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -58,7 +67,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/type-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/type-master-portlet.xml
+         	/WEB-INF/context/common.xml	
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -74,7 +86,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/uom-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/uom-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -90,7 +105,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/struc-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/struc-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -105,7 +123,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/cds-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/cds-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -120,7 +141,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/kpi-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/kpi-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -135,7 +159,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/dataEntry/assign-kpi-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/dataEntry/assign-kpi-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -151,7 +178,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/threshold-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/threshold-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -167,7 +197,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/master/recommend-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/master/recommend-master-portlet.xml
+         	/WEB-INF/context/common.xml	
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -183,7 +216,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/dataEntry/result-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/dataEntry/result-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>
@@ -199,7 +235,10 @@
       <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
       <init-param>
          <name>contextConfigLocation</name>
-         <value>/WEB-INF/context/config/setup-master-portlet.xml</value>
+         <value>
+         	/WEB-INF/context/config/setup-master-portlet.xml
+         	/WEB-INF/context/common.xml
+         </value>
       </init-param>
       <supports>
          <mime-type>text/html</mime-type>

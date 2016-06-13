@@ -216,7 +216,7 @@
    	</style>
   </head>
 
-  <body>
+  <body> 
   	<input id="messageMsg" type="hidden" value="${messageCode}" />
 	<c:if test="${not empty messageCode}">
 	<div id="msgAlert" style="display:none">

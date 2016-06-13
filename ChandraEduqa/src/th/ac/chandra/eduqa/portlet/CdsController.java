@@ -1,17 +1,21 @@
 package th.ac.chandra.eduqa.portlet;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.portlet.PortletContext;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,8 +31,15 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import org.springframework.web.portlet.bind.PortletRequestDataBinder;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
+
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.model.User;
+import com.liferay.portal.util.PortalUtil;
+
 import th.ac.chandra.eduqa.form.CdsForm;
-import th.ac.chandra.eduqa.mapper.CustomObjectMapper;
 import th.ac.chandra.eduqa.mapper.ResultService;
 import th.ac.chandra.eduqa.model.CdsModel;
 import th.ac.chandra.eduqa.model.DbConnModel;
@@ -36,12 +47,6 @@ import th.ac.chandra.eduqa.model.DbQueryModel;
 import th.ac.chandra.eduqa.model.SysYearModel;
 import th.ac.chandra.eduqa.service.EduqaService;
 import th.ac.chandra.eduqa.xstream.common.Paging;
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.User;
-import com.liferay.portal.util.PortalUtil;
 
 @Controller("cdsController")
 @RequestMapping("VIEW")
@@ -53,6 +58,7 @@ public class CdsController {
 	
 	private Integer getCurrentYear(){
 		SysYearModel sysYearModel = new SysYearModel();
+		@SuppressWarnings("unchecked")
 		List<SysYearModel> sysYears = service.searchSysYear(sysYearModel);
 		try{
 			sysYearModel = sysYears.get(0);
@@ -62,23 +68,14 @@ public class CdsController {
 		}
 	}
 	
-	@Autowired
-	private CustomObjectMapper customObjectMapper;
-
-	private String msg = "start";
 	@InitBinder
 	public void initBinder(PortletRequestDataBinder binder, PortletPreferences preferences) {
 		logger.debug("initBinder");
 		binder.registerCustomEditor(byte[].class, new ByteArrayMultipartFileEditor());
-/*
-		final String[] ALLOWED_FIELDS={"researchGroupM.researchGroupId","researchGroupM.createdBy","researchGroupM.createdDate",
-				"researchGroupM.groupCode","researchGroupM.permissions","researchGroupM.updatedBy",
-				"researchGroupM.updatedDate","researchGroupM.groupTh","researchGroupM.groupEng","mode", "command","keySearch"};
-			*/
-		//	binder.setAllowedFields(ALLOWED_FIELDS);		
 	}
-	 @RenderMapping()
-	public String listRows(PortletRequest request,Model model){
+	
+	@RenderMapping()
+	public String listRows(PortletRequest request,Model model) throws UnsupportedEncodingException{		
 		CdsForm cdsForm=null;
 		if (!model.containsAttribute("cdsForm")) {
 			cdsForm = new CdsForm();
@@ -98,6 +95,7 @@ public class CdsController {
 		model.addAttribute("pageNo",1);
 		model.addAttribute("PageCur",1);
 		model.addAttribute("lastPage",rs.getResultPage());
+		
 		return "master/cds";
 	}
 	
@@ -198,6 +196,7 @@ public class CdsController {
 		Map<String,String> dbTypeList = new HashMap<String,String>();
 		dbTypeList.put("mysql","mysql");
 		dbTypeList.put("oracle","oracle");
+		dbTypeList.put("db2", "db2");
 		model.addAttribute("dbTypeList", dbTypeList);
 		// conn
 		DbConnModel connModel = new DbConnModel();
@@ -479,6 +478,8 @@ public class CdsController {
 		System.out.println(json.toString());
 		response.getWriter().write(json.toString());
 	}
+	
+	
 	@ResourceMapping(value="exDataQuery")
 	@ResponseBody 
 	public void exQuery(ResourceRequest request,ResourceResponse response) 

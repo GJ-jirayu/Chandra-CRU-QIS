@@ -19,6 +19,7 @@ public class CdsEvidenceModel extends ImakeXML implements Serializable{
 	private String updatedBy;
 	private Timestamp createdDate;
 	private Timestamp updatedDate;
+	private String evidenceUrlPath;
 
 	public CdsEvidenceModel() {
 	}
@@ -93,6 +94,14 @@ public class CdsEvidenceModel extends ImakeXML implements Serializable{
 
 	public void setUpdatedDate(Timestamp updatedDate) {
 		this.updatedDate = updatedDate;
+	}
+
+	public String getEvidenceUrlPath() {
+		return evidenceUrlPath;
+	}
+
+	public void setEvidenceUrlPath(String evidenceUrlPath) {
+		this.evidenceUrlPath = evidenceUrlPath;
 	}
 	
 }

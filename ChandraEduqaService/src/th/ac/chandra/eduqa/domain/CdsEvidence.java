@@ -41,6 +41,9 @@ public class CdsEvidence implements Serializable {
 	
 	@Column(name="UPDATED_DTTM")
 	private Timestamp updatedDate;
+	
+	@Column(name="EVIDENCE_URL_PATH")
+	private String evidenceUrlPath;
 
 	
 	public CdsEvidence() {
@@ -125,5 +128,14 @@ public class CdsEvidence implements Serializable {
 	public void setUpdatedDate(Timestamp updatedDate) {
 		this.updatedDate = updatedDate;
 	}
-	
+
+
+	public String getEvidenceUrlPath() {
+		return evidenceUrlPath;
+	}
+
+
+	public void setEvidenceUrlPath(String evidenceUrlPath) {
+		this.evidenceUrlPath = evidenceUrlPath;
+	}
 }

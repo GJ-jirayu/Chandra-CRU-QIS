@@ -1,5 +1,6 @@
 package th.ac.chandra.eduqa.portlet;
 
+import java.io.File;
 //import java.sql.Date;
 import java.sql.Timestamp;
 //import java.text.DateFormat;
@@ -94,6 +95,7 @@ public class KpiLevelController {
 		model.addAttribute("levels", levels);
 		model.addAttribute("lastPage", service.getResultPage());
 		model.addAttribute("PageCur", "1");
+		
 		return "master/KpiLevel";
 	}
 

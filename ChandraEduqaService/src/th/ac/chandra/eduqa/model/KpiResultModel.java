@@ -356,5 +356,5 @@ public class KpiResultModel extends ImakeXML implements Serializable{
 	public void setActive(Integer active) {
 		this.active = active;
 	}
-	
+
 }
